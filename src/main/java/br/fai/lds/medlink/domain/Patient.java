@@ -25,3 +25,4 @@ public class Patient extends Person {
 
     @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
+}
