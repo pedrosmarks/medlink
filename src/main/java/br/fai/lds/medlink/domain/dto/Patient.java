@@ -1,7 +1,15 @@
 package br.fai.lds.medlink.domain.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+@Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Patient extends Person{
 
 
@@ -16,4 +24,5 @@ public class Patient extends Person{
 
     @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
+
 }
