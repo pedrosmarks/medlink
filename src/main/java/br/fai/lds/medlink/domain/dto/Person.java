@@ -31,7 +31,6 @@ public class Person {
     private Gender gender;
 
     @NotNull(message = "A data de nascimento não pode ser nula")
-    @Past(message = "A data de nascimento deve ser no passado")
     private LocalDate dataNascimento;
 
     @NotNull(message = "O número de telefone não pode ser nulo")
