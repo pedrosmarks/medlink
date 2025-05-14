@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class AppConfiguration {
 
 
-//Environment é usada para  acessar propriedades e perfis ativos do Spring.
+    //Environment é usada para  acessar propriedades e perfis ativos do Spring.
     private final Environment environment;
 
     public AppConfiguration(Environment environment) {
@@ -22,12 +22,10 @@ public class AppConfiguration {
         System.out.println(Arrays.toString(environment.getActiveProfiles()));
         System.out.println("-----");
 
-
     }
 
     @Bean
     public PatientDao getUserFakeDao() {
         return new PatientFakeDaoImpl();
     }
-
 }

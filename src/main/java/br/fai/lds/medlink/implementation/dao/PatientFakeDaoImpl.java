@@ -16,7 +16,7 @@ public class PatientFakeDaoImpl implements PatientDao {
 
 
     private static List<Patient> patients = new ArrayList<>();
-    private static int ID=0;
+    private static int ID=1;
 
     private int getNextId(){
        return ID++;
@@ -39,10 +39,52 @@ public class PatientFakeDaoImpl implements PatientDao {
                         .number("123")
                         .complement("")
                         .neighborhood("centro")
-                        .city("Pouso Alegre")
+                        .city("Cambuí")
                         .state("Minas Gerais")
                         .zipCode("123456789")
                         .build())
+                        .email("bolotinha@gmail.com")
+                        .plan("Pet")
+                        .susCard("123456")
+                .build());
+        patients.add(Patient.builder()
+                .name("Jade")
+                .cpf("456.789.123-45")
+                .gender(Gender.FEMININO)
+                .dataNascimento(LocalDate.parse("12.13.2019",formatter))
+                .phoneNumber("Liga pra mamãe e pro papai")
+                .address(Address.builder()
+                        .street("Rua A")
+                        .number("123")
+                        .complement("")
+                        .neighborhood("centro")
+                        .city("Ouro Fino")
+                        .state("Minas Gerais")
+                        .zipCode("123456789")
+                        .build())
+                .email("jadinha@gmail.com")
+                .plan("Pet")
+                .susCard("123456")
+                .build());
+
+        patients.add(Patient.builder()
+                .name("Frajola")
+                .cpf("789.123.456-78")
+                .gender(Gender.FEMININO)
+                .dataNascimento(LocalDate.parse("01.12.2019",formatter))
+                .phoneNumber("Liga pra mamãe e pro papai")
+                .address(Address.builder()
+                        .street("Rua A")
+                        .number("123")
+                        .complement("")
+                        .neighborhood("centro")
+                        .city("Santa Rita do Sapucaí")
+                        .state("Minas Gerais")
+                        .zipCode("123456789")
+                        .build())
+                .email("frajolinha@gmail.com")
+                .plan("Pet")
+                .susCard("123456")
                 .build());
     }
 
