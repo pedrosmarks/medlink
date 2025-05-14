@@ -2,6 +2,7 @@ package br.fai.lds.medlink.controller;
 
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,14 @@ import java.util.List;
 public class PatientController {
 
 
-    private final Patient patient;
+    private final PatientService patientService;;
 
-    public PatientController(Patient patient) {
-        this.patient = patient;
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
     }
 
     @GetMapping()
     public ResponseEntity<List<Patient>> getPatient(){
-        return ResponseEntity.ok(patient.findAll());}
-
+        return ResponseEntity.ok(patientService.findAll());
+    }
 }
