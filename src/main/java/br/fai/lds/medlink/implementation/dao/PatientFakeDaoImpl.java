@@ -29,6 +29,7 @@ public class PatientFakeDaoImpl implements PatientDao {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         patients.add(Patient.builder()
+                .id(getNextId())
                 .name("Bolota")
                 .cpf("123.456.789-10")
                 .gender(Gender.FEMININO)
@@ -48,10 +49,11 @@ public class PatientFakeDaoImpl implements PatientDao {
                         .susCard("123456")
                 .build());
         patients.add(Patient.builder()
+                .id(getNextId())
                 .name("Jade")
                 .cpf("456.789.123-45")
                 .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("12.13.2019",formatter))
+                .dataNascimento(LocalDate.parse("12.03.2019",formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
                 .address(Address.builder()
                         .street("Rua A")
@@ -68,6 +70,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .build());
 
         patients.add(Patient.builder()
+                .id(getNextId())
                 .name("Frajola")
                 .cpf("789.123.456-78")
                 .gender(Gender.FEMININO)
