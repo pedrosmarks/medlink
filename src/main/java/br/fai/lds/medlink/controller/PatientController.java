@@ -1,6 +1,5 @@
 package br.fai.lds.medlink.controller;
 
-
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.service.user.patient.PatientService;
 import org.springframework.http.ResponseEntity;
