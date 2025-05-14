@@ -16,11 +16,13 @@ public class MedicController {
     private final MedicService medicService;
 
     public MedicController(MedicService medicService) {
+
         this.medicService = medicService;
     }
 
     @GetMapping
     ResponseEntity<List<Medic>> getMedic(){
+
         return ResponseEntity.ok(medicService.findAll());
     }
 }

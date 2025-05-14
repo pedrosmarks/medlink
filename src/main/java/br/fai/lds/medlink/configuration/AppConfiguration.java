@@ -28,6 +28,7 @@ public class AppConfiguration {
 
     @Bean
     public PatientDao getPatientFakeDao() {
+
         return new PatientFakeDaoImpl();
     }
 
