@@ -58,12 +58,17 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public Object readyById(int id) {
-        return null;
+
+        return patients.stream()
+                .filter(patient -> patient.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
+
 
     @Override
     public List readAll() {
-        return List.of();
+        return patients;
     }
 
     @Override
