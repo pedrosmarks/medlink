@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain.dto;
+package br.fai.lds.medlink.domain;
 
 public enum Gender {
 

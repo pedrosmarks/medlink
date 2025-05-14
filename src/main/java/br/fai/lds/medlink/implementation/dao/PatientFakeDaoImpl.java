@@ -1,8 +1,8 @@
 package br.fai.lds.medlink.implementation.dao;
 
-import br.fai.lds.medlink.domain.dto.Address;
-import br.fai.lds.medlink.domain.dto.Gender;
-import br.fai.lds.medlink.domain.dto.Patient;
+import br.fai.lds.medlink.domain.Address;
+import br.fai.lds.medlink.domain.Gender;
+import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.PatientDao;
 
 import java.time.LocalDate;

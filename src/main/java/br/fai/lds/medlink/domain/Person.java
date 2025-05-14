@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain.dto;
+package br.fai.lds.medlink.domain;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
