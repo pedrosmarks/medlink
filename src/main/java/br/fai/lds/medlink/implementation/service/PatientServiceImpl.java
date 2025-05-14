@@ -2,9 +2,11 @@ package br.fai.lds.medlink.implementation.service;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.service.patient.PatientService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class PatientServiceImpl implements PatientService {
     @Override
     public int create(Patient entity) {
