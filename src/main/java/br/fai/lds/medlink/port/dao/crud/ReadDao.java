@@ -1,4 +1,10 @@
 package br.fai.lds.medlink.port.dao.crud;
 
-public interface ReadDao {
+import java.util.List;
+
+public interface ReadDao<T> {
+
+    T readyById(final int id);
+
+    List<T> readAll();
 }
