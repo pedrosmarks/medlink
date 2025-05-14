@@ -2,7 +2,7 @@ package br.fai.lds.medlink.implementation.service;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.PatientDao;
-import br.fai.lds.medlink.port.service.patient.PatientService;
+import br.fai.lds.medlink.port.service.user.patient.PatientService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

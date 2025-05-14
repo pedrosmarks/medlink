@@ -1,4 +1,6 @@
 package br.fai.lds.medlink.port.dao.user;
 
-public interface MedicDao {
+import br.fai.lds.medlink.port.dao.crud.CrudDao;
+
+public interface MedicDao extends CrudDao {
 }

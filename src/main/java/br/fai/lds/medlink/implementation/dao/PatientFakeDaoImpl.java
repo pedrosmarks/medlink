@@ -19,12 +19,11 @@ public class PatientFakeDaoImpl implements PatientDao {
     private static int ID=1;
 
     private int getNextId(){
-       return ID++;
+
+        return ID++;
     }
 
-
     public PatientFakeDaoImpl(){
-
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -44,9 +43,9 @@ public class PatientFakeDaoImpl implements PatientDao {
                         .state("Minas Gerais")
                         .zipCode("123456789")
                         .build())
-                        .email("bolotinha@gmail.com")
-                        .plan("Pet")
-                        .susCard("123456")
+                .email("bolotinha@gmail.com")
+                .plan("Pet")
+                .susCard("123456")
                 .build());
         patients.add(Patient.builder()
                 .id(getNextId())
