@@ -1,5 +1,8 @@
 package br.fai.lds.medlink.configuration;
 
+import br.fai.lds.medlink.implementation.dao.PatientFakeDaoImpl;
+import br.fai.lds.medlink.port.dao.user.PatientDao;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
@@ -18,5 +21,12 @@ public class AppConfiguration {
         System.out.println("----");
         System.out.println(Arrays.toString(environment.getActiveProfiles()));
         System.out.println("-----");
+
+
+    }
+
+    @Bean
+    public PatientDao getUserFakeDao(){
+        return new PatientFakeDaoImpl();
     }
 }
