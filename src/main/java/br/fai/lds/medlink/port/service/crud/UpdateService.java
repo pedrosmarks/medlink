@@ -4,5 +4,5 @@ import br.fai.lds.medlink.domain.Patient;
 
 public interface UpdateService <T>{
 
-    Patient update(final int id, final T entity);
+     T update(final int id, final T entity);
 }

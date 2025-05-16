@@ -21,7 +21,7 @@ public class MedicServiceImpl  implements MedicService {
     @Override
     public int create(Medic entity) {
         medicDao.create(entity);
-        return -1;
+        return entity.getId();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class MedicServiceImpl  implements MedicService {
 
     @Override
     public Medic findById(int id) {
-        return (Medic) medicDao.readyById(id);
+        return (Medic) medicDao.readById(id);
     }
 
     @Override
@@ -41,8 +41,7 @@ public class MedicServiceImpl  implements MedicService {
     }
 
     @Override
-    public Patient update(int id, Medic entity) {
-
-        return entity;
+    public Medic update(int id, Medic entity) {
+        throw new UnsupportedOperationException("Update not implemented yet.");
     }
 }

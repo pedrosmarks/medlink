@@ -48,8 +48,9 @@ public class MedicFakeDaoImpl implements MedicDao {
 
 
     @Override
-    public void create(Object entity) {
-
+    public void create(Medic entity) {
+        entity.setId(getNextId());
+        medics.add(entity);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class MedicFakeDaoImpl implements MedicDao {
     }
 
     @Override
-    public Object readyById(int id) {
+    public Medic readById(int id) {
         return medics.stream()
                 .filter(medic -> medic.getId() == id)
                 .findFirst()
@@ -71,8 +72,9 @@ public class MedicFakeDaoImpl implements MedicDao {
         return medics;
     }
 
+
     @Override
-    public void updateInformation(int id, Object entity) {
+    public void updateInformation(int id, Medic entity) {
 
     }
 }

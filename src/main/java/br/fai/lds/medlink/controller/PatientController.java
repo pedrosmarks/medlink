@@ -36,16 +36,10 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Patient> createNew (@RequestBody final Patient data){
+    public ResponseEntity<Patient> createNew(@RequestBody final Patient data) {
         final int id = patientService.create(data);
-
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
-        return  ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(data);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Patient> update (@PathVariable int id, @RequestBody Patient data){
-        Patient updated = patientService.update(id, data);
-        return updated == null? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
-    }
 }

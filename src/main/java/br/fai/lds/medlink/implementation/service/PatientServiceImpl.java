@@ -19,7 +19,7 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public int create(Patient entity) {
         patientDao.create(entity);
-        return 1;
+        return entity.getId();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Patient findById(int id) {
-        return (Patient) patientDao.readyById(id);
+        return (Patient) patientDao.readById(id);
     }
 
     @Override
@@ -39,8 +39,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Patient update(int id, Patient entity) {
-        patientDao.updateInformation(id, entity);
-        return null;
+        throw new UnsupportedOperationException("Update not implemented yet.");
     }
 }
 

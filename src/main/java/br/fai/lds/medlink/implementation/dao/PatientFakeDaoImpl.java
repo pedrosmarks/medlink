@@ -91,7 +91,9 @@ public class PatientFakeDaoImpl implements PatientDao {
     }
 
     @Override
-    public void create(Object entity) {
+    public void create(Patient entity) {
+        entity.setId(getNextId());
+        patients.add(entity);
 
     }
 
@@ -101,8 +103,7 @@ public class PatientFakeDaoImpl implements PatientDao {
     }
 
     @Override
-    public Object readyById(int id) {
-
+    public Patient readById(int id) {
         return patients.stream()
                 .filter(patient -> patient.getId() == id)
                 .findFirst()
@@ -116,7 +117,7 @@ public class PatientFakeDaoImpl implements PatientDao {
     }
 
     @Override
-    public void updateInformation(int id, Object entity) {
+    public void updateInformation(int id, Patient entity) {
 
     }
 }

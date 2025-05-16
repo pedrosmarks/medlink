@@ -37,11 +37,10 @@ public class MedicController {
     }
 
     @PostMapping
-    public ResponseEntity<Medic> createNew (@RequestBody final Medic data){
+    public ResponseEntity<Medic> createNew(@RequestBody final Medic data) {
         final int id = medicService.create(data);
-
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
-        return  ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(data);
     }
 
     @PutMapping("/{id}")
@@ -49,4 +48,6 @@ public class MedicController {
         Medic updated = medicService.update(id, data);
         return updated == null? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
+
+
 }
