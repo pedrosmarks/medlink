@@ -1,8 +1,8 @@
 package br.fai.lds.medlink.port.service.crud;
 
-import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.Patient;
 
 public interface UpdateService <T>{
 
-    Medic update(final int id, final T entity);
+    Patient update(final int id, final T entity);
 }

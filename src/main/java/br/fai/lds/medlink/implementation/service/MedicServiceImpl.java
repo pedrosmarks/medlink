@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.implementation.service;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.MedicDao;
 import br.fai.lds.medlink.port.service.user.medic.MedicService;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class MedicServiceImpl  implements MedicService {
     }
 
     @Override
-    public Medic update(int id, Medic entity) {
+    public Patient update(int id, Medic entity) {
 
         return entity;
     }

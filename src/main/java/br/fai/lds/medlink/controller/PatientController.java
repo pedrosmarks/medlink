@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.service.user.patient.PatientService;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,11 @@ public class PatientController {
 
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
         return  ResponseEntity.created(uri).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Patient> update (@PathVariable int id, @RequestBody Patient data){
+        Patient updated = patientService.update(id, data);
+        return updated == null? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
 }
