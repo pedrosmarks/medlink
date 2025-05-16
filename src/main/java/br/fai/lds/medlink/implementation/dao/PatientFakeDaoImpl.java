@@ -100,13 +100,10 @@ public class PatientFakeDaoImpl implements PatientDao {
     }
 
     @Override
-    public void remove(int id) {
-        Patient patient = readById(id);
-        if (patient != null) {
-            patient.setActive(false);
-        }
-    }
+    public boolean remove(int id) {
 
+        return false;
+    }
 
     @Override
     public Patient readById(int id) {
@@ -131,4 +128,15 @@ public class PatientFakeDaoImpl implements PatientDao {
             }
         }
     }
+
+    @Override
+    public boolean deactivate(int id) {
+        Patient patient = readById(id);
+        if (patient == null) return false;
+
+        patient.setActive(false);
+        updateInformation(id, patient);
+        return true;
+    }
+
 }

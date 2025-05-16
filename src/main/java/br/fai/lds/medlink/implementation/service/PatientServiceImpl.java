@@ -24,15 +24,15 @@ public class PatientServiceImpl implements PatientService {
         return entity.getId();
     }
 
+
+    @Override
+    public boolean deactivate(int id) {
+        return patientDao.deactivate(id);
+    }
+
     @Override
     public boolean delete(int id) {
-        Patient patient = patientDao.readById(id);
-        if (patient == null) {
-            return false;
-        }
-        patient.setActive(false);
-        patientDao.updateInformation(id, patient);
-        return true;
+        return patientDao.remove(id);
     }
 
     @Override

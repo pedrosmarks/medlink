@@ -1,6 +1,6 @@
 package br.fai.lds.medlink.port.service.crud;
 
-public interface DeactivateService {
+public interface DeleteService {
 
     boolean delete(final int id);
 }
