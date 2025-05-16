@@ -25,6 +25,15 @@ public class PatientController {
         return ResponseEntity.ok(patientService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Patient> getEntityById(@PathVariable final int id){
+        Patient entity = patientService.findById(id);
+
+
+        return entity == null ?
+                ResponseEntity.notFound().build():ResponseEntity.ok(entity);
+    }
+
     @PostMapping
     public ResponseEntity<Patient> createNew (@RequestBody final Patient data){
         final int id = patientService.create(data);
