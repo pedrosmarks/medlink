@@ -27,6 +27,15 @@ public class MedicController {
         return ResponseEntity.ok(medicService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Medic> getEntityById(@PathVariable final int id){
+        Medic entity = medicService.findById(id);
+
+
+        return entity == null ?
+                ResponseEntity.notFound().build():ResponseEntity.ok(entity);
+    }
+
     @PostMapping
     public ResponseEntity<Medic> createNew (@RequestBody final Medic data){
         final int id = medicService.create(data);
