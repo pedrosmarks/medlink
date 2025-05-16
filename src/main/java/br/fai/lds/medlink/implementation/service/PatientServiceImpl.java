@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.implementation.service;
 
+import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.PatientDao;
 import br.fai.lds.medlink.port.service.user.patient.PatientService;
@@ -38,8 +39,9 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void update(int id, Patient entity) {
+    public Medic update(int id, Patient entity) {
         patientDao.updateInformation(id, entity);
+        return null;
     }
 }
 

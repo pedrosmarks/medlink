@@ -40,7 +40,8 @@ public class MedicServiceImpl  implements MedicService {
     }
 
     @Override
-    public void update(int id, Medic entity) {
+    public Medic update(int id, Medic entity) {
 
+        return entity;
     }
 }

@@ -43,4 +43,10 @@ public class MedicController {
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
         return  ResponseEntity.created(uri).build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Medic> update (@PathVariable int id,  @RequestBody Medic data){
+        Medic updated = medicService.update(id, data);
+        return updated == null? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
+    }
 }
