@@ -42,4 +42,13 @@ public class PatientController {
         return ResponseEntity.created(uri).body(data);
     }
 
+    @PutMapping("/{id}/remove")
+    public ResponseEntity<Void> removePatient(@PathVariable int id) {
+        boolean success = patientService.delete(id);
+        if (!success) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build(); // Retorna 204 sem corpo
+    }
+
 }

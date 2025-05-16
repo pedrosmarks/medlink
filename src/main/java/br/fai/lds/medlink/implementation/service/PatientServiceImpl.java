@@ -3,6 +3,7 @@ package br.fai.lds.medlink.implementation.service;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.PatientDao;
 import br.fai.lds.medlink.port.service.user.patient.PatientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientDao patientDao;
 
+    @Autowired
     public PatientServiceImpl(PatientDao patientDao) {
         this.patientDao = patientDao;
     }
@@ -23,8 +25,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void delete(int id) {
-        patientDao.remove(id);
+    public boolean delete(int id) {
+        Patient patient = patientDao.readById(id);
+        if (patient == null) {
+            return false;
+        }
+        patient.setActive(false);
+        patientDao.updateInformation(id, patient);
+        return true;
     }
 
     @Override

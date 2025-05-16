@@ -1,7 +1,6 @@
 package br.fai.lds.medlink.implementation.service;
 
 import br.fai.lds.medlink.domain.Medic;
-import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.MedicDao;
 import br.fai.lds.medlink.port.service.user.medic.MedicService;
 import org.springframework.stereotype.Service;
@@ -25,8 +24,9 @@ public class MedicServiceImpl  implements MedicService {
     }
 
     @Override
-    public void delete(int id) {
+    public boolean delete(int id) {
         medicDao.remove(id);
+        return Boolean.parseBoolean(null);
     }
 
 

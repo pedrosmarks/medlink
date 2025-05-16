@@ -4,26 +4,28 @@ import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.PatientDao;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+@Primary
+@Repository
 public class PatientFakeDaoImpl implements PatientDao {
 
 
     private static List<Patient> patients = new ArrayList<>();
-    private static int ID=1;
+    private static int ID = 1;
 
-    private int getNextId(){
+    private int getNextId() {
 
         return ID++;
     }
 
-    public PatientFakeDaoImpl(){
+    public PatientFakeDaoImpl() {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -32,7 +34,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .name("Bolota")
                 .cpf("123.456.789-10")
                 .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("01.12.2019",formatter))
+                .dataNascimento(LocalDate.parse("01.12.2019", formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
                 .address(Address.builder()
                         .street("Rua A")
@@ -52,7 +54,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .name("Jade")
                 .cpf("456.789.123-45")
                 .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("12.03.2019",formatter))
+                .dataNascimento(LocalDate.parse("12.03.2019", formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
                 .address(Address.builder()
                         .street("Rua A")
@@ -73,7 +75,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .name("Frajola")
                 .cpf("789.123.456-78")
                 .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("01.12.2019",formatter))
+                .dataNascimento(LocalDate.parse("01.12.2019", formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
                 .address(Address.builder()
                         .street("Rua A")
@@ -99,8 +101,12 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public void remove(int id) {
-
+        Patient patient = readById(id);
+        if (patient != null) {
+            patient.setActive(false);
+        }
     }
+
 
     @Override
     public Patient readById(int id) {
@@ -118,6 +124,11 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public void updateInformation(int id, Patient entity) {
-
+        for (int i = 0; i < patients.size(); i++) {
+            if (patients.get(i).getId() == id) {
+                patients.set(i, entity);
+                return;
+            }
+        }
     }
 }

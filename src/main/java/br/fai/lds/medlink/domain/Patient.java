@@ -27,4 +27,8 @@ public class Patient extends Person {
     private String susCard;
 
     private boolean active = true;
+
+    public boolean isAtivo() {
+        return active;
+    }
 }

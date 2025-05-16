@@ -2,7 +2,7 @@ package br.fai.lds.medlink.port.service.crud;
 
 public interface CrudService <T> extends
         CreateService<T>,
-        DeleteService,
+        DeactivateService,
         ReadService<T>,
         UpdateService<T> {
 }
