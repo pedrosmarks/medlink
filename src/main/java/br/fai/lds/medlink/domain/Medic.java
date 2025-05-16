@@ -23,4 +23,6 @@ public class Medic extends Person {
 
     @NotNull(message = "O endereço de email não pode estar em branco")
     private String email;
+
+    private boolean active = true;
 }
