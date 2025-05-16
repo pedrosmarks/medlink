@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.implementation.service;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.port.dao.crud.ReadDao;
 import br.fai.lds.medlink.port.dao.user.MedicDao;
 import br.fai.lds.medlink.port.service.user.medic.MedicService;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,13 @@ public class MedicServiceImpl  implements MedicService {
 
     @Override
     public boolean delete(int id) {
-        medicDao.remove(id);
-        return Boolean.parseBoolean(null);
+        Medic medic = medicDao.readById(id);
+        if (medic == null) {
+            return false;
+        }
+        medic.setActive(false);
+        medicDao.updateInformation(id, medic);
+        return true;
     }
 
 
@@ -43,5 +49,10 @@ public class MedicServiceImpl  implements MedicService {
     @Override
     public Medic update(int id, Medic entity) {
         throw new UnsupportedOperationException("Update not implemented yet.");
+    }
+
+    @Override
+    public Medic readById(int id) {
+        return null;
     }
 }

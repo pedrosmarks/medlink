@@ -3,6 +3,7 @@ package br.fai.lds.medlink.implementation.dao;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.user.MedicDao;
 
 import java.time.LocalDate;
@@ -55,7 +56,10 @@ public class MedicFakeDaoImpl implements MedicDao {
 
     @Override
     public void remove(int id) {
-
+        Medic medic = readById(id);
+        if (medic != null) {
+            medic.setActive(false);
+        }
     }
 
     @Override
@@ -72,9 +76,13 @@ public class MedicFakeDaoImpl implements MedicDao {
         return medics;
     }
 
-
     @Override
     public void updateInformation(int id, Medic entity) {
-
+        for (int i = 0; i < medics.size(); i++) {
+            if (medics.get(i).getId() == id) {
+                medics.set(i, entity);
+                return;
+            }
+        }
     }
 }

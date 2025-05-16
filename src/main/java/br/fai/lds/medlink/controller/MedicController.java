@@ -43,11 +43,15 @@ public class MedicController {
         return ResponseEntity.created(uri).body(data);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Medic> update (@PathVariable int id,  @RequestBody Medic data){
-        Medic updated = medicService.update(id, data);
-        return updated == null? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
+    @PutMapping("/{id}/remove")
+    public ResponseEntity<Void> removePatient(@PathVariable int id) {
+        boolean success = medicService.delete(id);
+        if (!success) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
+
 
 
 }

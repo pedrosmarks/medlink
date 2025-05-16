@@ -48,7 +48,7 @@ public class PatientController {
         if (!success) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.noContent().build(); // Retorna 204 sem corpo
+        return ResponseEntity.noContent().build();
     }
 
 }
