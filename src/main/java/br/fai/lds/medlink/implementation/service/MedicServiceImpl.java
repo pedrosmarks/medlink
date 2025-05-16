@@ -20,7 +20,7 @@ public class MedicServiceImpl  implements MedicService {
     @Override
     public int create(Medic entity) {
         medicDao.create(entity);
-        return 1;
+        return -1;
     }
 
     @Override
