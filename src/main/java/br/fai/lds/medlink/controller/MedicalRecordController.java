@@ -12,19 +12,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-@RequiredArgsConstructor
 //Gera automaticamente um construtor com os argumentos obrigatorios, no caso final
-@RestController
+@RequiredArgsConstructor
 //Retorno dos metodos e converte para JSON
-@RequestMapping("/api/medical-record")
+@RestController
 //Define os edpoint para todas as rotas
+@RequestMapping("/api/medical-record")
+
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
     private final MedicalRecordMapper medicalRecordMapper;
 
-
-    // GET: Chama o service para buscar todos os prontuarios (findAll()) e converte cada entidade para um DTO
+    /**
+     * GET: Chama o service para buscar todos os prontuarios(findAll())
+     * Converte cada entidade para um DTO
+     */
     @GetMapping
     public ResponseEntity<List<MedicalRecordDto>> getAll() {
         List<MedicalRecord> records = medicalRecordService.findAll();
@@ -37,8 +40,8 @@ public class MedicalRecordController {
      *GET: Chama o service para buscar um prontuario especifico, definido pela rota "/{id}"
      *PathVariable: Pega o valor  da URL {id} e atribui a variavel int
      *findById é o responsável por chamar o service para fazer a busca do prontuario
-     *Se encontrar transforma em DTO e retorna um objeto e retorna 204,
-     *Se não encontrar devolve 404
+     *Se encontrar transforma em DTO e retorna um objeto 204,
+     *Se não encontrar retorn 404
      */
     @GetMapping("/{id}")
     public ResponseEntity<MedicalRecordDto> getById(@PathVariable int id) {
