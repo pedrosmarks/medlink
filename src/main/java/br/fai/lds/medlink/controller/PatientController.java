@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.dto.PatientDto;
+import br.fai.lds.medlink.dataTransferObject.PatientDto;
 import br.fai.lds.medlink.mapper.PatientMapper;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.RequiredArgsConstructor;

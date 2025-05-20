@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.dto;
+package br.fai.lds.medlink.dataTransferObject;
 
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;

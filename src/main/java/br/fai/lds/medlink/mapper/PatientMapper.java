@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.mapper;
 
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.dto.PatientDto;
+import br.fai.lds.medlink.dataTransferObject.PatientDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

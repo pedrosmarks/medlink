@@ -1,13 +1,13 @@
-package br.fai.lds.medlink.dto;
+package br.fai.lds.medlink.dataTransferObject;
 
 import br.fai.lds.medlink.domain.BloodType;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class MedicalRecordDto {
 
 
+    private int id;
     private BloodType bloodType;
     private String organDonor;
     private String diagnosis;
@@ -16,6 +16,5 @@ public class MedicalRecordDto {
     private String vaccine;
     private String surgicalHistory;
     private String medications;
-
 
 }
