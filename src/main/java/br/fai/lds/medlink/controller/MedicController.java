@@ -1,6 +1,8 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.dto.MedicDto;
+import br.fai.lds.medlink.mapper.MedicMapper;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,37 +11,57 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+
+
 @RestController
 @RequestMapping("/api/medic")
 public class MedicController {
 
     private final MedicService medicService;
+    private final MedicMapper medicMapper;
 
-    public MedicController(MedicService medicService) {
+    public MedicController(MedicService medicService, MedicMapper medicMapper) {
 
         this.medicService = medicService;
+        this.medicMapper = medicMapper;
     }
 
     @GetMapping
-    ResponseEntity<List<Medic>> getMedic(){
+    ResponseEntity<List<MedicDto>> getMedic(){
 
-        return ResponseEntity.ok(medicService.findAll());
+        List<Medic> medics = medicService.findAll();
+        List<MedicDto> dtoList = medics.stream()
+                .map(medicMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Medic> getEntityById(@PathVariable final int id){
+    public ResponseEntity<MedicDto> getEntityById(@PathVariable final int id){
         Medic entity = medicService.findById(id);
 
+        if (entity == null){
 
-        return entity == null ?
-                ResponseEntity.notFound().build():ResponseEntity.ok(entity);
+            return ResponseEntity.notFound().build();
+        }
+        MedicDto dto = medicMapper.toDto(entity);
+        return ResponseEntity.ok(dto);
+
     }
 
     @PostMapping
-    public ResponseEntity<Medic> createNew(@RequestBody final Medic data) {
-        final int id = medicService.create(data);
-        final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
-        return ResponseEntity.created(uri).body(data);
+    public ResponseEntity<MedicDto> createNew(@RequestBody final MedicDto dto) {
+        Medic entity = medicMapper.toEntity(dto);
+        int id = medicService.create(entity);
+        dto.setId(id);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{id}/remove")

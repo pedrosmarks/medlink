@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface MedicalMapper {
+public interface MedicMapper {
 
     @Mapping(target = "id", expression = "java(java.util.concurrent.ThreadLocalRandom.current().nextLong(100_0000))")
     // Anotacao @Mapping é para uso temporario, enquanto não têm o banco de dados implementado, ela simula geracao de ID.
