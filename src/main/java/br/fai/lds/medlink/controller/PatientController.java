@@ -1,6 +1,8 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.dto.PatientDto;
+import br.fai.lds.medlink.mapper.PatientMapper;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,31 +16,51 @@ import java.util.List;
 public class PatientController {
 
 
-    private final PatientService patientService;;
+    private final PatientService patientService;
+    private final PatientMapper patientMapper;
 
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, PatientMapper patientMapper) {
+
         this.patientService = patientService;
+        this.patientMapper = patientMapper;
     }
 
     @GetMapping()
-    public ResponseEntity<List<Patient>> getPatient(){
-        return ResponseEntity.ok(patientService.findAll());
+    public ResponseEntity<List<PatientDto>> getPatient() {
+
+        List<Patient> patients = patientService.findAll();
+        List<PatientDto> dtoList = patients.stream()
+                .map(patientMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getEntityById(@PathVariable final int id){
+    public ResponseEntity<PatientDto> getEntityById(@PathVariable final int id) {
         Patient entity = patientService.findById(id);
 
+        if (entity == null) {
+            ResponseEntity.notFound().build();
+        }
 
-        return entity == null ?
-                ResponseEntity.notFound().build():ResponseEntity.ok(entity);
+        PatientDto dto = patientMapper.toDto(entity);
+        return ResponseEntity.ok(dto);
+
     }
 
     @PostMapping
-    public ResponseEntity<Patient> createNew(@RequestBody final Patient data) {
-        final int id = patientService.create(data);
-        final URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
-        return ResponseEntity.created(uri).body(data);
+    public ResponseEntity<PatientDto> createNew(@RequestBody PatientDto dto) {
+        Patient entity = patientMapper.toEntity(dto);
+        int id = patientService.create(entity);
+        dto.setId(id);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{id}/deactivate")
@@ -46,5 +68,4 @@ public class PatientController {
         boolean result = patientService.deactivate(id);
         return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
-
 }
