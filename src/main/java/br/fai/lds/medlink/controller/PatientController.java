@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.port.service.user.patient.PatientService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,6 +46,5 @@ public class PatientController {
         boolean result = patientService.deactivate(id);
         return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
-
 
 }

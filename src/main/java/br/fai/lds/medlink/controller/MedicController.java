@@ -1,8 +1,7 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Medic;
-import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.port.service.user.medic.MedicService;
+import br.fai.lds.medlink.port.service.medic.MedicService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -44,14 +43,11 @@ public class MedicController {
     }
 
     @PutMapping("/{id}/remove")
-    public ResponseEntity<Void> removePatient(@PathVariable int id) {
+    public ResponseEntity<Void> deleteMedic(@PathVariable int id) {
         boolean success = medicService.delete(id);
         if (!success) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
     }
-
-
-
 }

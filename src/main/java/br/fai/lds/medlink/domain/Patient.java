@@ -3,6 +3,7 @@ package br.fai.lds.medlink.domain;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -26,9 +27,7 @@ public class Patient extends Person {
     @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
 
+    @Getter
     private boolean active = true;
 
-    public boolean isAtivo() {
-        return active;
-    }
 }

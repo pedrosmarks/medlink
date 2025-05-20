@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.port.service.user.patient;
+package br.fai.lds.medlink.port.service.patient;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.service.crud.CrudService;

@@ -1,8 +1,8 @@
-package br.fai.lds.medlink.implementation.service;
+package br.fai.lds.medlink.implementation.service.pacient;
 
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.port.dao.user.PatientDao;
-import br.fai.lds.medlink.port.service.user.patient.PatientService;
+import br.fai.lds.medlink.port.dao.patient.PatientDao;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

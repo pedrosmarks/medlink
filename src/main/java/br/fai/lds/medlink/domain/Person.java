@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public abstract class Person {
     private Gender gender;
 
     @NotNull(message = "A data de nascimento não pode ser nula")
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
 
     @NotNull(message = "O número de telefone não pode ser nulo")

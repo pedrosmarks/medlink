@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.port.dao.user;
+package br.fai.lds.medlink.port.dao.patient;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.crud.CrudDao;

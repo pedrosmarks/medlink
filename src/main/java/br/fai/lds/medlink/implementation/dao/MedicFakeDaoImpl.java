@@ -3,7 +3,7 @@ package br.fai.lds.medlink.implementation.dao;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
-import br.fai.lds.medlink.port.dao.user.MedicDao;
+import br.fai.lds.medlink.port.dao.medic.MedicDao;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

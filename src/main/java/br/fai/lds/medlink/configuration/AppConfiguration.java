@@ -2,8 +2,8 @@ package br.fai.lds.medlink.configuration;
 
 import br.fai.lds.medlink.implementation.dao.MedicFakeDaoImpl;
 import br.fai.lds.medlink.implementation.dao.PatientFakeDaoImpl;
-import br.fai.lds.medlink.port.dao.user.MedicDao;
-import br.fai.lds.medlink.port.dao.user.PatientDao;
+import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -28,7 +28,6 @@ public class AppConfiguration {
 
     @Bean
     public PatientDao getPatientFakeDao() {
-
         return new PatientFakeDaoImpl();
     }
 

@@ -1,9 +1,8 @@
-package br.fai.lds.medlink.implementation.service;
+package br.fai.lds.medlink.implementation.service.medic;
 
 import br.fai.lds.medlink.domain.Medic;
-import br.fai.lds.medlink.port.dao.crud.ReadDao;
-import br.fai.lds.medlink.port.dao.user.MedicDao;
-import br.fai.lds.medlink.port.service.user.medic.MedicService;
+import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import br.fai.lds.medlink.port.service.medic.MedicService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
