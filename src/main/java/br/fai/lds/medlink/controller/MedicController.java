@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.dto.MedicDto;
 import br.fai.lds.medlink.mapper.MedicMapper;
 import br.fai.lds.medlink.port.service.medic.MedicService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -11,8 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/medic")
 public class MedicController {
@@ -20,11 +20,6 @@ public class MedicController {
     private final MedicService medicService;
     private final MedicMapper medicMapper;
 
-    public MedicController(MedicService medicService, MedicMapper medicMapper) {
-
-        this.medicService = medicService;
-        this.medicMapper = medicMapper;
-    }
 
     @GetMapping
     ResponseEntity<List<MedicDto>> getMedic(){

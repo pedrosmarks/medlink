@@ -5,7 +5,7 @@ import br.fai.lds.medlink.dto.MedicalRecordDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface MedicalRecorMapper {
+public interface MedicalRecordMapper {
 
     MedicalRecordDto toDto(MedicalRecord entity);
 
