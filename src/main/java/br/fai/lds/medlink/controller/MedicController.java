@@ -75,7 +75,7 @@ public class MedicController {
      remove
      */
     @PutMapping("/{id}/remove")
-    public ResponseEntity<Void> deleteMedic(@PathVariable int id) {
+    public ResponseEntity<Void> deactivate(@PathVariable int id) {
         boolean success = medicService.delete(id);
         if (!success) {
             return ResponseEntity.notFound().build();
