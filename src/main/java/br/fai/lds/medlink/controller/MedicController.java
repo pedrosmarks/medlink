@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //Gera automaticamente um construtor com os argumentos obrigatorios, no caso final
 @RequiredArgsConstructor
@@ -21,19 +22,18 @@ import java.util.List;
 public class MedicController {
 
     private final MedicService medicService;
-    private final MedicMapper medicMapper;
+
 
     /**
      * GET: Chama o service para buscar todos os médicos(findAll())
      * Converte cada entidade para um DTO
      */
     @GetMapping
-    ResponseEntity<List<MedicDto>> getMedic(){
-
+    public ResponseEntity<List<MedicDto>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
         List<MedicDto> dtoList = medics.stream()
-                .map(medicMapper::toDto)
-                .toList();
+                .map(MedicDto::fromEntity)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtoList);
     }
@@ -45,12 +45,14 @@ public class MedicController {
      *Se não encontrar retorna 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicDto> getEntityById(@PathVariable final int id){
+    public ResponseEntity<MedicDto> getMedicById(@PathVariable int id) {
         Medic entity = medicService.findById(id);
-        if (entity == null){
+
+        if (entity == null) {
             return ResponseEntity.notFound().build();
         }
-        MedicDto dto = medicMapper.toDto(entity);
+
+        MedicDto dto = MedicDto.fromEntity(entity);
         return ResponseEntity.ok(dto);
     }
     /**
@@ -58,8 +60,8 @@ public class MedicController {
      *Converte o DTO recebido atraves da requisicao em uma entidade
      */
     @PostMapping
-    public ResponseEntity<MedicDto> createNew(@RequestBody final MedicDto dto) {
-        Medic entity = medicMapper.toEntity(dto);
+    public ResponseEntity<MedicDto> createMedic(@RequestBody MedicDto dto) {
+        Medic entity = dto.toEntity();
         int id = medicService.create(entity);
         dto.setId(id);
 
@@ -69,7 +71,7 @@ public class MedicController {
                 .buildAndExpand(id)
                 .toUri();
 
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.created(location).body(dto);
     }
     /**
      remove
@@ -77,9 +79,6 @@ public class MedicController {
     @PutMapping("/{id}/remove")
     public ResponseEntity<Void> deactivate(@PathVariable int id) {
         boolean success = medicService.delete(id);
-        if (!success) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
+        return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

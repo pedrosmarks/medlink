@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class MedicalRecordDto {
 
-    private int id;
     private BloodType bloodType;
     private String organDonor;
     private String diagnosis;
@@ -19,7 +18,6 @@ public class MedicalRecordDto {
 
     public static MedicalRecordDto fromEntity(MedicalRecord entity) {
         MedicalRecordDto dto = new MedicalRecordDto();
-        dto.setId(entity.getId());
         dto.setBloodType(entity.getBloodType());
         dto.setOrganDonor(entity.getOrganDonor());
         dto.setDiagnosis(entity.getDiagnosis());
@@ -34,7 +32,6 @@ public class MedicalRecordDto {
     // Converte de DTO para entidade
     public MedicalRecord toEntity() {
         MedicalRecord entity = new MedicalRecord();
-        entity.setId(this.id);
         entity.setBloodType(this.bloodType);
         entity.setOrganDonor(this.organDonor);
         entity.setDiagnosis(this.diagnosis);

@@ -2,7 +2,6 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.MedicalRecord;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecordDto;
-import br.fai.lds.medlink.mapper.MedicalRecordMapper;
 import br.fai.lds.medlink.port.service.medicalRecordService.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
