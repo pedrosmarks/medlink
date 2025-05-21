@@ -8,7 +8,6 @@ import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Data
@@ -39,4 +38,11 @@ public abstract class Person {
 
     @NotNull(message = "O endereço não pode ser nulo")
     private Address address;
+
+    public enum Gender {
+
+        MASCULINO,
+        FEMININO,
+        OUTRO
+    }
 }

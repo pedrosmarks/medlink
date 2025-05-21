@@ -1,7 +1,6 @@
 package br.fai.lds.medlink.implementation.dao;
 
 import br.fai.lds.medlink.domain.Address;
-import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import org.springframework.context.annotation.Primary;
