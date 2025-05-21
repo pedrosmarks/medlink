@@ -44,17 +44,5 @@ public class MedicalRecord {
     @Size(min = 5, max = 500, message = "A medicação deve ter entre 5 e 500 caracteres")
     private String medications;
 
-    public enum BloodType {
-
-        A_POSITIVO,
-        A_NEGATIVO,
-        B_POSITIVO,
-        B_NEGATIVO,
-        AB_POSITIVO,
-        AB_NEGATIVO,
-        O_POSITIVO,
-        O_NEGATIVO
-
-    }
 }
 

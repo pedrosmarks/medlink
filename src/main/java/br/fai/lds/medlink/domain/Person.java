@@ -39,10 +39,4 @@ public abstract class Person {
     @NotNull(message = "O endereço não pode ser nulo")
     private Address address;
 
-    public enum Gender {
-
-        MASCULINO,
-        FEMININO,
-        OUTRO
-    }
 }

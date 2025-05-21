@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.domain.dataTransferObject;
 
 import br.fai.lds.medlink.domain.Address;
+import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import lombok.Data;
 

@@ -2,7 +2,6 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.PatientDto;
-import br.fai.lds.medlink.mapper.PatientMapper;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 public class PatientController {
 
     private final PatientService patientService;
-    private final PatientMapper patientMapper;
 
     /**
      * GET: Chama o service para buscar todos os pacientes(findAll())
