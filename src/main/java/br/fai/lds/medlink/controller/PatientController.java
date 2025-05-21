@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //Gera automaticamente um construtor com os argumentos obrigatorios, no caso final
 @RequiredArgsConstructor
@@ -27,13 +28,12 @@ public class PatientController {
      * GET: Chama o service para buscar todos os pacientes(findAll())
      * Converte cada entidade para um DTO
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<PatientDto>> getPatient() {
-
         List<Patient> patients = patientService.findAll();
         List<PatientDto> dtoList = patients.stream()
-                .map(patientMapper::toDto)
-                .toList();
+                .map(PatientDto::fromEntity)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtoList);
     }
@@ -52,9 +52,8 @@ public class PatientController {
             return ResponseEntity.notFound().build();
         }
 
-        PatientDto dto = patientMapper.toDto(entity);
+        PatientDto dto = PatientDto.fromEntity(entity);
         return ResponseEntity.ok(dto);
-
     }
     /**
      *Responsável por criar um novo usuário paciente
@@ -62,7 +61,7 @@ public class PatientController {
      */
     @PostMapping
     public ResponseEntity<PatientDto> createNew(@RequestBody PatientDto dto) {
-        Patient entity = patientMapper.toEntity(dto);
+        Patient entity = dto.toEntity();
         int id = patientService.create(entity);
         dto.setId(id);
 
@@ -71,7 +70,8 @@ public class PatientController {
                 .path("/{id}")
                 .buildAndExpand(id)
                 .toUri();
-        return ResponseEntity.ok(dto);
+
+        return ResponseEntity.created(location).body(dto);
     }
     /**
      remove
