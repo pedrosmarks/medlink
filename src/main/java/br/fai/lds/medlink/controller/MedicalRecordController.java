@@ -52,8 +52,10 @@ public class MedicalRecordController {
     *Converte o DTO recebido atraves da requisicao em uma entidade
     */
     @PostMapping
-    public ResponseEntity<MedicalRecord> create(@RequestBody MedicalRecord dto) {
-        final int id = medicalRecordService.create(dto);
+    public ResponseEntity<MedicalRecordDto> create(@RequestBody MedicalRecordDto dto) {
+        MedicalRecord entity = dto.toEntity();
+        int id = medicalRecordService.create(entity);
+        dto.setId(id);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -87,7 +89,7 @@ public class MedicalRecordController {
      * Deleta um prontuario
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> deactivate(@PathVariable int id) {
         boolean deleted = medicalRecordService.delete(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }

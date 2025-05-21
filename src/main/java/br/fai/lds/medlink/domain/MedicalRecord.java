@@ -14,6 +14,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class MedicalRecord {
 
+    private int id;
+
     @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
 

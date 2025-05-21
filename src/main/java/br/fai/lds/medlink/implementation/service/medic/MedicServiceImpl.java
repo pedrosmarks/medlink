@@ -3,6 +3,7 @@ package br.fai.lds.medlink.implementation.service.medic;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.service.medic.MedicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class MedicServiceImpl  implements MedicService {
 
     private final MedicDao medicDao;
 
+    @Autowired
     public MedicServiceImpl(MedicDao medicDao) {
         this.medicDao = medicDao;
     }

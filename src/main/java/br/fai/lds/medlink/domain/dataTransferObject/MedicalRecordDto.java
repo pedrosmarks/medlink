@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class MedicalRecordDto {
 
+    private int id;
     private BloodType bloodType;
     private String organDonor;
     private String diagnosis;
