@@ -1,13 +1,13 @@
-package br.fai.lds.medlink.dataTransferObject;
+package br.fai.lds.medlink.domain.dataTransferObject;
 
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Data
-public class MedicDto {
+public class PatientDto {
+
 
     private int id;
     private String name;
@@ -17,8 +17,9 @@ public class MedicDto {
     private String phoneNumber;
     private Address address;
 
-    private String crm;
-    private String specialty;
     private String email;
+    private String plan;
+    private String susCard;
     private boolean active = true;
+
 }

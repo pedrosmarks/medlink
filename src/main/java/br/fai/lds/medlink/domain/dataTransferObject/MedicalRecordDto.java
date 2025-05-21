@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.dataTransferObject;
+package br.fai.lds.medlink.domain.dataTransferObject;
 
 import br.fai.lds.medlink.domain.BloodType;
 import lombok.Data;

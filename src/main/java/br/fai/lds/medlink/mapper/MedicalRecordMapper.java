@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.mapper;
 
 import br.fai.lds.medlink.domain.MedicalRecord;
-import br.fai.lds.medlink.dataTransferObject.MedicalRecordDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecordDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
