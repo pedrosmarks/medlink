@@ -22,19 +22,16 @@ import java.util.List;
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
-    private final MedicalRecordMapper medicalRecordMapper;
+
 
     /**
      * GET: Chama o service para buscar todos os prontuarios(findAll())
      * Converte cada entidade para um DTO
      */
     @GetMapping
-    public ResponseEntity<List<MedicalRecordDto>> getAll() {
-        List<MedicalRecord> records = medicalRecordService.findAll();
-        List<MedicalRecordDto> dtoList = records.stream()
-                .map(medicalRecordMapper::toDto)
-                .toList();
-        return ResponseEntity.ok(dtoList);
+    public ResponseEntity<List<MedicalRecord>> getAll() {
+        List<MedicalRecord> entities = medicalRecordService.findAll();
+        return ResponseEntity.ok(entities);
     }
     /**
      *GET: Chama o service para buscar um prontuario especifico, definido pela rota "/{id}"
@@ -44,23 +41,20 @@ public class MedicalRecordController {
      *Se não encontrar retorn 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalRecordDto> getById(@PathVariable int id) {
+    public ResponseEntity<MedicalRecord> getById(@PathVariable int id) {
         MedicalRecord entity = medicalRecordService.findById(id);
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
-        MedicalRecordDto dto = medicalRecordMapper.toDto(entity);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(entity);
     }
     /**
     *Responsável por criar um novo prontuario
     *Converte o DTO recebido atraves da requisicao em uma entidade
     */
     @PostMapping
-    public ResponseEntity<MedicalRecordDto> create(@RequestBody MedicalRecordDto dto) {
-        MedicalRecord entity = medicalRecordMapper.toEntity(dto);
-        int id = medicalRecordService.create(entity);
-        dto.setId(id);
+    public ResponseEntity<MedicalRecord> create(@RequestBody MedicalRecord dto) {
+        final int id = medicalRecordService.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -78,14 +72,16 @@ public class MedicalRecordController {
      * Se retornar 200 é que o prontuario foi encontrado e atualizado
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MedicalRecordDto> update(@PathVariable int id, @RequestBody MedicalRecordDto dto) {
-        MedicalRecord entity = medicalRecordMapper.toEntity(dto);
+    public ResponseEntity<MedicalRecord> update(@PathVariable int id, @RequestBody MedicalRecordDto dto) {
+        MedicalRecord entity = dto.toEntity();
         MedicalRecord updated = medicalRecordService.update(id, entity);
+
         if (updated == null) {
             return ResponseEntity.notFound().build();
         }
-        MedicalRecordDto updatedDto = medicalRecordMapper.toDto(updated);
-        return ResponseEntity.ok(updatedDto);
+        MedicalRecordDto updatedDto = MedicalRecordDto.fromEntity(updated);
+        return ResponseEntity.ok(updatedDto.toEntity());
+
     }
 
     /**
