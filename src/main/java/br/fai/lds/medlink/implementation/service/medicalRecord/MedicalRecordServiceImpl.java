@@ -26,7 +26,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public int create(MedicalRecord entity) {
-        return 0;
+        medicalRecordDao.create(entity);
+        return entity.getId();
     }
 
     @Override
@@ -36,12 +37,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public MedicalRecord findById(int id) {
-        return null;
+        return medicalRecordDao.readById(id);
     }
 
     @Override
     public List<MedicalRecord> findAll() {
-        return List.of();
+        return medicalRecordDao.readAll();
     }
 
     @Override
