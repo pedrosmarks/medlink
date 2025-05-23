@@ -36,7 +36,7 @@ public class MedicalRecordController {
      *GET: Chama o service para buscar um prontuario especifico, definido pela rota "/{id}"
      *PathVariable: Pega o valor  da URL {id} e atribui a variavel int
      *findById é o responsável por chamar o service para fazer a busca do prontuario
-     *Se encontrar transforma em DTO e retorna um objeto 204,
+     *Se encontrar transforma em DTO e retorna um objeto 201,
      *Se não encontrar retorn 404
      */
     @GetMapping("/{id}")

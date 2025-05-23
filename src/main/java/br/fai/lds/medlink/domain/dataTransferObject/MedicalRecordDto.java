@@ -16,6 +16,7 @@ public class MedicalRecordDto {
     private String vaccine;
     private String surgicalHistory;
     private String medications;
+    private boolean medicalRecordActive = true;
 
     public static MedicalRecordDto fromEntity(MedicalRecord entity) {
         MedicalRecordDto dto = new MedicalRecordDto();
@@ -27,6 +28,9 @@ public class MedicalRecordDto {
         dto.setVaccine(entity.getVaccine());
         dto.setSurgicalHistory(entity.getSurgicalHistory());
         dto.setMedications(entity.getMedications());
+        dto.setMedicalRecordActive(entity.isMedicalRecordActive(
+
+        ));
         return dto;
     }
 
@@ -41,6 +45,7 @@ public class MedicalRecordDto {
         entity.setVaccine(this.vaccine);
         entity.setSurgicalHistory(this.surgicalHistory);
         entity.setMedications(this.medications);
+        entity.setMedicalRecordActive(this.medicalRecordActive);
         return entity;
     }
 

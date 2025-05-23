@@ -46,5 +46,7 @@ public class MedicalRecord {
     @Size(min = 5, max = 500, message = "A medicação deve ter entre 5 e 500 caracteres")
     private String medications;
 
+    private boolean medicalRecordActive = true;
+
 }
 
