@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { LoginBaseComponent } from './login-base/login-base.component';
 
 @Component({
   selector: 'app-login', 
   standalone:true,
   imports: [
 
-    TabsModule
+    TabsModule,
+    LoginBaseComponent
 
   ],
   templateUrl: './login.component.html',
