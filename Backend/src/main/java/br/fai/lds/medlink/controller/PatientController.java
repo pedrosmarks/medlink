@@ -1,9 +1,13 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.LoginRequest;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.PatientDto;
+import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 public class PatientController {
 
     private final PatientService patientService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     /**
      * GET: Chama o service para buscar todos os pacientes(findAll())
@@ -78,5 +85,15 @@ public class PatientController {
     public ResponseEntity<Void> deactivate(@PathVariable int id) {
         boolean result = patientService.deactivate(id);
         return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/login/patient")
+    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
+        Patient patient = authenticationService.authenticatePatient(request.getEmail(), request.getPassword());
+        if (patient != null) {
+            PatientDto dto = PatientDto.fromEntity(patient);
+            return ResponseEntity.ok(dto);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
     }
 }
