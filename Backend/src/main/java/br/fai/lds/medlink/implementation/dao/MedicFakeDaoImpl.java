@@ -27,6 +27,7 @@ public class MedicFakeDaoImpl implements MedicDao {
         medics.add(Medic.builder()
                 .name("Olavo")
                 .cpf("999.999.999-00")
+                .password("89")
                 .gender(Gender.MASCULINO)
                 .dataNascimento(LocalDate.parse("01.01.1990", formatter))
                 .phoneNumber("8998654678")
@@ -41,7 +42,7 @@ public class MedicFakeDaoImpl implements MedicDao {
                         .build())
                 .crm("MG-89")
                 .specialty("Geral")
-                .email("aumiau@gmail.com")
+                .email("")
                 .build());
 
     }
@@ -88,6 +89,9 @@ public class MedicFakeDaoImpl implements MedicDao {
 
     @Override
     public Medic findByEmail(String email) {
-        return null;
+        return medics.stream()
+                .filter(p -> p.getEmail().equalsIgnoreCase(email))
+                .findFirst()
+                .orElse(null);
     }
 }

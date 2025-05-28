@@ -1,9 +1,13 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.LoginRequest;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicDto;
+import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,7 +24,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/medic")
 public class MedicController {
 
+    @Autowired
     private final MedicService medicService;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
 
     /**
@@ -79,5 +86,16 @@ public class MedicController {
     public ResponseEntity<Void> deactivate(@PathVariable int id) {
         boolean success = medicService.delete(id);
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/login/medic")
+    public ResponseEntity<?> loginMedic (@RequestBody LoginRequest request){
+        Medic medic = authenticationService.authenticateMedic(request.getEmail(), request.getPassword());
+        if( medic != null){
+            MedicDto dto = MedicDto.fromEntity(medic);
+            return ResponseEntity.ok(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
     }
 }
