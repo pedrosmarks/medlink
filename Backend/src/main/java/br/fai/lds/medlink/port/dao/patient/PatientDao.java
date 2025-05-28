@@ -7,6 +7,7 @@ import br.fai.lds.medlink.port.dao.crud.SoftDeleteDao;
 public interface PatientDao extends CrudDao <Patient>, SoftDeleteDao {
 
     Patient readById(int id);
+    Patient findByEmail(String email);
 
 
 }

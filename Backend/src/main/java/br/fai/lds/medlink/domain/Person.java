@@ -26,6 +26,8 @@ public abstract class Person {
     @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})$", message = "O CPF deve estar no formato XXX.XXX.XXX-XX")
     private String cpf;
 
+    private String password;
+
     @NotNull(message = "O gênero não pode ser nulo")
     private Gender gender;
 

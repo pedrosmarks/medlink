@@ -33,6 +33,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .id(getNextId())
                 .name("Bolota")
                 .cpf("123.456.789-10")
+                .password("1243")
                 .gender(Gender.FEMININO)
                 .dataNascimento(LocalDate.parse("01.12.2019", formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
@@ -109,6 +110,14 @@ public class PatientFakeDaoImpl implements PatientDao {
     public Patient readById(int id) {
         return patients.stream()
                 .filter(patient -> patient.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public Patient findByEmail(String email) {
+        return patients.stream()
+                .filter(p -> p.getEmail().equalsIgnoreCase(email))
                 .findFirst()
                 .orElse(null);
     }

@@ -85,4 +85,9 @@ public class MedicFakeDaoImpl implements MedicDao {
             }
         }
     }
+
+    @Override
+    public Medic findByEmail(String email) {
+        return null;
+    }
 }

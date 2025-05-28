@@ -5,6 +5,6 @@ import br.fai.lds.medlink.domain.Medic;
 
 public interface AuthenticationService {
 
-    Patient authenticate (final String email, final String password);
-    Medic authenticate (final String email, final String password);
+    Patient authenticatePatient (final String email, final String password);
+    Medic authenticateMedic (final String email, final String password);
 }
