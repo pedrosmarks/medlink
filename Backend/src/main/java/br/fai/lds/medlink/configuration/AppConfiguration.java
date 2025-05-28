@@ -39,8 +39,7 @@ public class AppConfiguration {
     }
 
     @Bean
-    public MedicalRecordDao getMedicalRecordFakeDao() {return new MedicalRecordFakeDaoImpl();
+    public MedicalRecordDao getMedicalRecordFakeDao() {
+        return new MedicalRecordFakeDaoImpl();
     }
-
-
 }

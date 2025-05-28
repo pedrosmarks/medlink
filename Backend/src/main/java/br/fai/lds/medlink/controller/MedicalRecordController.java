@@ -28,9 +28,15 @@ public class MedicalRecordController {
      * Converte cada entidade para um DTO
      */
     @GetMapping
-    public ResponseEntity<List<MedicalRecord>> getAll() {
+    public ResponseEntity<List<MedicalRecordDto>> getAll() {
         List<MedicalRecord> entities = medicalRecordService.findAll();
-        return ResponseEntity.ok(entities);
+
+        List<MedicalRecordDto> dto = entities
+                .stream()
+                .map(MedicalRecordDto::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(dto);
     }
     /**
      *GET: Chama o service para buscar um prontuario especifico, definido pela rota "/{id}"
@@ -40,12 +46,14 @@ public class MedicalRecordController {
      *Se não encontrar retorn 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalRecord> getById(@PathVariable int id) {
+    public ResponseEntity<MedicalRecordDto> getById(@PathVariable int id) {
         MedicalRecord entity = medicalRecordService.findById(id);
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(entity);
+        
+        MedicalRecordDto dto = MedicalRecordDto.fromEntity(entity);
+        return ResponseEntity.ok(dto);
     }
     /**
     *Responsável por criar um novo prontuario
@@ -73,7 +81,7 @@ public class MedicalRecordController {
      * Se retornar 200 é que o prontuario foi encontrado e atualizado
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MedicalRecord> update(@PathVariable int id, @RequestBody MedicalRecordDto dto) {
+    public ResponseEntity<MedicalRecordDto> update(@PathVariable int id, @RequestBody MedicalRecordDto dto) {
         MedicalRecord entity = dto.toEntity();
         MedicalRecord updated = medicalRecordService.update(id, entity);
 
@@ -81,7 +89,7 @@ public class MedicalRecordController {
             return ResponseEntity.notFound().build();
         }
         MedicalRecordDto updatedDto = MedicalRecordDto.fromEntity(updated);
-        return ResponseEntity.ok(updatedDto.toEntity());
+        return ResponseEntity.ok(updatedDto);
 
     }
 
