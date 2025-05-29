@@ -1,6 +1,8 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +30,10 @@ public class PatientController {
      * Converte cada entidade para um DTO
      */
     @GetMapping
-    public ResponseEntity<List<PatientDto>> getPatient() {
+    public ResponseEntity<List<PatientResponseDto>> getPatient() {
         List<Patient> patients = patientService.findAll();
-        List<PatientDto> dtoList = patients.stream()
-                .map(PatientDto::fromEntity)
+        List<PatientResponseDto> dtoList = patients.stream()
+                .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtoList);
@@ -44,14 +46,14 @@ public class PatientController {
      *Se não encontrar retorna 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PatientDto> getEntityById(@PathVariable final int id) {
+    public ResponseEntity<PatientResponseDto> getEntityById(@PathVariable final int id) {
         Patient entity = patientService.findById(id);
 
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
 
-        PatientDto dto = PatientDto.fromEntity(entity);
+        PatientResponseDto dto = PatientResponseDto.fromEntity(entity);
         return ResponseEntity.ok(dto);
     }
     /**
@@ -59,7 +61,7 @@ public class PatientController {
      *Converte o DTO recebido atraves da requisicao em uma entidade
      */
     @PostMapping
-    public ResponseEntity<PatientDto> createNew(@RequestBody PatientDto dto) {
+    public ResponseEntity<PatientCreateDto> createNew(@RequestBody PatientCreateDto dto) {
         Patient entity = dto.toEntity();
         int id = patientService.create(entity);
         dto.setId(id);

@@ -3,11 +3,14 @@ package br.fai.lds.medlink.domain.dataTransferObject.Medic;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
+import lombok.Data;
 
 import java.time.LocalDate;
 
+@Data
 public class MedicCreateDto {
 
+    private int id;
     private String name;
     private String cpf;
     private Gender gender;
@@ -23,6 +26,7 @@ public class MedicCreateDto {
     public Medic toEntity(){
         Medic entity = new Medic();
 
+        entity.setId(this.id);
         entity.setName(this.name);
         entity.setCpf(this.cpf);
         entity.setGender(this.gender);

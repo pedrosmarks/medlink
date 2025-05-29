@@ -3,6 +3,8 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.LoginRequest;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,7 @@ public class AuthController {
     public ResponseEntity<?> loginMedic (@RequestBody LoginRequest request){
         Medic medic = authenticationService.authenticateMedic(request.getEmail(), request.getPassword());
         if( medic != null){
-            MedicDto dto = MedicDto.fromEntity(medic);
+            MedicResponseDto dto = MedicResponseDto.fromEntity(medic);
             return ResponseEntity.ok(dto);
         }
 
@@ -34,7 +36,7 @@ public class AuthController {
     public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
         Patient patient = authenticationService.authenticatePatient(request.getEmail(), request.getPassword());
         if (patient != null) {
-            PatientDto dto = PatientDto.fromEntity(patient);
+            PatientResponseDto dto = PatientResponseDto.fromEntity(patient);
             return ResponseEntity.ok(dto);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");

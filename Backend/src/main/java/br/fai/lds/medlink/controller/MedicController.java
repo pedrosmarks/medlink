@@ -1,6 +1,8 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +31,11 @@ public class MedicController {
      * Converte cada entidade para um DTO
      */
     @GetMapping
-    public ResponseEntity<List<MedicDto>> getAllMedics() {
+    public ResponseEntity<List<MedicResponseDto>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
-        List<MedicDto> dtoList = medics
+        List<MedicResponseDto> dtoList = medics
                 .stream()
-                .map(MedicDto::fromEntity)
+                .map(MedicResponseDto::fromEntity)
                 .toList();
 
         return ResponseEntity.ok(dtoList);
@@ -46,14 +48,14 @@ public class MedicController {
      *Se não encontrar retorna 404
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicDto> getMedicById(@PathVariable int id) {
+    public ResponseEntity<MedicResponseDto> getMedicById(@PathVariable int id) {
         Medic entity = medicService.findById(id);
 
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
 
-        MedicDto dto = MedicDto.fromEntity(entity);
+        MedicResponseDto dto = MedicResponseDto.fromEntity(entity);
         return ResponseEntity.ok(dto);
     }
     /**
@@ -61,7 +63,7 @@ public class MedicController {
      *Converte o DTO recebido atraves da requisicao em uma entidade
      */
     @PostMapping
-    public ResponseEntity<MedicDto> createMedic(@RequestBody MedicDto dto) {
+    public ResponseEntity<MedicCreateDto> createMedic(@RequestBody MedicCreateDto dto) {
         Medic entity = dto.toEntity();
         int id = medicService.create(entity);
         dto.setId(id);
