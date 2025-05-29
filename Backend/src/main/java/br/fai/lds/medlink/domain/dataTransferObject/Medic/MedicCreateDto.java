@@ -13,7 +13,7 @@ public class MedicCreateDto {
     private Gender gender;
     private LocalDate birthdate;
     private String phoneNumber;
-    private Address adress;
+    private Address address;
     private String crm;
     private String specialty;
     private String email;
@@ -28,7 +28,7 @@ public class MedicCreateDto {
         entity.setGender(this.gender);
         entity.setBirthDate(this.birthdate);
         entity.setPhoneNumber(this.phoneNumber);
-        entity.setAddress(this.adress);
+        entity.setAddress(this.address);
         entity.setCrm(this.crm);
         entity.setSpecialty(this.specialty);
         entity.setEmail(this.email);
