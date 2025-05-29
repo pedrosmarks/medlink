@@ -1,5 +1,8 @@
 package br.fai.lds.medlink.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum BloodType {
 
     A_POSITIVE("A+"),
@@ -11,6 +14,7 @@ public enum BloodType {
     O_POSITIVE("0+"),
     O_NEGATIVE("0-");
 
+    //responsavel por acessar o texto tratado fora da enum
     //Declaracao de variavel de instancia label
     private final String label;
 
@@ -19,12 +23,7 @@ public enum BloodType {
         this.label = label;
     }
 
-    //responsavel por acessar o texto tratado fora da enum
-    public String getLabel() {
-        return label;
-    }
-
-   // sobrescreve o metodo para retornar o valor já tratado
+    // sobrescreve o metodo para retornar o valor já tratado
     @Override
     public String toString() {
         return label;
