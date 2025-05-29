@@ -26,6 +26,7 @@ public abstract class Person {
     @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})$", message = "O CPF deve estar no formato XXX.XXX.XXX-XX")
     private String cpf;
 
+    @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
     private String password;
 
     @NotNull(message = "O gênero não pode ser nulo")
@@ -33,7 +34,7 @@ public abstract class Person {
 
     @NotNull(message = "A data de nascimento não pode ser nula")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataNascimento;
+    private LocalDate birthDate;
 
     @NotNull(message = "O número de telefone não pode ser nulo")
     private String phoneNumber;
