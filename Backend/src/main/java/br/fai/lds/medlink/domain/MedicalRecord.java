@@ -19,8 +19,8 @@ public class MedicalRecord {
     @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
 
-    @NotBlank(message = "A informação de doador de órgãos é obrigatória")
-    private String organDonor;
+    @NotNull(message = "A informação de doador de órgãos é obrigatória")
+    private OrganDonorStatus organDonor;
 
     @NotBlank(message = "O diagnóstico é obrigatório")
     @Size(min = 5, max = 500, message = "O diagnóstico deve ter entre 5 e 500 caracteres")
@@ -35,7 +35,7 @@ public class MedicalRecord {
     private String allergies;
 
     @NotBlank(message = "As vacinas são obrigatórias")
-    @Size(min = 5, max = 500, message = "As vacinas devem ter entre 5 e 500 caracteres")
+    @Size(min = 2, max = 500, message = "As vacinas devem ter entre 5 e 500 caracteres")
     private String vaccine;
 
     @NotBlank(message = "O histórico cirúrgico é obrigatório")
