@@ -2,14 +2,18 @@ package br.fai.lds.medlink.domain.dataTransferObject;
 
 import br.fai.lds.medlink.domain.BloodType;
 import br.fai.lds.medlink.domain.MedicalRecord;
-import lombok.Data;
+import br.fai.lds.medlink.domain.OrganDonorStatus;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MedicalRecordDto {
 
     private int id;
     private BloodType bloodType;
-    private String organDonor;
+    private OrganDonorStatus organDonorStatus;
     private String diagnosis;
     private String familyHistory;
     private String allergies;
@@ -20,25 +24,24 @@ public class MedicalRecordDto {
 
     public static MedicalRecordDto fromEntity(MedicalRecord entity) {
         MedicalRecordDto dto = new MedicalRecordDto();
+        dto.setId(entity.getId());
         dto.setBloodType(entity.getBloodType());
-        dto.setOrganDonor(entity.getOrganDonor());
+        dto.setOrganDonorStatus(entity.getOrganDonor());
         dto.setDiagnosis(entity.getDiagnosis());
         dto.setFamilyHistory(entity.getFamilyHistory());
         dto.setAllergies(entity.getAllergies());
         dto.setVaccine(entity.getVaccine());
         dto.setSurgicalHistory(entity.getSurgicalHistory());
         dto.setMedications(entity.getMedications());
-        dto.setMedicalRecordActive(entity.isMedicalRecordActive(
-
-        ));
+        dto.setMedicalRecordActive(entity.isMedicalRecordActive());
         return dto;
     }
 
-    // Converte de DTO para entidade
     public MedicalRecord toEntity() {
         MedicalRecord entity = new MedicalRecord();
+        entity.setId(this.id);
         entity.setBloodType(this.bloodType);
-        entity.setOrganDonor(this.organDonor);
+        entity.setOrganDonor(this.organDonorStatus);
         entity.setDiagnosis(this.diagnosis);
         entity.setFamilyHistory(this.familyHistory);
         entity.setAllergies(this.allergies);
@@ -48,5 +51,5 @@ public class MedicalRecordDto {
         entity.setMedicalRecordActive(this.medicalRecordActive);
         return entity;
     }
-
 }
+
