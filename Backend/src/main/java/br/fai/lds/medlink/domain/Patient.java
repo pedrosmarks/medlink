@@ -17,7 +17,7 @@ public class Patient extends Person {
 
     private int id;
 
-    @NotNull(message = "O endereco email não pode estar em branco")
+    @NotNull(message = "O endereco de email não pode estar em branco")
     private String email;
 
 
