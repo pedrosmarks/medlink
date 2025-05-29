@@ -3,7 +3,6 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.LoginRequest;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.domain.dataTransferObject.PatientDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

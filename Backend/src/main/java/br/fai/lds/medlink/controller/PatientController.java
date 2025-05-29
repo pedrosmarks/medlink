@@ -1,13 +1,9 @@
 package br.fai.lds.medlink.controller;
 
-import br.fai.lds.medlink.domain.LoginRequest;
 import br.fai.lds.medlink.domain.Patient;
-import br.fai.lds.medlink.domain.dataTransferObject.PatientDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
