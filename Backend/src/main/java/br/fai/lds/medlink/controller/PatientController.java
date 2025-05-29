@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 public class PatientController {
 
     private final PatientService patientService;
-
-    @Autowired
     private AuthenticationService authenticationService;
 
     /**
@@ -46,7 +44,7 @@ public class PatientController {
      *GET: Chama o service para buscar um paciente especifico, definido pela rota "/{id}"
      *PathVariable: Pega o valor  da URL {id} e atribui a variavel int
      *findById é o responsável por chamar o service para fazer a busca do paciente
-     *Se encontrar transforma em DTO e retorna um objeto  204,
+     *Se encontrar transforma em DTO e retorna um objeto  200,
      *Se não encontrar retorna 404
      */
     @GetMapping("/{id}")

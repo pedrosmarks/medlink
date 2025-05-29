@@ -24,9 +24,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/medic")
 public class MedicController {
 
-    @Autowired
+
     private final MedicService medicService;
-    @Autowired
     private final AuthenticationService authenticationService;
 
 
@@ -37,9 +36,10 @@ public class MedicController {
     @GetMapping
     public ResponseEntity<List<MedicDto>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
-        List<MedicDto> dtoList = medics.stream()
+        List<MedicDto> dtoList = medics
+                .stream()
                 .map(MedicDto::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(dtoList);
     }
@@ -47,7 +47,7 @@ public class MedicController {
      *GET: Chama o service para buscar um medico especifico, definido pela rota "/{id}"
      *PathVariable: Pega o valor  da URL {id} e atribui a variavel int
      *findById é o responsável por chamar o service para fazer a busca do medico
-     *Se encontrar transforma em DTO e retorna um objeto  204,
+     *Se encontrar transforma em DTO e retorna um objeto  200,
      *Se não encontrar retorna 404
      */
     @GetMapping("/{id}")
