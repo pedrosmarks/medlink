@@ -1,5 +1,8 @@
 package br.fai.lds.medlink.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum Gender {
 
     FEMININO("Feminino"),
@@ -10,10 +13,6 @@ public enum Gender {
 
     Gender(String label) {
         this.label = label;
-    }
-
-    public String getLabel(){
-        return label;
     }
 
     @Override
