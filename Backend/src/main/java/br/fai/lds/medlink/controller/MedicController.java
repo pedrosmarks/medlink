@@ -88,14 +88,4 @@ public class MedicController {
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/login/medic")
-    public ResponseEntity<?> loginMedic (@RequestBody LoginRequest request){
-        Medic medic = authenticationService.authenticateMedic(request.getEmail(), request.getPassword());
-        if( medic != null){
-            MedicDto dto = MedicDto.fromEntity(medic);
-            return ResponseEntity.ok(dto);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
-    }
 }

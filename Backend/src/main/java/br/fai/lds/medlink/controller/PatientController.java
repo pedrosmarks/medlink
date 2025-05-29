@@ -85,13 +85,4 @@ public class PatientController {
         return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/login/patient")
-    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
-        Patient patient = authenticationService.authenticatePatient(request.getEmail(), request.getPassword());
-        if (patient != null) {
-            PatientDto dto = PatientDto.fromEntity(patient);
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
-    }
 }
