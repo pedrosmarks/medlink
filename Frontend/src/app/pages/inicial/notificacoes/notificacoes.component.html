@@ -1,0 +1,20 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="text-center mb-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" width="60" alt="Notificações">
+        <h2 class="mt-2">Notificações</h2>
+      </div>
+      <div class="card p-4">
+        <div *ngFor="let notificacao of notificacoes" class="d-flex align-items-center mb-4">
+          <img [src]="notificacao.icone" alt="Ícone" width="50" height="50" class="me-4 border rounded bg-light">
+          <div>
+            <h5 class="mb-1">{{ notificacao.titulo }}</h5>
+            <div class="text-secondary mb-1">{{ notificacao.descricao }}</div>
+            <div class="text-muted small">Data: {{ notificacao.data }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

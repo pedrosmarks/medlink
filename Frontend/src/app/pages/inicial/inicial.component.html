@@ -8,7 +8,7 @@
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                     <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a [routerLink]="['/inicio/dashboard']" class="nav-link align-middle px-0">
                             <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faDesktop"></fa-icon>
                                 Dashboard</span>
@@ -16,32 +16,32 @@
                     </li>
                    
                     <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a [routerLink]="['/inicio/perfil']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faCircleUser"></fa-icon>
                                 Perfil</span></a>
                     </li>
 
                      <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a [routerLink]="['/inicio/pacientes']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faHospitalUser"></fa-icon>
                                 Pacientes</span></a>
                     </li>
                      <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a [routerLink]="['/inicio/relatorios']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faFileInvoice"></fa-icon>
                                 Relatórios</span></a>
                     </li>
                      <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a [routerLink]="['/inicio/mensagem']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faMessage"></fa-icon>
                                 Mensagem</span></a>
                     </li>
                      <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a [routerLink]="['/inicio/notificacoes']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline buttons">
                                 <fa-icon [icon]="faBell"></fa-icon>
                                 Notificações</span></a>
@@ -67,13 +67,7 @@
             </div>
         </div>
         <div class="col py-3">
-            <h3>Left Sidebar with Submenus</h3>
-            <p class="lead">
-                An example 2-level sidebar with collasible menu items. The menu functions like an "accordion" where only a single 
-                menu is be open at a time. While the sidebar itself is not toggle-able, it does responsively shrink in width on smaller screens.</p>
-            <ul class="list-unstyled">
-                <li><h5>Responsive</h5> shrinks in width, hides text labels and collapses to icons only on mobile</li>
-            </ul>
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>

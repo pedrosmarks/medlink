@@ -1,0 +1,21 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 mb-4" *ngFor="let paciente of pacientes">
+      <div class="card p-4">
+        <div class="d-flex align-items-center">
+          <img [src]="paciente.avatar" alt="Avatar" width="80" height="80" class="rounded-circle me-4 border">
+          <div>
+            <h4>{{ paciente.nome }}</h4>
+            <p class="mb-1"><strong>CPF:</strong> {{ paciente.cpf }}</p>
+            <p class="mb-1"><strong>Idade:</strong> {{ paciente.idade }} anos</p>
+            <p class="mb-1"><strong>Tipo Sanguíneo:</strong> {{ paciente.tipoSanguineo }}</p>
+            <p class="mb-1"><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+            <p class="mb-1"><strong>E-mail:</strong> {{ paciente.email }}</p>
+            <p class="mb-1"><strong>Observações:</strong> {{ paciente.observacoes }}</p>
+            <button class="btn btn-outline-primary mt-2">Acessar prontuário</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

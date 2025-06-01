@@ -1,0 +1,21 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="text-center mb-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/726/726623.png" width="70" alt="Mensagens">
+        <h2 class="mt-2">Mensagens</h2>
+      </div>
+      <div class="card p-4">
+        <div *ngFor="let msg of mensagens" class="d-flex align-items-center mb-4">
+          <img [src]="msg.avatar" alt="Avatar" width="70" height="70" class="rounded-circle me-4 border">
+          <div>
+            <h5 class="mb-1">{{ msg.nome }}</h5>
+            <div *ngIf="msg.novas > 0" class="text-success">{{ msg.novas }} Novas mensagens</div>
+            <div *ngIf="msg.novas === 0" class="text-muted">Nenhuma nova mensagem</div>
+            <div class="text-secondary">{{ msg.resumo }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

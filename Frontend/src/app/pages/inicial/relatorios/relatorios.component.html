@@ -1,0 +1,21 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="text-center mb-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="60" alt="Relatórios">
+        <h2 class="mt-2">Relatórios</h2>
+      </div>
+      <div class="card p-4">
+        <div *ngFor="let relatorio of relatorios" class="d-flex align-items-center mb-4">
+          <img [src]="relatorio.icone" alt="Ícone" width="60" height="60" class="me-4 border rounded bg-light">
+          <div>
+            <h5 class="mb-1">{{ relatorio.titulo }}</h5>
+            <div class="text-secondary mb-1">{{ relatorio.descricao }}</div>
+            <div class="text-muted small">Data: {{ relatorio.data }}</div>
+            <button class="btn btn-outline-primary btn-sm mt-2">Visualizar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
