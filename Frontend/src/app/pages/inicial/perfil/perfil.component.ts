@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PerfilReadService } from '../../../services/perfil/perfil-read.service';
 
 @Component({
   selector: 'app-perfil',
@@ -8,12 +9,14 @@ import { CommonModule } from '@angular/common';
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']
 })
-export class PerfilComponent {
-  perfil = {
-    nome: 'Dr. João da Silva',
-    especialidade: 'Cardiologista',
-    crm: 'CRM 123456',
-    avatar: 'https://cdn-icons-png.flaticon.com/512/921/921347.png',
-    descricao: 'Especialista em cardiologia com mais de 15 anos de experiência. Atendimento humanizado e focado no bem-estar do paciente.'
-  };
+export class PerfilComponent implements OnInit {
+  perfil: any = null;
+
+  constructor(private perfilReadService: PerfilReadService) {}
+
+  ngOnInit(): void {
+    this.perfilReadService.getPerfil().subscribe(data => {
+      this.perfil = data[0]; // Supondo que só existe um perfil
+    });
+  }
 }

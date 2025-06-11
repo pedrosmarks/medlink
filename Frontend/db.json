@@ -1,0 +1,95 @@
+{
+  "dashboard": [
+    { "id": 1, "title": "Card 1", "text": "Conteúdo do card 1.", "size": "col-md-10" },
+    { "id": 2, "title": "Card 2", "text": "Conteúdo do card 2.", "size": "col-md-5" },
+    { "id": 3, "title": "Card 3", "text": "Conteúdo do card 3.", "size": "col-md-5" }
+  ],
+  "mensagens": [
+    {
+      "id": 1,
+      "nome": "João da Silva",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "novas": 2,
+      "resumo": "Boa tarde, Dr a receita a...."
+    },
+    {
+      "id": 2,
+      "nome": "Maria de Souza",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921342.png",
+      "novas": 0,
+      "resumo": "Bom dia o remedio deu reaca..."
+    }
+  ],
+  "pacientes": [
+    {
+      "id": 1,
+      "nome": "José Manuel",
+      "cpf": "xxx.xxx.xxx-xx",
+      "idade": 30,
+      "tipoSanguineo": "A+",
+      "telefone": "35 9xxxx-xxxx",
+      "email": "jose@exemplo.com.br",
+      "observacoes": "Paciente faz hemodialise",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png"
+    },
+    {
+      "id": 2,
+      "nome": "Maria de Souza",
+      "cpf": "yyy.yyy.yyy-yy",
+      "idade": 28,
+      "tipoSanguineo": "O-",
+      "telefone": "35 9yyyy-yyyy",
+      "email": "maria@exemplo.com.br",
+      "observacoes": "Alergia a penicilina",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921342.png"
+    }
+  ],
+  "perfil": [
+    {
+      "id": 1,
+      "nome": "Dr. João da Silva",
+      "especialidade": "Cardiologista",
+      "crm": "CRM 123456",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "descricao": "Especialista em cardiologia com mais de 15 anos de experiência. Atendimento humanizado e focado no bem-estar do paciente.",
+      "cpf": "xxx.xxx.xxx-xx",
+      "idade": 45,
+      "tipoSanguineo": "A+",
+      "telefone": "35 9xxxx-xxxx",
+      "email": "joao@exemplo.com.br",
+      "observacoes": "Paciente faz hemodialise"
+    }
+  ],
+  "relatorios": [
+    {
+      "id": 1,
+      "titulo": "Relatório de Consultas",
+      "descricao": "Resumo das consultas realizadas no período.",
+      "data": "01/06/2025",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+    },
+    {
+      "id": 2,
+      "titulo": "Relatório de Exames",
+      "descricao": "Exames solicitados e resultados recebidos.",
+      "data": "28/05/2025",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135789.png"
+    }
+  ],
+  "notificacoes": [
+    {
+      "id": "1",
+      "titulo": "Consulta agendada",
+      "descricao": "Você tem uma consulta marcada para amanhã às 14h.",
+      "data": "01/06/2025",
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png"
+    },
+    {
+      "id": 2,
+      "titulo": "Novo exame disponível",
+      "descricao": "O resultado do exame de sangue já está disponível.",
+      "data": "30/05/2025",
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png"
+    }
+  ]
+}

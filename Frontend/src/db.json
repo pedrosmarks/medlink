@@ -1,0 +1,16 @@
+{
+    "dashboard":[
+
+        { "id": 1, "title": "Card 1", "text": "Conteúdo do card 1.", "size": "col-md-10" },
+        { "id": 2, "title": "Card 2", "text": "Conteúdo do card 2.", "size": "col-md-10" },
+        { "id": 3, "title": "Card 3", "text": "Conteúdo do card 3.", "size": "col-md-10" }
+
+    ],
+    "mensagens":[
+
+        { "id": 1, "title": "Card 1", "text": "Conteúdo do card 1.", "size": "col-md-10" }
+
+
+    ]
+}
+
