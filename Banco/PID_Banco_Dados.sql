@@ -1,3 +1,4 @@
+
 -- =============================
 -- TABELAS BÁSICAS
 -- =============================
@@ -45,7 +46,7 @@ CREATE TABLE telefone_pessoa (
     id SERIAL PRIMARY KEY,
     pessoa_id INT NOT NULL,
     numero VARCHAR(15) NOT NULL,
-    tipo_telefone VARCHAR(20), -- ex: residencial, celular, comercial
+    tipo_telefone VARCHAR(20),
     CONSTRAINT fk_telefone_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 );
 
@@ -106,8 +107,6 @@ CREATE TABLE prontuario (
     CONSTRAINT fk_prontuario_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
 );
 
--- Detalhes do prontuário (tabelas de alergias, vacinas, etc)
-
 CREATE TABLE alergia (
     id SERIAL PRIMARY KEY,
     prontuario_id INT NOT NULL,
@@ -142,8 +141,6 @@ CREATE TABLE medicamento_diario (
     descricao_medicamento VARCHAR(500) NOT NULL,
     CONSTRAINT fk_medicamento_diario_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
-
--- Consultas e resultados
 
 CREATE TABLE consulta (
     id SERIAL PRIMARY KEY,
@@ -237,118 +234,29 @@ CREATE TABLE log_acesso_prontuario (
 );
 
 -- =============================
--- LOGS DE ALTERAÇÕES (exemplo para médico, paciente, prontuário)
+-- USUÁRIO E AUTENTICAÇÃO
 -- =============================
-
-CREATE TABLE log_alteracao_medico (
-    id SERIAL PRIMARY KEY,
-    medico_id INT NOT NULL,
-    campo_alterado VARCHAR(100) NOT NULL,
-    valor_antigo TEXT,
-    valor_novo TEXT,
-    data_alteracao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_log_medico FOREIGN KEY (medico_id) REFERENCES medico(id)
-);
-
-CREATE TABLE log_alteracao_paciente (
-    id SERIAL PRIMARY KEY,
-    paciente_id INT NOT NULL,
-    campo_alterado VARCHAR(100) NOT NULL,
-    valor_antigo TEXT,
-    valor_novo TEXT,
-    data_alteracao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_log_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
-);
-
-CREATE TABLE log_alteracao_prontuario (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    campo_alterado VARCHAR(100) NOT NULL,
-    valor_antigo TEXT,
-    valor_novo TEXT,
-    data_alteracao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_log_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
-
--- =============================
--- TRIGGERS
--- =============================
-
--- 1) Trigger para gravar acesso ao prontuário no log_acesso_prontuario
-CREATE OR REPLACE FUNCTION log_acesso()
-RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO log_acesso_prontuario (medico_id, prontuario_id, data_acesso)
-    VALUES (NEW.medico_id, NEW.prontuario_id, CURRENT_TIMESTAMP);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_log_acesso
-AFTER INSERT ON medico_acesso_prontuario
-FOR EACH ROW EXECUTE FUNCTION log_acesso();
-
--- 2) Trigger para atualizar status para REVOGADA ao remover acesso
-CREATE OR REPLACE FUNCTION revogar_solicitacao()
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE solicitacao_acesso_prontuario
-    SET status = 'REVOGADA',
-        revogado = TRUE,
-        data_resposta = CURRENT_TIMESTAMP
-    WHERE medico_id = OLD.medico_id
-      AND paciente_id = (SELECT paciente_id FROM prontuario WHERE id = OLD.prontuario_id);
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_revogar_solicitacao
-AFTER DELETE ON medico_acesso_prontuario
-FOR EACH ROW EXECUTE FUNCTION revogar_solicitacao();
-
--- =============================
--- VIEW PARA MÉDICOS PACIENTES AUTORIZADOS
--- =============================
-
-CREATE OR REPLACE VIEW medico_paciente_autorizados AS
-SELECT 
-    m.id AS medico_id,
-    p.id AS paciente_id,
-    mp.data_liberacao,
-    pe.nome AS nome_paciente,
-    pm.nome AS nome_medico
-FROM medico_acesso_prontuario mp
-JOIN prontuario pr ON pr.id = mp.prontuario_id
-JOIN paciente p ON pr.paciente_id = p.id
-JOIN pessoa pe ON p.pessoa_id = pe.id
-JOIN medico m ON mp.medico_id = m.id
-JOIN pessoa pm ON m.pessoa_id = pm.id;
-
--- =============================
--- TABELA DE USUÁRIOS PARA LOGIN (email e senha hash)
--- =============================
-
-CREATE TYPE tipo_usuario AS ENUM ('PACIENTE', 'MEDICO', 'ADMIN');
 
 CREATE TABLE usuario (
     id SERIAL PRIMARY KEY,
+    pessoa_id INT NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    senha_hash VARCHAR(255) NOT NULL,
-    tipo tipo_usuario NOT NULL,
-    pessoa_id INT NOT NULL,
-    ativo BOOLEAN DEFAULT TRUE,
+    senha VARCHAR(255) NOT NULL,
+    perfil VARCHAR(20) NOT NULL CHECK (perfil IN ('MEDICO', 'PACIENTE')),
     CONSTRAINT fk_usuario_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 );
 
 -- =============================
--- EXEMPLO DE INSERÇÃO DE ESTADOS E CIDADES
+-- MENSAGENS ENTRE PACIENTE E MÉDICO
 -- =============================
 
-INSERT INTO estado (sigla, nome) VALUES
-('AC', 'Acre'), ('AL', 'Alagoas'), ('AP', 'Amapá'), ('AM', 'Amazonas'), ('BA', 'Bahia'),
-('CE', 'Ceará'), ('DF', 'Distrito Federal'), ('ES', 'Espírito Santo'), ('GO', 'Goiás'),
-('MA', 'Maranhão'), ('MT', 'Mato Grosso'), ('MS', 'Mato Grosso do Sul'), ('MG', 'Minas Gerais'),
-('PA', 'Pará'), ('PB', 'Paraíba'), ('PR', 'Paraná'), ('PE', 'Pernambuco'), ('PI', 'Piauí'),
-('RJ', 'Rio de Janeiro'), ('RN', 'Rio Grande do Norte'), ('RS', 'Rio Grande do Sul'),
-('RO', 'Rondônia'), ('RR', 'Roraima'), ('SC', 'Santa Catarina'), ('SP', 'São Paulo'),
-('SE', 'Sergipe'), ('TO', 'Tocantins');
+CREATE TABLE mensagem (
+    id SERIAL PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    medico_id INT NOT NULL,
+    conteudo TEXT NOT NULL,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    respondida BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_mensagem_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+    CONSTRAINT fk_mensagem_medico FOREIGN KEY (medico_id) REFERENCES medico(id)
+);
