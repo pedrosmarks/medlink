@@ -1,11 +1,10 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.LoginRequest;
-import br.fai.lds.medlink.domain.Medic;
-import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,24 +20,30 @@ public class AuthController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/login/medic")
-    public ResponseEntity<?> loginMedic (@RequestBody LoginRequest request){
-        Medic medic = authenticationService.authenticateMedic(request.getEmail(), request.getPassword());
-        if( medic != null){
-            MedicResponseDto dto = MedicResponseDto.fromEntity(medic);
-            return ResponseEntity.ok(dto);
-        }
+    record ErrorResponse(String message) {}
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+    @PostMapping("/login/medic")
+    public ResponseEntity<?> loginMedic(@Valid @RequestBody LoginRequest request) {
+        return login(request.getEmail(), request.getPassword(),
+                authenticationService::authenticateMedic,
+                MedicResponseDto::fromEntity);
     }
 
     @PostMapping("/login/patient")
-    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest request) {
-        Patient patient = authenticationService.authenticatePatient(request.getEmail(), request.getPassword());
-        if (patient != null) {
-            PatientResponseDto dto = PatientResponseDto.fromEntity(patient);
-            return ResponseEntity.ok(dto);
+    public ResponseEntity<?> loginPatient(@Valid @RequestBody LoginRequest request) {
+        return login(request.getEmail(), request.getPassword(),
+                authenticationService::authenticatePatient,
+                PatientResponseDto::fromEntity);
+    }
+
+    private <T, R> ResponseEntity<?> login(String email, String password,
+                                           java.util.function.BiFunction<String, String, T> authFunction,
+                                           java.util.function.Function<T, R> toDto) {
+        T user = authFunction.apply(email, password);
+        if (user != null) {
+            return ResponseEntity.ok(toDto.apply(user));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("Credenciais inválidas"));
     }
 }
