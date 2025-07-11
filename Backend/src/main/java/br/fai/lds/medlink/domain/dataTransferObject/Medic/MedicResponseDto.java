@@ -13,6 +13,7 @@ public class MedicResponseDto {
     public static MedicResponseDto fromEntity(Medic entity) {
         MedicResponseDto dto = new MedicResponseDto();
         dto.setName(entity.getName());
+        dto.setCrm(entity.getCrm());
         dto.setSpecialty(entity.getSpecialty());
         return dto;
     }
