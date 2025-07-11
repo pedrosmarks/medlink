@@ -1,6 +1,6 @@
 package br.fai.lds.medlink.controller;
 
-import br.fai.lds.medlink.domain.dataTransferObject.LoginDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
