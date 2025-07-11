@@ -18,41 +18,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/login")
 public class AuthController {
 
-    // Serviço de autenticação injetado automaticamente via construtor (Lombok)
+    // Serviço que faz a autenticação de usuários
     private final AuthenticationService authenticationService;
 
-    // Classe interna para padronizar mensagens de erro em JSON
-    record ErrorResponse(String message) {}
 
     @PostMapping("/login/medic")
     public ResponseEntity<?> loginMedic(@Valid @RequestBody LoginRequest request) {
-        // Reutiliza metodo generico de login, passando função específica de autenticação e conversão para DTO de Medic
-        return login(request.getEmail(), request.getPassword(),
-                authenticationService::authenticateMedic,
-                MedicResponseDto::fromEntity);
+        // Tenta autenticar o médico com email e senha
+        var medic = authenticationService.authenticateMedic(request.getEmail(), request.getPassword());
+
+        if (medic != null) {
+            // Se encontrou, converte para DTO e retorna status 200 OK
+            MedicResponseDto dto = MedicResponseDto.fromEntity(medic);
+            return ResponseEntity.ok(dto);
+        } else {
+            // Se não encontrou, retorna erro 401 não autorizado com mensagem
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciais inválidas");
+        }
     }
 
     @PostMapping("/login/patient")
     public ResponseEntity<?> loginPatient(@Valid @RequestBody LoginRequest request) {
-        return login(request.getEmail(), request.getPassword(),
-                authenticationService::authenticatePatient,
-                PatientResponseDto::fromEntity);
-    }
+        // Tenta autenticar o paciente com email e senha
+        var patient = authenticationService.authenticatePatient(request.getEmail(), request.getPassword());
 
-
-    private <T, R> ResponseEntity<?> login(String email, String password,
-                                           java.util.function.BiFunction<String, String, T> authFunction,
-                                           java.util.function.Function<T, R> toDto) {
-        // Tenta autenticar o usuário com as credenciais fornecidas
-        T user = authFunction.apply(email, password);
-
-        // Se autenticação bem-sucedida, retorna status 200 com o DTO do usuário
-        if (user != null) {
-            return ResponseEntity.ok(toDto.apply(user));
+        if (patient != null) {
+            // Se encontrou, converte para DTO e retorna status 200 OK
+            PatientResponseDto dto = PatientResponseDto.fromEntity(patient);
+            return ResponseEntity.ok(dto);
+        } else {
+            // Se não encontrou, retorna erro 401 não autorizado com mensagem
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciais inválidas");
         }
-
-        // Caso contrário, retorna status 401 (não autorizado) com mensagem de erro
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse("Credenciais inválidas"));
     }
 }
