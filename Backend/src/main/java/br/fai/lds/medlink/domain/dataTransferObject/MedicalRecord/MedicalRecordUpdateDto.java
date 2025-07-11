@@ -41,17 +41,14 @@ public class MedicalRecordUpdateDto {
     @Size(min = 5, max = 500)
     private String medications;
 
-    public MedicalRecord toEntity() {
-        MedicalRecord record = new MedicalRecord();
-        record.setBloodType(bloodType);
-        record.setOrganDonor(organDonor);
-        record.setDiagnosis(diagnosis);
-        record.setFamilyHistory(familyHistory);
-        record.setAllergies(allergies);
-        record.setVaccine(vaccine);
-        record.setSurgicalHistory(surgicalHistory);
-        record.setMedications(medications);
-        record.setMedicalRecordActive(true);
-        return record;
+    public void updateEntity(MedicalRecord entity) {
+        entity.setBloodType(bloodType);
+        entity.setOrganDonor(organDonor);
+        entity.setDiagnosis(diagnosis);
+        entity.setFamilyHistory(familyHistory);
+        entity.setAllergies(allergies);
+        entity.setVaccine(vaccine);
+        entity.setSurgicalHistory(surgicalHistory);
+        entity.setMedications(medications);
     }
 }

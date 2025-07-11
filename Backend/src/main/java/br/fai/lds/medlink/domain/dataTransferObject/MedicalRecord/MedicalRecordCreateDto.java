@@ -16,7 +16,6 @@ import lombok.*;
 @Builder
 public class MedicalRecordCreateDto {
 
-    private int id;
 
     @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
@@ -55,7 +54,6 @@ public class MedicalRecordCreateDto {
      */
     public static MedicalRecordCreateDto fromEntity(MedicalRecord entity) {
         return MedicalRecordCreateDto.builder()
-                .id(entity.getId())
                 .bloodType(entity.getBloodType())
                 .organDonor(entity.getOrganDonor())
                 .diagnosis(entity.getDiagnosis())
@@ -73,7 +71,6 @@ public class MedicalRecordCreateDto {
      */
     public MedicalRecord toEntity() {
         return MedicalRecord.builder()
-                .id(this.id)
                 .bloodType(this.bloodType)
                 .organDonor(this.organDonor)
                 .diagnosis(this.diagnosis)
