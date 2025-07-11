@@ -2,7 +2,6 @@ package br.fai.lds.medlink.domain.dataTransferObject.Patient;
 
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
-import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
@@ -42,21 +41,20 @@ public class PatientUpdateDto {
     @NotNull(message = "O plano não pode estar em branco")
     private String plan;
 
-    @NotNull(message = "O crtao do Sus não pode estar em branco")
+    @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
 
     private boolean active;
 
-
     public void updateEntity(Patient entity){
-        if (this. name != null) entity.setName(this.name);
-        if (this.gender != null) entity.setGender((this.gender));
-        if (this.birthdate != null) entity.setGender(this.gender);
+        if (this.name != null) entity.setName(this.name);
+        if (this.gender != null) entity.setGender(this.gender);
+        if (this.birthdate != null) entity.setBirthDate(this.birthdate);  // corrigido aqui!
         if (this.phoneNumber != null) entity.setPhoneNumber(this.phoneNumber);
-        if (this.address != null) entity.setAddress(this.getAddress());
-        if (this.email != null) entity.setEmail(this.getEmail());
-        if (this.plan != null) entity.setPlan(this.getPlan());
-        if (this.susCard != null) entity.setSusCard(this.getSusCard());
-        entity.setActive(this.isActive());
+        if (this.address != null) entity.setAddress(this.address);
+        if (this.email != null) entity.setEmail(this.email);
+        if (this.plan != null) entity.setPlan(this.plan);
+        if (this.susCard != null) entity.setSusCard(this.susCard);
+        entity.setActive(this.active);
     }
 }
