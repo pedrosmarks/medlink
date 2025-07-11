@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PacientesReadService } from '../../../services/pacientes/pacientes-read.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-pacientes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,
+    RouterModule
+  ],
   templateUrl: './pacientes.component.html',
   styleUrls: ['./pacientes.component.css']
 })

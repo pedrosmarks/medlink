@@ -1,0 +1,66 @@
+<div class="perfil-container" *ngIf="perfil">
+  <div class="perfil-avatar">
+    <img [src]="perfil.avatar" alt="Avatar" />
+  </div>
+  <div class="perfil-campos">
+    <div class="perfil-linha">
+      <label>Nome:</label>
+      <span *ngIf="!editando">{{ perfil.nome }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.nome" name="nome" required />
+    </div>
+    <div class="perfil-linha">
+      <label>Especialidade:</label>
+      <span *ngIf="!editando">{{ perfil.especialidade }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.especialidade" name="especialidade" required />
+    </div>
+    <div class="perfil-linha">
+      <label>CRM:</label>
+      <span *ngIf="!editando">{{ perfil.crm }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.crm" name="crm" required />
+    </div>
+    <div class="perfil-linha">
+      <label>Descrição:</label>
+      <span *ngIf="!editando">{{ perfil.descricao }}</span>
+      <textarea *ngIf="editando" [(ngModel)]="perfil.descricao" name="descricao"></textarea>
+    </div>
+    <div class="perfil-linha">
+      <label>CPF:</label>
+      <span *ngIf="!editando">{{ perfil.cpf }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.cpf" name="cpf" />
+    </div>
+    <div class="perfil-linha">
+      <label>Idade:</label>
+      <span *ngIf="!editando">{{ perfil.idade }}</span>
+      <input *ngIf="editando" type="number" [(ngModel)]="perfil.idade" name="idade" />
+    </div>
+    <div class="perfil-linha">
+      <label>Tipo Sanguíneo:</label>
+      <span *ngIf="!editando">{{ perfil.tipoSanguineo }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.tipoSanguineo" name="tipoSanguineo" />
+    </div>
+    <div class="perfil-linha">
+      <label>Telefone:</label>
+      <span *ngIf="!editando">{{ perfil.telefone }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.telefone" name="telefone" />
+    </div>
+    <div class="perfil-linha">
+      <label>Email:</label>
+      <span *ngIf="!editando">{{ perfil.email }}</span>
+      <input *ngIf="editando" type="email" [(ngModel)]="perfil.email" name="email" />
+    </div>
+    <div class="perfil-linha">
+      <label>Observações:</label>
+      <span *ngIf="!editando">{{ perfil.observacoes }}</span>
+      <textarea *ngIf="editando" [(ngModel)]="perfil.observacoes" name="observacoes"></textarea>
+    </div>
+  </div>
+
+  <div class="perfil-botoes">
+    <button *ngIf="!editando" (click)="editar()">Editar</button>
+    <button *ngIf="editando" (click)="salvar()" class="salvar">Salvar</button>
+    <button *ngIf="editando" (click)="cancelar()" class="cancelar">Cancelar</button>
+  </div>
+</div>
+<div *ngIf="!perfil">
+  Carregando perfil...
+</div>

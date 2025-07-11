@@ -1,0 +1,48 @@
+<div *ngIf="paciente">
+  <div class="prontuario-header">
+    <img [src]="paciente.avatar" alt="Avatar" />
+    <div>
+      <h2>{{ paciente.nome }}</h2>
+      <p>CPF: {{ paciente.cpf }}</p>
+      <p>Idade: {{ paciente.idade }} anos</p>
+      <p>Tipo Sanguíneo: {{ paciente.tipoSanguineo }}</p>
+      <p>Telefone: {{ paciente.telefone }}</p>
+      <p>E-mail: {{ paciente.email }}</p>
+      <p>Observações: {{ paciente.observacoes }}</p>
+    </div>
+  </div>
+  <div><button class="btn btn-secondary mb-3" routerLink="/medico/pacientes">
+    ← Voltar
+        </button></div>
+  <div class="prontuario-cards">
+    <h3>Prontuário Médico</h3>
+    <div class="cards-grid">
+      <div class="card">
+        <h4>Consultas</h4>
+        <p>Consultas realizadas</p>
+      </div>
+      <div class="card">
+        <h4>Vacinas</h4>
+        <p>Cartão de vacina eletrônico</p>
+      </div>
+      <div class="card">
+        <h4>Medicamentos</h4>
+        <p>Lista de medicamentos utilizado pelo paciente</p>
+      </div>
+      <div class="card">
+        <h4>Cirurgias</h4>
+        <p>Procedimentos cirurgicos já realizado</p>
+      </div>
+      <div class="card">
+        <h4>Diagnosticos</h4>
+        <p>Diagnosticos</p>
+      </div>
+      <div class="card">
+        <h4>“Alergias”</h4>
+        <p>Lista de medicamentos que NÃO pode ser receitada ao paciente</p>
+      </div>
+
+      
+    </div>
+  </div>
+</div>

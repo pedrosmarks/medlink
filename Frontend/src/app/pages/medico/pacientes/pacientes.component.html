@@ -12,7 +12,12 @@
             <p class="mb-1"><strong>Telefone:</strong> {{ paciente.telefone }}</p>
             <p class="mb-1"><strong>E-mail:</strong> {{ paciente.email }}</p>
             <p class="mb-1"><strong>Observações:</strong> {{ paciente.observacoes }}</p>
-            <button class="btn btn-outline-primary mt-2">Acessar prontuário</button>
+            <button
+            class="btn btn-outline-primary mt-2"
+            [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
+>
+            Acessar prontuário
+            </button>
           </div>
         </div>
       </div>
