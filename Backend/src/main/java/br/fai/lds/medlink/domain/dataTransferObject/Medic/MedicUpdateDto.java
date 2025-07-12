@@ -22,7 +22,7 @@ public class MedicUpdateDto {
 
     @NotNull(message = "A data de nascimento não pode ser nula")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
     @NotNull(message = "O número de telefone não pode ser nulo")
     private String phoneNumber;
@@ -30,7 +30,7 @@ public class MedicUpdateDto {
     @NotNull(message = "O endereço não pode ser nulo")
     private Address address;
 
-    @NotNull(message = "O crm não pode estar em branco")
+    @NotNull(message = "O CRM não pode estar em branco")
     private String crm;
 
     @NotNull(message = "A especialidade médica não pode estar em branco")
@@ -38,14 +38,14 @@ public class MedicUpdateDto {
 
     private boolean active;
 
-    public void updateEntity(Medic entity){
-        if (this. name != null) entity.setName(this.name);
-        if (this.gender != null) entity.setGender((this.gender));
-        if (this.birthdate != null) entity.setGender(this.gender);
+    public void updateEntity(Medic entity) {
+        if (this.name != null) entity.setName(this.name);
+        if (this.gender != null) entity.setGender(this.gender);
+        if (this.birthDate != null) entity.setBirthDate(this.birthDate);
         if (this.phoneNumber != null) entity.setPhoneNumber(this.phoneNumber);
-        if (this.address != null) entity.setAddress(this.getAddress());
-        if (this.crm != null) entity.setCrm(this.getCrm());
-        if (this.specialty != null) entity.setSpecialty(this.getSpecialty());
-        entity.setActive(this.isActive());
+        if (this.address != null) entity.setAddress(this.address);
+        if (this.crm != null) entity.setCrm(this.crm);
+        if (this.specialty != null) entity.setSpecialty(this.specialty);
+        entity.setActive(this.active);
     }
 }

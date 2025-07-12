@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,8 +14,6 @@ import java.time.LocalDate;
 
 @Data
 public class MedicCreateDto {
-
-    private int id;
 
     @NotNull(message = "O nome não pode ser nulo")
     @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
@@ -29,7 +28,7 @@ public class MedicCreateDto {
 
     @NotNull(message = "A data de nascimento não pode ser nula")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
     @NotNull(message = "O número de telefone não pode ser nulo")
     private String phoneNumber;
@@ -37,34 +36,31 @@ public class MedicCreateDto {
     @NotNull(message = "O endereço não pode ser nulo")
     private Address address;
 
-    @NotNull(message = "O crm não pode estar em branco")
+    @NotNull(message = "O CRM não pode estar em branco")
     private String crm;
 
     @NotNull(message = "A especialidade médica não pode estar em branco")
     private String specialty;
 
-    @NotNull(message = "O endereço de email não pode estar em branco")
+    @NotNull(message = "O endereço de e-mail não pode estar em branco")
+    @Email(message = "O e-mail deve ser válido")
     private String email;
 
     @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
     private String password;
 
-
-    public Medic toEntity(){
+    public Medic toEntity() {
         Medic entity = new Medic();
-
-        entity.setId(this.id);
         entity.setName(this.name);
         entity.setCpf(this.cpf);
         entity.setGender(this.gender);
-        entity.setBirthDate(this.birthdate);
+        entity.setBirthDate(this.birthDate);
         entity.setPhoneNumber(this.phoneNumber);
         entity.setAddress(this.address);
         entity.setCrm(this.crm);
         entity.setSpecialty(this.specialty);
         entity.setEmail(this.email);
         entity.setPassword(this.password);
-
         return entity;
     }
 }

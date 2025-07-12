@@ -14,8 +14,6 @@ import java.time.LocalDate;
 @Data
 public class PatientCreateDto {
 
-    private int id;
-
     @NotNull(message = "O nome não pode ser nulo")
     @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
     private String name;
@@ -43,14 +41,12 @@ public class PatientCreateDto {
     @NotNull(message = "O plano não pode estar em branco")
     private String plan;
 
-    @NotNull(message = "O crtao do Sus não pode estar em branco")
+    @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
-
 
     public Patient toEntity(){
         Patient entity = new Patient();
 
-        entity.setId(this.id);
         entity.setName(this.name);
         entity.setCpf(this.cpf);
         entity.setGender(this.gender);

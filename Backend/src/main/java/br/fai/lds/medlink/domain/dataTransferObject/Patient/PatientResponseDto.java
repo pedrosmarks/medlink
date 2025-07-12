@@ -22,6 +22,7 @@ public class PatientResponseDto {
         PatientResponseDto dto = new PatientResponseDto();
         dto.setName(entity.getName());
         dto.setGender(entity.getGender());
+        dto.setBirthdate(entity.getBirthDate());  // incluído birthdate aqui
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setAddress(entity.getAddress());
         dto.setEmail(entity.getEmail());
