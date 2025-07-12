@@ -1,95 +1,307 @@
 {
   "dashboard": [
-    { "id": 1, "title": "Card 1", "text": "Conteúdo do card 1.", "size": "col-md-10" },
-    { "id": 2, "title": "Card 2", "text": "Conteúdo do card 2.", "size": "col-md-5" },
-    { "id": 3, "title": "Card 3", "text": "Conteúdo do card 3.", "size": "col-md-5" }
+    {
+      "id": "1",
+      "title": "Novos pacientes",
+      "text": "Você tem 10 novos pacientes.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "2",
+      "title": "Consultas agendadas",
+      "text": "Você tem 5 consultas marcadas para hoje.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "3",
+      "title": "Mensagens não lidas",
+      "text": "3 mensagens aguardando resposta.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "4",
+      "title": "Exames pendentes",
+      "text": "2 exames aguardando análise.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "5",
+      "title": "Relatórios disponíveis",
+      "text": "Novos relatórios prontos para revisão.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "6",
+      "title": "Solicitações de receita",
+      "text": "1 solicitação de receita pendente.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "7",
+      "title": "Avisos importantes",
+      "text": "Há 2 avisos importantes para você.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "8",
+      "title": "Pacientes em acompanhamento",
+      "text": "Você está acompanhando 8 pacientes.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "9",
+      "title": "Consultas do dia",
+      "text": "Hoje você tem 4 consultas agendadas.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "10",
+      "title": "Teleconsultas agendadas",
+      "text": "2 teleconsultas marcadas para esta semana.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "11",
+      "title": "Pendências administrativas",
+      "text": "Você possui 3 pendências administrativas.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "12",
+      "title": "Aniversariantes do mês",
+      "text": "2 pacientes fazem aniversário este mês.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "13",
+      "title": "Feedbacks recebidos",
+      "text": "Você recebeu 5 novos feedbacks.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "14",
+      "title": "Alertas de saúde pública",
+      "text": "Novo alerta de saúde pública disponível.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "15",
+      "title": "Atualizações do sistema",
+      "text": "O sistema foi atualizado recentemente.",
+      "size": "col-md-6"
+    }
   ],
   "mensagens": [
     {
-      "id": 1,
+      "id": "1",
       "nome": "João da Silva",
       "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
       "novas": 2,
       "resumo": "Boa tarde, Dr a receita a...."
     },
     {
-      "id": 2,
-      "nome": "Maria de Souza",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921342.png",
-      "novas": 0,
-      "resumo": "Bom dia o remedio deu reaca..."
+      "id": "2",
+      "nome": "Maria Oliveira",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "novas": 1,
+      "resumo": "Olá, gostaria de agendar uma consulta."
     }
   ],
   "pacientes": [
     {
-      "id": 1,
-      "nome": "José Manuel",
+      "id": "1",
+      "nome": "João da Silva",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
       "cpf": "xxx.xxx.xxx-xx",
       "idade": 30,
       "tipoSanguineo": "A+",
       "telefone": "35 9xxxx-xxxx",
-      "email": "jose@exemplo.com.br",
+      "email": "joao@exemplo.com.br",
       "observacoes": "Paciente faz hemodialise",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png"
+      "especialistasAutorizados": [
+        1,
+        2
+      ],
+      "requisicoesAcesso": [
+        {
+          "medicoId": 3,
+          "status": "pendente"
+        }
+      ],
+      "consultas": [
+        {
+          "data": "2024-06-10",
+          "descricao": "Consulta de rotina"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "COVID-19",
+          "data": "2023-01-15"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "Losartana",
+          "dosagem": "50mg"
+        }
+      ],
+      "cirurgias": [
+        {
+          "nome": "Apendicectomia",
+          "data": "2015-08-20"
+        }
+      ],
+      "diagnosticos": [
+        {
+          "nome": "Hipertensão",
+          "data": "2022-03-01"
+        }
+      ],
+      "alergias": [
+        {
+          "descricao": "Dipirona"
+        }
+      ]
     },
     {
-      "id": 2,
-      "nome": "Maria de Souza",
+      "id": "2",
+      "nome": "Maria Oliveira",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
       "cpf": "yyy.yyy.yyy-yy",
-      "idade": 28,
-      "tipoSanguineo": "O-",
-      "telefone": "35 9yyyy-yyyy",
+      "idade": 45,
+      "tipoSanguineo": "B-",
+      "telefone": "11 9xxxx-xxxx",
       "email": "maria@exemplo.com.br",
-      "observacoes": "Alergia a penicilina",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921342.png"
+      "observacoes": "Paciente diabética",
+      "especialistasAutorizados": [
+        2
+      ],
+      "requisicoesAcesso": [
+        {},
+        {
+          "medicoId": 1,
+          "status": "pendente"
+        }
+      ],
+      "consultas": [
+        {
+          "data": "2024-05-20",
+          "descricao": "Avaliação de rotina"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "Influenza",
+          "data": "2023-03-10"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "Metformina",
+          "dosagem": "850mg"
+        }
+      ],
+      "cirurgias": [],
+      "diagnosticos": [
+        {
+          "nome": "Diabetes Tipo 2",
+          "data": "2020-09-15"
+        }
+      ],
+      "alergias": [
+        {
+          "descricao": "Penicilina"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "nome": "Carlos Pereira",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "cpf": "zzz.zzz.zzz-zz",
+      "idade": 52,
+      "tipoSanguineo": "O+",
+      "telefone": "21 9xxxx-xxxx",
+      "email": "carlos@exemplo.com.br",
+      "observacoes": "Paciente com histórico de cirurgia cardíaca",
+      "especialistasAutorizados": [
+        1
+      ],
+      "requisicoesAcesso": [],
+      "consultas": [
+        {
+          "data": "2024-04-15",
+          "descricao": "Pós-operatório"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "Hepatite B",
+          "data": "2022-11-05"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "AAS",
+          "dosagem": "100mg"
+        }
+      ],
+      "cirurgias": [
+        {
+          "nome": "Revascularização do miocárdio",
+          "data": "2023-12-01"
+        }
+      ],
+      "diagnosticos": [
+        {
+          "nome": "Cardiopatia isquêmica",
+          "data": "2023-10-20"
+        }
+      ],
+      "alergias": []
     }
   ],
   "perfil": [
     {
-      "id": 1,
-      "nome": "Dr. João da Silva",
-      "especialidade": "Cardiologista",
-      "crm": "CRM 123456",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
-      "descricao": "Especialista em cardiologia com mais de 15 anos de experiência. Atendimento humanizado e focado no bem-estar do paciente.",
-      "cpf": "xxx.xxx.xxx-xx",
-      "idade": 45,
-      "tipoSanguineo": "A+",
-      "telefone": "35 9xxxx-xxxx",
-      "email": "joao@exemplo.com.br",
-      "observacoes": "Paciente faz hemodialise"
+      "id": "1",
+      "nome": "Dr. Pedro Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "pedro.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
     }
   ],
   "relatorios": [
     {
-      "id": 1,
-      "titulo": "Relatório de Consultas",
-      "descricao": "Resumo das consultas realizadas no período.",
-      "data": "01/06/2025",
-      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+      "id": "1",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "titulo": "Relatório de atendimentos",
+      "descricao": "Resumo dos atendimentos realizados no mês."
     },
     {
-      "id": 2,
-      "titulo": "Relatório de Exames",
-      "descricao": "Exames solicitados e resultados recebidos.",
-      "data": "28/05/2025",
-      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135789.png"
+      "id": "2",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "titulo": "Relatório financeiro",
+      "descricao": "Resumo financeiro mensal."
     }
   ],
   "notificacoes": [
     {
       "id": "1",
-      "titulo": "Consulta agendada",
-      "descricao": "Você tem uma consulta marcada para amanhã às 14h.",
-      "data": "01/06/2025",
-      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png"
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
+      "mensagem": "Nova atualização disponível no sistema."
     },
     {
-      "id": 2,
-      "titulo": "Novo exame disponível",
-      "descricao": "O resultado do exame de sangue já está disponível.",
-      "data": "30/05/2025",
-      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png"
+      "id": "2",
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
+      "mensagem": "Consulta agendada para amanhã às 10h."
     }
   ]
 }
