@@ -1,0 +1,16 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Diagnósticos de {{ pacienteNome }}</h2>
+<div class="diagnosticos-grid">
+  <div class="diagnostico-card" *ngFor="let diag of diagnosticos">
+    <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="36" alt="Diagnóstico" />
+    <div>
+      <strong>Nome:</strong> {{ diag.nome }}<br>
+      <strong>Data:</strong> {{ diag.data | date:'dd/MM/yyyy' }}
+    </div>
+  </div>
+  <div *ngIf="diagnosticos.length === 0" class="text-muted">
+    Nenhum diagnóstico cadastrado para este paciente.
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Alergias de {{ pacienteNome }}</h2>
+<div class="alergias-grid">
+  <div class="alergia-card" *ngFor="let alergia of alergias">
+    <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
+    <div>
+      <strong>Descrição:</strong> {{ alergia.descricao }}
+    </div>
+  </div>
+  <div *ngIf="alergias.length === 0" class="text-muted">
+    Nenhuma alergia cadastrada para este paciente.
+  </div>
+</div>

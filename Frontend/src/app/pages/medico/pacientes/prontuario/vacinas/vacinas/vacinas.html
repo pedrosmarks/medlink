@@ -1,0 +1,16 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Vacinas de {{ pacienteNome }}</h2>
+<div class="vacinas-grid">
+  <div class="vacina-card" *ngFor="let vacina of vacinas">
+    <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
+    <div>
+      <strong>Nome:</strong> {{ vacina.nome }}<br>
+      <strong>Data:</strong> {{ vacina.data | date:'dd/MM/yyyy' }}
+    </div>
+  </div>
+  <div *ngIf="vacinas.length === 0" class="text-muted">
+    Nenhuma vacina cadastrada para este paciente.
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Consultas de {{ pacienteNome }}</h2>
+<div class="consultas-grid">
+  <div class="consulta-card" *ngFor="let consulta of consultas">
+    <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
+    <div>
+      <strong>Data:</strong> {{ consulta.data | date:'dd/MM/yyyy' }}<br>
+      <strong>Descrição:</strong> {{ consulta.descricao }}
+    </div>
+  </div>
+  <div *ngIf="consultas.length === 0" class="text-muted">
+    Nenhuma consulta cadastrada para este paciente.
+  </div>
+</div>

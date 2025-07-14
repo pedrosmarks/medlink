@@ -1,0 +1,21 @@
+.consultas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5em;
+  margin-top: 1.5em;
+}
+
+.consulta-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1em 1.5em;
+  min-width: 260px;
+  display: flex;
+  align-items: flex-start;
+  gap: 1em;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+}
+.consulta-card img {
+  margin-top: 0.2em;
+}

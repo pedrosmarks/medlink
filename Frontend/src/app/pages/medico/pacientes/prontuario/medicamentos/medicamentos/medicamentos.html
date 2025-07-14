@@ -1,0 +1,17 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Medicamentos de {{ pacienteNome }}</h2>
+<div class="medicamentos-grid">
+  <div class="medicamento-card" *ngFor="let medicamento of medicamentos">
+    <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="36" alt="Medicamento" />
+    <div>
+      <strong>Nome:</strong> {{ medicamento.nome }}<br>
+      <strong>Dosagem:</strong> {{ medicamento.dosagem }}<br>
+      <strong>Início:</strong> {{ medicamento.inicio | date:'dd/MM/yyyy' }}
+    </div>
+  </div>
+  <div *ngIf="medicamentos.length === 0" class="text-muted">
+    Nenhum medicamento cadastrado para este paciente.
+  </div>
+</div>
