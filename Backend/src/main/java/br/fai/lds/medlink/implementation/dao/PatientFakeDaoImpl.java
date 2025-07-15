@@ -16,17 +16,14 @@ import java.util.List;
 @Repository
 public class PatientFakeDaoImpl implements PatientDao {
 
-
     private static List<Patient> patients = new ArrayList<>();
     private static int ID = 1;
 
     private int getNextId() {
-
         return ID++;
     }
 
     public PatientFakeDaoImpl() {
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         patients.add(Patient.builder()
@@ -35,7 +32,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .cpf("123.456.789-10")
                 .password("1243")
                 .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("01.12.2019", formatter))
+                .birthDate(LocalDate.parse("01.12.2019", formatter))
                 .phoneNumber("Liga pra mamãe e pro papai")
                 .address(Address.builder()
                         .street("Rua A")
@@ -44,50 +41,9 @@ public class PatientFakeDaoImpl implements PatientDao {
                         .neighborhood("centro")
                         .city("Cambuí")
                         .state("Minas Gerais")
-                        .zipCode("123456789")
+                        .zipCode("12345-678")
                         .build())
                 .email("bolotinha@gmail.com")
-                .plan("Pet")
-                .susCard("123456")
-                .build());
-        patients.add(Patient.builder()
-                .id(getNextId())
-                .name("Jade")
-                .cpf("456.789.123-45")
-                .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("12.03.2019", formatter))
-                .phoneNumber("Liga pra mamãe e pro papai")
-                .address(Address.builder()
-                        .street("Rua A")
-                        .number("123")
-                        .complement("")
-                        .neighborhood("centro")
-                        .city("Ouro Fino")
-                        .state("Minas Gerais")
-                        .zipCode("123456789")
-                        .build())
-                .email("jadinha@gmail.com")
-                .plan("Pet")
-                .susCard("123456")
-                .build());
-
-        patients.add(Patient.builder()
-                .id(getNextId())
-                .name("Frajola")
-                .cpf("789.123.456-78")
-                .gender(Gender.FEMININO)
-                .dataNascimento(LocalDate.parse("01.12.2019", formatter))
-                .phoneNumber("Liga pra mamãe e pro papai")
-                .address(Address.builder()
-                        .street("Rua A")
-                        .number("123")
-                        .complement("")
-                        .neighborhood("centro")
-                        .city("Santa Rita do Sapucaí")
-                        .state("Minas Gerais")
-                        .zipCode("123456789")
-                        .build())
-                .email("frajolinha@gmail.com")
                 .plan("Pet")
                 .susCard("123456")
                 .build());
@@ -97,12 +53,15 @@ public class PatientFakeDaoImpl implements PatientDao {
     public void create(Patient entity) {
         entity.setId(getNextId());
         patients.add(entity);
-
     }
 
     @Override
     public boolean remove(int id) {
-
+        Patient patient = readById(id);
+        if (patient != null) {
+            patient.setActive(false);
+            return true;
+        }
         return false;
     }
 
@@ -122,9 +81,8 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .orElse(null);
     }
 
-
     @Override
-    public List readAll() {
+    public List<Patient> readAll() {
         return patients;
     }
 
@@ -147,5 +105,4 @@ public class PatientFakeDaoImpl implements PatientDao {
         updateInformation(id, patient);
         return true;
     }
-
 }
