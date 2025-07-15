@@ -2,55 +2,57 @@ package br.fai.lds.medlink.implementation.dao;
 
 import br.fai.lds.medlink.domain.BloodType;
 import br.fai.lds.medlink.domain.MedicalRecord;
+import br.fai.lds.medlink.domain.OrganDonorStatus;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
 
-    private static List<MedicalRecord> medicalRecord = new ArrayList<>();
+    private static List<MedicalRecord> medicalRecords = new ArrayList<>();
     private static int ID = 1;
 
     private int getNextId() {
-
         return ID++;
     }
 
     public MedicalRecordFakeDaoImpl() {
-
-        medicalRecord.add(MedicalRecord.builder()
+        medicalRecords.add(MedicalRecord.builder()
+                .id(getNextId())
                 .medications("Losartana")
                 .allergies("Dipirona")
                 .bloodType(BloodType.A_POSITIVE)
-                .vaccine("Covid 19")
+                .vaccine("Covid-19")
                 .diagnosis("Pressão alta")
-                .organDonor("SIM")
-                .familyHistory("Não há")
-                .surgicalHistory("Não há")
+                .organDonor(OrganDonorStatus.SIM)
+                .familyHistory("Hipertensão na família")
+                .surgicalHistory("Apendicectomia")
+                .medicalRecordActive(true)
                 .build());
-
     }
 
     @Override
     public void create(MedicalRecord entity) {
         entity.setId(getNextId());
-        medicalRecord.add(entity);
-
+        medicalRecords.add(entity);
     }
 
     @Override
     public boolean remove(int id) {
-        MedicalRecord medicalRecord = readById(id);
-        if (medicalRecord != null) {
-            medicalRecord.setMedicalRecordActive(false);
+        MedicalRecord record = readById(id);
+        if (record != null) {
+            record.setMedicalRecordActive(false);
+            return true;
         }
         return false;
     }
 
     @Override
     public MedicalRecord readById(int id) {
-        return medicalRecord
+        return medicalRecords
                 .stream()
                 .filter(medicalRecord -> medicalRecord.getId() == id)
                 .findFirst()
@@ -59,15 +61,14 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
 
     @Override
     public List<MedicalRecord> readAll() {
-        return medicalRecord;
-
+        return medicalRecords;
     }
 
     @Override
     public void updateInformation(int id, MedicalRecord entity) {
-        for (int i = 0; i < medicalRecord.size(); i++) {
-            if (medicalRecord.get(i).getId() == id) {
-                medicalRecord.set(i, entity);
+        for (int i = 0; i < medicalRecords.size(); i++) {
+            if (medicalRecords.get(i).getId() == id) {
+                medicalRecords.set(i, entity);
                 return;
             }
         }
