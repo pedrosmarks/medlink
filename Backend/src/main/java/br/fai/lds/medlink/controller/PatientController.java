@@ -2,70 +2,76 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientUpdateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/patient")
+@RequestMapping("/api/patients")
 public class PatientController {
 
     private final PatientService patientService;
 
-    //Retorna todos os pacientes cadastrados
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    // Criar paciente
+    @PostMapping
+    public ResponseEntity<PatientResponseDto> createPatient(@Valid @RequestBody PatientCreateDto dto) {
+        Patient patient = dto.toEntity();
+        int id = patientService.create(patient);
+        patient.setId(id);
+        return new ResponseEntity<>(PatientResponseDto.fromEntity(patient), HttpStatus.CREATED);
+    }
+
+    // Listar todos
     @GetMapping
-    public ResponseEntity<List<PatientResponseDto>> getAll() {
+    public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
-        List<PatientResponseDto> dtoList = patients.stream()
+        List<PatientResponseDto> dtos = patients.stream()
                 .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(dtoList);
+        return ResponseEntity.ok(dtos);
     }
 
-    //Retorna um paciente específico pelo ID
+    // Buscar por id
     @GetMapping("/{id}")
-    public ResponseEntity<PatientResponseDto> getById(@PathVariable final int id) {
-        Patient entity = patientService.findById(id);
-
-        if (entity == null) {
+    public ResponseEntity<PatientResponseDto> getPatientById(@PathVariable int id) {
+        Patient patient = patientService.findById(id);
+        if (patient == null) {
             return ResponseEntity.notFound().build();
         }
-
-        PatientResponseDto dto = PatientResponseDto.fromEntity(entity);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(PatientResponseDto.fromEntity(patient));
     }
 
-    //Cria um novo paciente
-    @PostMapping
-    public ResponseEntity<PatientResponseDto> create(@Valid @RequestBody PatientCreateDto dto) {
-        Patient entity = dto.toEntity();
-        int id = patientService.create(entity);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
-
-        PatientResponseDto responseDto = PatientResponseDto.fromEntity(entity);
-
-        return ResponseEntity.created(location).body(responseDto);
+    // Atualizar paciente
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable int id,
+                                                            @Valid @RequestBody PatientUpdateDto dto) {
+        Patient patient = patientService.findById(id);
+        if (patient == null) {
+            return ResponseEntity.notFound().build();
+        }
+        dto.updateEntity(patient);
+        Patient updated = patientService.update(id, patient);
+        return ResponseEntity.ok(PatientResponseDto.fromEntity(updated));
     }
 
-    // Desativa (inativa) um paciente pelo ID
-
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivate(@PathVariable int id) {
-        boolean result = patientService.deactivate(id);
-        return result ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    // Inativar paciente
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deactivatePatient(@PathVariable int id) {
+        boolean success = patientService.deactivate(id);
+        if (!success) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
