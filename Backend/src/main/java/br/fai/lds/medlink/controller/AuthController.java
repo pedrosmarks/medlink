@@ -1,14 +1,17 @@
 package br.fai.lds.medlink.controller;
 
-import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
-import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.LoginDTO;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,29 +20,31 @@ public class AuthController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/medic")
-    public ResponseEntity<?> loginMedic(@Valid @RequestBody LoginDTO loginDTO) {
-        var medic = authenticationService.authenticateMedic(loginDTO.getEmail(), loginDTO.getPassword());
+    @PostMapping
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
 
+        var medic = authenticationService.authenticateMedic(loginDTO.getEmail(), loginDTO.getPassword());
         if (medic != null) {
-            MedicResponseDto dto = MedicResponseDto.fromEntity(medic);
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Credenciais inválidas");
+            return ResponseEntity.ok(new LoginResponse(
+                    medic.getId(),
+                    medic.getName(),
+                    "MEDIC"
+            ));
         }
+
+        var patient = authenticationService.authenticatePatient(loginDTO.getEmail(), loginDTO.getPassword());
+        if (patient != null) {
+            return ResponseEntity.ok(new LoginResponse(
+                    patient.getId(),
+                    patient.getName(),
+                    "PATIENT"
+            ));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Credenciais inválidas"));
     }
 
-    @PostMapping("/patient")
-    public ResponseEntity<?> loginPatient(@Valid @RequestBody LoginDTO loginDTO) {
-        var patient = authenticationService.authenticatePatient(loginDTO.getEmail(), loginDTO.getPassword());
-
-        if (patient != null) {
-            PatientResponseDto dto = PatientResponseDto.fromEntity(patient);
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Credenciais inválidas");
-        }
+    private record LoginResponse(int id, String name, String profile) {
     }
 }
