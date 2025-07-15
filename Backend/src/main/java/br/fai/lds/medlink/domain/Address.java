@@ -11,6 +11,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class Address {
 
     @NotBlank(message = "Nome da rua não pode estar em branco")
