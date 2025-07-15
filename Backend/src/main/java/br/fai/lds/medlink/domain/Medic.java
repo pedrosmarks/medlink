@@ -2,6 +2,7 @@ package br.fai.lds.medlink.domain;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -24,5 +25,6 @@ public class Medic extends Person {
     @NotNull(message = "O endereço de email não pode estar em branco")
     private String email;
 
+    @Builder.Default
     private boolean active = true;
 }
