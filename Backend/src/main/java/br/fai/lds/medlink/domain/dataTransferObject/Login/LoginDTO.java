@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain.dataTransferObject;
+package br.fai.lds.medlink.domain.dataTransferObject.Login;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
