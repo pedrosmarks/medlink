@@ -6,81 +6,73 @@ import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.MedicalRecordR
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.MedicalRecordUpdateDto;
 import br.fai.lds.medlink.port.service.medicalRecordService.MedicalRecordService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/medical-record")
+@RequestMapping("/api/medical-records")
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
 
-    // Retorna a lista de todos os prontuários médicos.
-    @GetMapping
-    public ResponseEntity<List<MedicalRecordResponseDto>> getAll() {
-        List<MedicalRecord> entities = medicalRecordService.findAll();
-        List<MedicalRecordResponseDto> dtos = entities.stream()
-                .map(MedicalRecordResponseDto::fromEntity)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(dtos);
+    public MedicalRecordController(MedicalRecordService medicalRecordService) {
+        this.medicalRecordService = medicalRecordService;
     }
 
-    // Retorna um prontuário médico pelo ID.
-    @GetMapping("/{id}")
-    public ResponseEntity<MedicalRecordResponseDto> getById(@PathVariable int id) {
-        MedicalRecord entity = medicalRecordService.findById(id);
-        if (entity == null) {
-            return ResponseEntity.notFound().build();
-        }
-        MedicalRecordResponseDto dto = MedicalRecordResponseDto.fromEntity(entity);
-        return ResponseEntity.ok(dto);
-    }
-
-    // Cria um novo prontuário médico.
+    // Criar prontuário médico
     @PostMapping
     public ResponseEntity<MedicalRecordResponseDto> create(@Valid @RequestBody MedicalRecordCreateDto dto) {
         MedicalRecord entity = dto.toEntity();
         int id = medicalRecordService.create(entity);
         entity.setId(id);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
-
-        return ResponseEntity.created(location).body(MedicalRecordResponseDto.fromEntity(entity));
+        return new ResponseEntity<>(MedicalRecordResponseDto.fromEntity(entity), HttpStatus.CREATED);
     }
 
-    // Atualiza um prontuário médico existente.
-    @PutMapping("/{id}")
-    public ResponseEntity<MedicalRecordResponseDto> update(
-            @PathVariable int id,
-            @Valid @RequestBody MedicalRecordUpdateDto dto
-    ) {
-        MedicalRecord entity = dto.toEntity();
-        MedicalRecord updated = medicalRecordService.update(id, entity);
+    // Listar todos os prontuários
+    @GetMapping
+    public ResponseEntity<List<MedicalRecordResponseDto>> getAll() {
+        List<MedicalRecord> records = medicalRecordService.findAll();
+        List<MedicalRecordResponseDto> dtos = records.stream()
+                .map(MedicalRecordResponseDto::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
 
-        if (updated == null) {
+    // Buscar prontuário por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<MedicalRecordResponseDto> getById(@PathVariable int id) {
+        MedicalRecord record = medicalRecordService.findById(id);
+        if (record == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(MedicalRecordResponseDto.fromEntity(record));
+    }
+
+    // Atualizar prontuário médico
+    @PutMapping("/{id}")
+    public ResponseEntity<MedicalRecordResponseDto> update(@PathVariable int id,
+                                                           @Valid @RequestBody MedicalRecordUpdateDto dto) {
+        MedicalRecord record = medicalRecordService.findById(id);
+        if (record == null) {
             return ResponseEntity.notFound().build();
         }
 
-        MedicalRecordResponseDto updatedDto = MedicalRecordResponseDto.fromEntity(updated);
-        return ResponseEntity.ok(updatedDto);
+        dto.updateEntity(record);
+        MedicalRecord updated = medicalRecordService.update(id, record);
+        return ResponseEntity.ok(MedicalRecordResponseDto.fromEntity(updated));
     }
 
-    // Desativa (deleta) um prontuário médico pelo ID.
+    // Inativar prontuário médico
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deactivate(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@PathVariable int id) {
         boolean deleted = medicalRecordService.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
