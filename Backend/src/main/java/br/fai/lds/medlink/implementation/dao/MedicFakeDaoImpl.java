@@ -4,24 +4,24 @@ import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class MedicFakeDaoImpl implements MedicDao {
 
     private static List<Medic> medics = new ArrayList<>();
     private static int ID = 1;
 
     private int getNextId() {
-
         return ID++;
     }
 
     public MedicFakeDaoImpl() {
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         medics.add(Medic.builder()
@@ -29,7 +29,7 @@ public class MedicFakeDaoImpl implements MedicDao {
                 .cpf("999.999.999-00")
                 .password("89")
                 .gender(Gender.MASCULINO)
-                .dataNascimento(LocalDate.parse("01.01.1990", formatter))
+                .birthDate(LocalDate.parse("01.01.1990", formatter))
                 .phoneNumber("8998654678")
                 .address(Address.builder()
                         .street("Rua B")
@@ -38,15 +38,13 @@ public class MedicFakeDaoImpl implements MedicDao {
                         .neighborhood("Faisqueira")
                         .city("Pouso Alegre")
                         .state("Minas Gerais")
-                        .zipCode("89675634")
+                        .zipCode("89675-634")
                         .build())
                 .crm("MG-89")
                 .specialty("Geral")
-                .email("")
+                .email("olavo@example.com")
                 .build());
-
     }
-
 
     @Override
     public void create(Medic entity) {
@@ -59,6 +57,7 @@ public class MedicFakeDaoImpl implements MedicDao {
         Medic medic = readById(id);
         if (medic != null) {
             medic.setActive(false);
+            return true;
         }
         return false;
     }
@@ -71,9 +70,8 @@ public class MedicFakeDaoImpl implements MedicDao {
                 .orElse(null);
     }
 
-
     @Override
-    public List readAll() {
+    public List<Medic> readAll() {
         return medics;
     }
 
