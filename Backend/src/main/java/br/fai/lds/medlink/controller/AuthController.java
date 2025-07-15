@@ -1,15 +1,14 @@
 package br.fai.lds.medlink.controller;
 
-import br.fai.lds.medlink.domain.dataTransferObject.LoginDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -43,6 +42,34 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("message", "Credenciais inválidas"));
+    }
+
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
+        boolean success = authenticationService.sendVerificationCode(dto.getIdentifier());
+
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Usuário não encontrado com esse e-mail ou CPF."));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Código de verificação enviado."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
+        boolean success = authenticationService.resetPassword(
+                dto.getIdentifier(),
+                dto.getVerificationCode(),
+                dto.getNewPassword()
+        );
+
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Código inválido ou expirado."));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Senha redefinida com sucesso."));
     }
 
     private record LoginResponse(int id, String name, String profile) {
