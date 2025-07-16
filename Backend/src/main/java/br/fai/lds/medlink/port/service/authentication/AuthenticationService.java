@@ -10,7 +10,10 @@ public interface AuthenticationService {
     Patient authenticatePatient(final String email, final String password);
     Medic authenticateMedic(final String email, final String password);
 
-    void requestPasswordReset(PasswordResetRequestDTO dto);
+    boolean requestPasswordReset(PasswordResetRequestDTO dto);
     boolean resetPassword(PasswordResetDTO dto);
+
+    boolean sendVerificationCode(String identifier);
+
 }
 
