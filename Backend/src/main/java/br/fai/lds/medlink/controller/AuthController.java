@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginResponseDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
@@ -9,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class AuthController {
 
         var medic = authenticationService.authenticateMedic(loginDTO.getEmail(), loginDTO.getPassword());
         if (medic != null) {
-            return ResponseEntity.ok(new LoginResponse(
+            return ResponseEntity.ok(new LoginResponseDTO(
                     medic.getId(),
                     medic.getName(),
                     "MEDIC"
@@ -33,7 +32,7 @@ public class AuthController {
 
         var patient = authenticationService.authenticatePatient(loginDTO.getEmail(), loginDTO.getPassword());
         if (patient != null) {
-            return ResponseEntity.ok(new LoginResponse(
+            return ResponseEntity.ok(new LoginResponseDTO(
                     patient.getId(),
                     patient.getName(),
                     "PATIENT"
@@ -41,7 +40,7 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", "Credenciais inválidas"));
+                .body("Credenciais inválidas");
     }
 
     @PostMapping("/request-password-reset")
@@ -50,28 +49,21 @@ public class AuthController {
 
         if (!success) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "Usuário não encontrado com esse e-mail ou CPF."));
+                    .body("Usuário não encontrado com esse e-mail ou CPF.");
         }
 
-        return ResponseEntity.ok(Map.of("message", "Código de verificação enviado."));
+        return ResponseEntity.ok("Código de verificação enviado.");
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
-        boolean success = authenticationService.resetPassword(
-                dto.getIdentifier(),
-                dto.getVerificationCode(),
-                dto.getNewPassword()
-        );
+        boolean success = authenticationService.resetPassword(dto);
 
         if (!success) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "Código inválido ou expirado."));
+                    .body("Código inválido ou expirado.");
         }
 
-        return ResponseEntity.ok(Map.of("message", "Senha redefinida com sucesso."));
-    }
-
-    private record LoginResponse(int id, String name, String profile) {
+        return ResponseEntity.ok("Senha redefinida com sucesso.");
     }
 }
