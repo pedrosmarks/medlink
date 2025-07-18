@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.implementation.service.medicalRecord;
 
 import br.fai.lds.medlink.domain.MedicalRecord;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.MedicalRecordResponseDto;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import br.fai.lds.medlink.port.service.medicalRecordService.MedicalRecordService;
@@ -55,4 +56,17 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         medicalRecordDao.updateInformation(id, entity);
         return entity;
     }
+
+    @Override
+    public MedicalRecordResponseDto findByPatientId(int medicId, int patientId) {
+
+        MedicalRecord record = medicalRecordDao.findByPatientId(patientId);
+
+        if (record == null) {
+            throw new RuntimeException("Prontuário não encontrado para o paciente ID " + patientId);
+        }
+
+        return MedicalRecordResponseDto.fromEntity(record);
+    }
+
 }
