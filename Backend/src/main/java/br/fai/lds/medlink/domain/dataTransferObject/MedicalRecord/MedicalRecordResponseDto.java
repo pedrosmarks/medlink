@@ -1,14 +1,17 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 
 import br.fai.lds.medlink.domain.BloodType;
-import br.fai.lds.medlink.domain.MedicalRecord;
 import br.fai.lds.medlink.domain.OrganDonorStatus;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MedicalRecordResponseDto {
 
     private int id;
+    private int patientId;
     private BloodType bloodType;
     private OrganDonorStatus organDonor;
     private String diagnosis;
@@ -19,18 +22,19 @@ public class MedicalRecordResponseDto {
     private String medications;
     private boolean medicalRecordActive;
 
-    public static MedicalRecordResponseDto fromEntity(MedicalRecord record) {
-        MedicalRecordResponseDto dto = new MedicalRecordResponseDto();
-        dto.setId(record.getId());
-        dto.setBloodType(record.getBloodType());
-        dto.setOrganDonor(record.getOrganDonor());
-        dto.setDiagnosis(record.getDiagnosis());
-        dto.setFamilyHistory(record.getFamilyHistory());
-        dto.setAllergies(record.getAllergies());
-        dto.setVaccine(record.getVaccine());
-        dto.setSurgicalHistory(record.getSurgicalHistory());
-        dto.setMedications(record.getMedications());
-        dto.setMedicalRecordActive(record.isMedicalRecordActive());
-        return dto;
+    public static MedicalRecordResponseDto fromEntity(br.fai.lds.medlink.domain.MedicalRecord record) {
+        return MedicalRecordResponseDto.builder()
+                .id(record.getId())
+                .patientId(record.getPatientId())
+                .bloodType(record.getBloodType())
+                .organDonor(record.getOrganDonor())
+                .diagnosis(record.getDiagnosis())
+                .familyHistory(record.getFamilyHistory())
+                .allergies(record.getAllergies())
+                .vaccine(record.getVaccine())
+                .surgicalHistory(record.getSurgicalHistory())
+                .medications(record.getMedications())
+                .medicalRecordActive(record.isMedicalRecordActive())
+                .build();
     }
 }
