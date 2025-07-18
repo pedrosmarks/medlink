@@ -48,5 +48,7 @@ public class MedicalRecord {
 
     private boolean medicalRecordActive = true;
 
+    private int patientId;
+
 }
 
