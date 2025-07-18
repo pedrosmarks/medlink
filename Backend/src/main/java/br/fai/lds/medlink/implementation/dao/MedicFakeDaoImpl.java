@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Primary
 @Repository
 public class MedicFakeDaoImpl implements MedicDao {
 
