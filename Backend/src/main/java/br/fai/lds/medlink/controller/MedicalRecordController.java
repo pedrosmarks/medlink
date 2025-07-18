@@ -96,4 +96,6 @@ public class MedicalRecordController {
         return ResponseEntity.ok(dto);
     }
 
+
+
 }
