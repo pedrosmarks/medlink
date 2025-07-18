@@ -1,10 +1,13 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicUpdateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +21,13 @@ import java.util.stream.Collectors;
 public class MedicController {
 
     private final MedicService medicService;
+    private final PatientService patientService; //
 
-    public MedicController(MedicService medicService) {
+    public MedicController(MedicService medicService, PatientService patientService) {
         this.medicService = medicService;
+        this.patientService = patientService; //
     }
 
-    // Criar médico
     @PostMapping
     public ResponseEntity<MedicResponseDto> createMedic(@Valid @RequestBody MedicCreateDto dto) {
         Medic medic = dto.toEntity();
@@ -32,7 +36,6 @@ public class MedicController {
         return new ResponseEntity<>(MedicResponseDto.fromEntity(medic), HttpStatus.CREATED);
     }
 
-    // Listar todos
     @GetMapping
     public ResponseEntity<List<MedicResponseDto>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
@@ -42,7 +45,6 @@ public class MedicController {
         return ResponseEntity.ok(dtos);
     }
 
-    // Buscar por id
     @GetMapping("/{id}")
     public ResponseEntity<MedicResponseDto> getMedicById(@PathVariable int id) {
         Medic medic = medicService.findById(id);
@@ -52,7 +54,6 @@ public class MedicController {
         return ResponseEntity.ok(MedicResponseDto.fromEntity(medic));
     }
 
-    // Atualizar médico
     @PutMapping("/{id}")
     public ResponseEntity<MedicResponseDto> updateMedic(@PathVariable int id,
                                                         @Valid @RequestBody MedicUpdateDto dto) {
@@ -65,7 +66,6 @@ public class MedicController {
         return ResponseEntity.ok(MedicResponseDto.fromEntity(updated));
     }
 
-    // Inativar médico
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivateMedic(@PathVariable int id) {
         boolean success = medicService.delete(id);
@@ -73,5 +73,15 @@ public class MedicController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    //  Listar pacientes vinculados ao médico
+    @GetMapping("/{id}/patients")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByMedic(@PathVariable("id") int medicId) {
+        List<Patient> patients = patientService.findByMedicId(medicId); // busca entidades
+        List<PatientResponseDto> dtos = patients.stream()
+                .map(PatientResponseDto::fromEntity) // converte para DTO
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 }
