@@ -11,12 +11,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Primary
 @Repository
 public class PatientFakeDaoImpl implements PatientDao {
 
-    private static List<Patient> patients = new ArrayList<>();
+    private static List<Patient> patientList = new ArrayList<>();
     private static int ID = 1;
 
     private int getNextId() {
@@ -26,7 +27,7 @@ public class PatientFakeDaoImpl implements PatientDao {
     public PatientFakeDaoImpl() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-        patients.add(Patient.builder()
+        patientList.add(Patient.builder()
                 .id(getNextId())
                 .name("Bolota")
                 .cpf("123.456.789-10")
@@ -46,13 +47,15 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .email("bolotinha@gmail.com")
                 .plan("Pet")
                 .susCard("123456")
+                .medicId(1) // IMPORTANTE: define o ID do médico vinculado
+                .active(true)
                 .build());
     }
 
     @Override
     public void create(Patient entity) {
         entity.setId(getNextId());
-        patients.add(entity);
+        patientList.add(entity);
     }
 
     @Override
@@ -67,7 +70,7 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public Patient readById(int id) {
-        return patients.stream()
+        return patientList.stream()
                 .filter(patient -> patient.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -75,7 +78,7 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public Patient findByEmail(String email) {
-        return patients.stream()
+        return patientList.stream()
                 .filter(p -> p.getEmail().equalsIgnoreCase(email))
                 .findFirst()
                 .orElse(null);
@@ -83,14 +86,14 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public List<Patient> readAll() {
-        return patients;
+        return new ArrayList<>(patientList);
     }
 
     @Override
     public void updateInformation(int id, Patient entity) {
-        for (int i = 0; i < patients.size(); i++) {
-            if (patients.get(i).getId() == id) {
-                patients.set(i, entity);
+        for (int i = 0; i < patientList.size(); i++) {
+            if (patientList.get(i).getId() == id) {
+                patientList.set(i, entity);
                 return;
             }
         }
@@ -105,4 +108,13 @@ public class PatientFakeDaoImpl implements PatientDao {
         updateInformation(id, patient);
         return true;
     }
+
+    @Override
+    public List<Patient> findByMedicId(int medicId) {
+        return patientList.stream()
+                .filter(patient -> patient.getMedicId() == medicId)
+                .collect(Collectors.toList());
+    }
+
+
 }
