@@ -24,6 +24,7 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
     public MedicalRecordFakeDaoImpl() {
         medicalRecords.add(MedicalRecord.builder()
                 .id(getNextId())
+                .patientId(1)  // lembre de atribuir patientId nos seus registros fake também
                 .medications("Losartana")
                 .allergies("Dipirona")
                 .bloodType(BloodType.A_POSITIVE)
@@ -54,8 +55,7 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
 
     @Override
     public MedicalRecord readById(int id) {
-        return medicalRecords
-                .stream()
+        return medicalRecords.stream()
                 .filter(medicalRecord -> medicalRecord.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -74,5 +74,13 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
                 return;
             }
         }
+    }
+
+    @Override
+    public MedicalRecord findByPatientId(int patientId) {
+        return medicalRecords.stream()
+                .filter(record -> record.getPatientId() == patientId)
+                .findFirst()
+                .orElse(null);
     }
 }
