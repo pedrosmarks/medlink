@@ -4,12 +4,14 @@ import br.fai.lds.medlink.domain.BloodType;
 import br.fai.lds.medlink.domain.MedicalRecord;
 import br.fai.lds.medlink.domain.OrganDonorStatus;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Primary
 public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
 
     private static List<MedicalRecord> medicalRecords = new ArrayList<>();
