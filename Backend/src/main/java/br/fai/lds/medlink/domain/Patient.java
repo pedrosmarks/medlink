@@ -27,4 +27,6 @@ public class Patient extends Person {
     @Builder.Default
     private boolean active = true;
 
+    private int medicId;
+
 }
