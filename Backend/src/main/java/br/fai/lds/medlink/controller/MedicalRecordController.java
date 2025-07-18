@@ -75,4 +75,25 @@ public class MedicalRecordController {
         }
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{medicId}/patients/{patientId}/medical-record")
+    public ResponseEntity<MedicalRecordResponseDto> getMedicalRecordByPatient(
+            @PathVariable int medicId,
+            @PathVariable int patientId) {
+
+        boolean hasPermission = true;
+
+        if (!hasPermission) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        MedicalRecordResponseDto dto = medicalRecordService.findByPatientId(medicId, patientId);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
+    }
+
 }
