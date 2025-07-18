@@ -1,12 +1,14 @@
 package br.fai.lds.medlink.implementation.service.pacient;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl implements PatientService {
@@ -23,7 +25,6 @@ public class PatientServiceImpl implements PatientService {
         patientDao.create(entity);
         return entity.getId();
     }
-
 
     @Override
     public boolean deactivate(int id) {
@@ -49,5 +50,17 @@ public class PatientServiceImpl implements PatientService {
     public Patient update(int id, Patient entity) {
         throw new UnsupportedOperationException("Update not implemented yet.");
     }
-}
 
+    @Override
+    public List<PatientResponseDto> getPatientsByMedicId(int medicId) {
+        List<Patient> patients = patientDao.findByMedicId(medicId);
+        return patients.stream()
+                .map(PatientResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Patient> findByMedicId(int medicId) {
+        return patientDao.findByMedicId(medicId);
+    }
+}
