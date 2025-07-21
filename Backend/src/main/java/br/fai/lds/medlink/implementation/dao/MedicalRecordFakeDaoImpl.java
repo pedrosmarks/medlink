@@ -1,8 +1,6 @@
 package br.fai.lds.medlink.implementation.dao;
 
-import br.fai.lds.medlink.domain.BloodType;
-import br.fai.lds.medlink.domain.MedicalRecord;
-import br.fai.lds.medlink.domain.OrganDonorStatus;
+import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -24,15 +22,41 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
     public MedicalRecordFakeDaoImpl() {
         medicalRecords.add(MedicalRecord.builder()
                 .id(getNextId())
-                .patientId(1)  // lembre de atribuir patientId nos seus registros fake também
-                .medications("Losartana")
-                .allergies("Dipirona")
+                .patientId(1)
+                .medications(List.of(
+                        Medication.builder()
+                                .name("Losartana")
+                                .dosage("50mg")
+                                .frequency("1x dia")
+                                .build()
+                ))
+                .allergies(List.of(
+                        Allergy.builder()
+                                .name("Dipirona")
+                                .substance("Dipyrone")
+                                .reaction("Erupção cutânea")
+                                .severity("Média")
+                                .build()
+                ))
+                .vaccines(List.of(
+                        Vaccine.builder()
+                                .name("Covid-19")
+                                .date("2021-05-20")
+                                .build()
+                ))
+                .surgeries(List.of(
+                        Surgery.builder()
+                                .name("Apendicectomia")
+                                .date("2010-01-01")
+                                .location("Hospital XYZ")
+                                .notes("Sem complicações")
+                                .build()
+                ))
+                .consultations(new ArrayList<>()) // inicializa vazio
                 .bloodType(BloodType.A_POSITIVE)
-                .vaccine("Covid-19")
-                .diagnosis("Pressão alta")
                 .organDonor(OrganDonorStatus.SIM)
+                .diagnosis("Pressão alta")
                 .familyHistory("Hipertensão na família")
-                .surgicalHistory("Apendicectomia")
                 .medicalRecordActive(true)
                 .build());
     }
