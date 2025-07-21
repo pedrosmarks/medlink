@@ -1,12 +1,11 @@
 package br.fai.lds.medlink.domain;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -22,33 +21,28 @@ public class MedicalRecord {
     @NotNull(message = "A informação de doador de órgãos é obrigatória")
     private OrganDonorStatus organDonor;
 
-    @NotBlank(message = "O diagnóstico é obrigatório")
-    @Size(min = 5, max = 500, message = "O diagnóstico deve ter entre 5 e 500 caracteres")
+    @NotNull(message = "O diagnóstico é obrigatório")
     private String diagnosis;
 
-    @NotBlank(message = "O histórico familiar é obrigatório")
-    @Size(min = 5, max = 500, message = "O histórico familiar deve ter entre 5 e 500 caracteres")
+    @NotNull(message = "O histórico familiar é obrigatório")
     private String familyHistory;
-
-    @NotBlank(message = "As alergias são obrigatórias")
-    @Size(min = 5, max = 500, message = "As alergias devem ter entre 5 e 500 caracteres")
-    private String allergies;
-
-    @NotBlank(message = "As vacinas são obrigatórias")
-    @Size(min = 2, max = 500, message = "As vacinas devem ter entre 5 e 500 caracteres")
-    private String vaccine;
-
-    @NotBlank(message = "O histórico cirúrgico é obrigatório")
-    @Size(min = 5, max = 500, message = "O histórico cirúrgico deve ter entre 5 e 500 caracteres")
-    private String surgicalHistory;
-
-    @NotBlank(message = "A medicação é obrigatória")
-    @Size(min = 5, max = 500, message = "A medicação deve ter entre 5 e 500 caracteres")
-    private String medications;
 
     private boolean medicalRecordActive = true;
 
     private int patientId;
 
-}
+    @Builder.Default
+    private List<Allergy> allergies = new ArrayList<>();
 
+    @Builder.Default
+    private List<Vaccine> vaccines = new ArrayList<>();
+
+    @Builder.Default
+    private List<Surgery> surgeries = new ArrayList<>();
+
+    @Builder.Default
+    private List<Medication> medications = new ArrayList<>();
+
+    @Builder.Default
+    private List<Consultation> consultations = new ArrayList<>();
+}
