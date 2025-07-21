@@ -1,54 +1,40 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 
-import br.fai.lds.medlink.domain.BloodType;
-import br.fai.lds.medlink.domain.MedicalRecord;
-import br.fai.lds.medlink.domain.OrganDonorStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import br.fai.lds.medlink.domain.*;
+import lombok.*;
 
-@Data
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MedicalRecordUpdateDto {
-
-    @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
-
-    @NotNull(message = "A informação de doador de órgãos é obrigatória")
     private OrganDonorStatus organDonor;
-
-    @NotBlank(message = "O diagnóstico é obrigatório")
-    @Size(min = 5, max = 500)
     private String diagnosis;
-
-    @NotBlank(message = "O histórico familiar é obrigatório")
-    @Size(min = 5, max = 500)
     private String familyHistory;
+    private List<Allergy> allergies;
+    private List<Vaccine> vaccines;
+    private List<Surgery> surgeries;
+    private List<Medication> medications;
+    private List<Consultation> consultations;
+    private Boolean medicalRecordActive;
 
-    @NotBlank(message = "As alergias são obrigatórias")
-    @Size(min = 5, max = 500)
-    private String allergies;
-
-    @NotBlank(message = "As vacinas são obrigatórias")
-    @Size(min = 2, max = 500)
-    private String vaccine;
-
-    @NotBlank(message = "O histórico cirúrgico é obrigatório")
-    @Size(min = 5, max = 500)
-    private String surgicalHistory;
-
-    @NotBlank(message = "A medicação é obrigatória")
-    @Size(min = 5, max = 500)
-    private String medications;
-
-    public void updateEntity(MedicalRecord entity) {
-        entity.setBloodType(bloodType);
-        entity.setOrganDonor(organDonor);
-        entity.setDiagnosis(diagnosis);
-        entity.setFamilyHistory(familyHistory);
-        entity.setAllergies(allergies);
-        entity.setVaccine(vaccine);
-        entity.setSurgicalHistory(surgicalHistory);
-        entity.setMedications(medications);
+    public MedicalRecord toEntity() {
+        return MedicalRecord.builder()
+                .bloodType(this.bloodType)
+                .organDonor(this.organDonor)
+                .diagnosis(this.diagnosis)
+                .familyHistory(this.familyHistory)
+                .allergies(this.allergies != null ? this.allergies : List.of())
+                .vaccines(this.vaccines != null ? this.vaccines : List.of())
+                .surgeries(this.surgeries != null ? this.surgeries : List.of())
+                .medications(this.medications != null ? this.medications : List.of())
+                .consultations(this.consultations != null ? this.consultations : List.of())
+                .medicalRecordActive(this.medicalRecordActive != null ? this.medicalRecordActive : true)
+                .build();
     }
+
 }
