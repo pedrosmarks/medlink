@@ -23,55 +23,52 @@ public class MedicalRecordResponseDto {
     private String familyHistory;
     private boolean medicalRecordActive;
 
-    private List<AlergiaDto> alergias;
-    private List<MedicamentoDto> medicamentos;
-    private List<CirurgiaDto> cirurgias;
-    private List<VacinaDto> vacinas;
-    private List<ConsultaDto> consultas;
+    private List<AllergyCreateDto> allergies;
+    private List<MedicationCreateDto> medications;
+    private List<SurgeryCreateDto> surgeries;
+    private List<VaccineCreateDto> vaccines;
+    private List<ConsultationCreateDto> consultations;
 
     public static MedicalRecordResponseDto fromEntity(MedicalRecord entity) {
 
-        List<AlergiaDto> alergias = List.of();
-        if (entity.getAllergies() != null && !entity.getAllergies().isBlank()) {
-            alergias = Arrays.stream(entity.getAllergies().split(","))
-                    .map(String::trim)
-                    .map(nome -> AlergiaDto.builder().substancia(nome).build())
-                    .collect(Collectors.toList());
-        }
-
-        List<MedicamentoDto> medicamentos = List.of();
-        if (entity.getMedications() != null && !entity.getMedications().isBlank()) {
-            medicamentos = Arrays.stream(entity.getMedications().split(","))
-                    .map(String::trim)
-                    .map(nome -> MedicamentoDto.builder().nome(nome).build())
-                    .collect(Collectors.toList());
-        }
-
-        List<CirurgiaDto> cirurgias = List.of();
-        if (entity.getSurgicalHistory() != null && !entity.getSurgicalHistory().isBlank()) {
-            cirurgias = Arrays.stream(entity.getSurgicalHistory().split(","))
-                    .map(String::trim)
-                    .map(nome -> CirurgiaDto.builder()
-                            .nome(nome)
-                            .data(null)   // Aqui você pode ajustar para pegar a data real depois
-                            .local(null)  // Aqui você pode ajustar para pegar o local real depois
+        List<AllergyCreateDto> allergies = List.of();
+        if (entity.getAllergies() != null && !entity.getAllergies().isEmpty()) {
+            allergies = entity.getAllergies().stream()
+                    .map(allergy -> AllergyCreateDto.builder()
+                            .substance(allergy.getSubstance())
                             .build())
                     .collect(Collectors.toList());
         }
 
-        List<VacinaDto> vacinas = List.of();
-        if (entity.getVaccine() != null && !entity.getVaccine().isBlank()) {
-            vacinas = Arrays.stream(entity.getVaccine().split(","))
-                    .map(String::trim)
-                    .map(nome -> VacinaDto.builder()
-                            .nome(nome)
-                            .data(null)  // Ajustar futuramente para a data correta
+        List<MedicationCreateDto> medications = List.of();
+        if (entity.getMedications() != null && !entity.getMedications().isEmpty()) {
+            medications = entity.getMedications().stream()
+                    .map(med -> MedicationCreateDto.builder()
+                            .name(med.getName())
                             .build())
                     .collect(Collectors.toList());
         }
 
-        // Consultas ainda não armazenadas na entidade, retorna lista vazia por enquanto
-        List<ConsultaDto> consultas = List.of();
+        List<VaccineCreateDto> vaccines = List.of();
+        if (entity.getVaccines() != null && !entity.getVaccines().isEmpty()) {
+            vaccines = entity.getVaccines().stream()
+                    .map(vaccine -> VaccineCreateDto.builder()
+                            .name(vaccine.getName())
+                            .date(vaccine.getDate())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
+        List<ConsultationCreateDto> consultations = List.of();
+        if (entity.getConsultations() != null && !entity.getConsultations().isEmpty()) {
+            consultations = entity.getConsultations().stream()
+                    .map(consult -> ConsultationCreateDto.builder()
+                            .date(consult.getDate())
+                            .reason(consult.getReason())
+                            .notes(consult.getNotes())
+                            .build())
+                    .collect(Collectors.toList());
+        }
 
         return MedicalRecordResponseDto.builder()
                 .id(entity.getId())
@@ -80,12 +77,11 @@ public class MedicalRecordResponseDto {
                 .organDonor(entity.getOrganDonor())
                 .diagnosis(entity.getDiagnosis())
                 .familyHistory(entity.getFamilyHistory())
-                .alergias(alergias)
-                .medicamentos(medicamentos)
-                .cirurgias(cirurgias)
-                .vacinas(vacinas)
-                .consultas(consultas)
                 .medicalRecordActive(entity.isMedicalRecordActive())
+                .allergies(allergies)
+                .medications(medications)
+                .vaccines(vaccines)
+                .consultations(consultations)
                 .build();
     }
 }
