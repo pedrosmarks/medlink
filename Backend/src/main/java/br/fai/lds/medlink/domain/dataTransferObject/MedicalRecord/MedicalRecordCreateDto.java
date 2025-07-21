@@ -1,13 +1,12 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 
-
-import br.fai.lds.medlink.domain.BloodType;
-import br.fai.lds.medlink.domain.MedicalRecord;
-import br.fai.lds.medlink.domain.OrganDonorStatus;
+import br.fai.lds.medlink.domain.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +15,6 @@ import lombok.*;
 @Builder
 public class MedicalRecordCreateDto {
 
-
     @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
 
@@ -24,34 +22,28 @@ public class MedicalRecordCreateDto {
     private OrganDonorStatus organDonor;
 
     @NotBlank(message = "O diagnóstico é obrigatório")
-    @Size(min = 5, max = 500, message = "O diagnóstico deve ter entre 5 e 500 caracteres")
+    @Size(min = 5, max = 500)
     private String diagnosis;
 
     @NotBlank(message = "O histórico familiar é obrigatório")
-    @Size(min = 5, max = 500, message = "O histórico familiar deve ter entre 5 e 500 caracteres")
+    @Size(min = 5, max = 500)
     private String familyHistory;
 
-    @NotBlank(message = "As alergias são obrigatórias")
-    @Size(min = 5, max = 500, message = "As alergias devem ter entre 5 e 500 caracteres")
-    private String allergies;
+    @NotNull(message = "As alergias são obrigatórias")
+    private List<Allergy> allergies;
 
-    @NotBlank(message = "As vacinas são obrigatórias")
-    @Size(min = 2, max = 500, message = "As vacinas devem ter entre 2 e 500 caracteres")
-    private String vaccine;
+    @NotNull(message = "As vacinas são obrigatórias")
+    private List<Vaccine> vaccines;
 
-    @NotBlank(message = "O histórico cirúrgico é obrigatório")
-    @Size(min = 5, max = 500, message = "O histórico cirúrgico deve ter entre 5 e 500 caracteres")
-    private String surgicalHistory;
+    @NotNull(message = "O histórico cirúrgico é obrigatório")
+    private List<Surgery> surgicalHistory;
 
-    @NotBlank(message = "A medicação é obrigatória")
-    @Size(min = 5, max = 500, message = "A medicação deve ter entre 5 e 500 caracteres")
-    private String medications;
+    @NotNull(message = "A medicação é obrigatória")
+    private List<Medication> medications;
 
     private boolean medicalRecordActive = true;
 
-    /**
-     * Converte uma entidade para DTO.
-     */
+    // Converte entidade para DTO
     public static MedicalRecordCreateDto fromEntity(MedicalRecord entity) {
         return MedicalRecordCreateDto.builder()
                 .bloodType(entity.getBloodType())
@@ -59,16 +51,13 @@ public class MedicalRecordCreateDto {
                 .diagnosis(entity.getDiagnosis())
                 .familyHistory(entity.getFamilyHistory())
                 .allergies(entity.getAllergies())
-                .vaccine(entity.getVaccine())
-                .surgicalHistory(entity.getSurgicalHistory())
+                .vaccines(entity.getVaccines())
                 .medications(entity.getMedications())
                 .medicalRecordActive(entity.isMedicalRecordActive())
                 .build();
     }
 
-    /**
-     * Converte o DTO para entidade.
-     */
+    // Converte DTO para entidade
     public MedicalRecord toEntity() {
         return MedicalRecord.builder()
                 .bloodType(this.bloodType)
@@ -76,8 +65,7 @@ public class MedicalRecordCreateDto {
                 .diagnosis(this.diagnosis)
                 .familyHistory(this.familyHistory)
                 .allergies(this.allergies)
-                .vaccine(this.vaccine)
-                .surgicalHistory(this.surgicalHistory)
+                .vaccines(this.vaccines)
                 .medications(this.medications)
                 .medicalRecordActive(this.medicalRecordActive)
                 .build();
