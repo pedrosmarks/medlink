@@ -9,9 +9,6 @@ import java.util.List;
 public interface PatientService extends CrudService<Patient> {
     boolean deactivate(int id);
     boolean delete(int id);
-
     List<PatientResponseDto> getPatientsByMedicId(int medicId);
-
     List<Patient> findByMedicId(int medicId);
-
 }
