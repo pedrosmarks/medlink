@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 // Controlador REST responsável por gerenciar os paientes da aplicação
 @RestController
-@RequestMapping("/api/patients")
+@RequestMapping("/patients")
 public class PatientController {
 
     private final PatientService patientService;
