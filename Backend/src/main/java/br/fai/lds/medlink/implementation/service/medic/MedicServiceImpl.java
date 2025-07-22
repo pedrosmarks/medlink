@@ -47,7 +47,23 @@ public class MedicServiceImpl implements MedicService {
 
     @Override
     public Medic update(int id, Medic entity) {
-        // Implementação de atualização, se necessário no futuro
-        throw new UnsupportedOperationException("Update not implemented yet.");
+        Medic existingMedic = medicDao.readById(id);
+        if (existingMedic == null) {
+            throw new IllegalArgumentException("Médico com o id " + id + " não foi encontrado");
+        }
+
+        existingMedic.setName(entity.getName());
+        existingMedic.setGender(entity.getGender());
+        existingMedic.setBirthDate(entity.getBirthDate());
+        existingMedic.setPhoneNumber(entity.getPhoneNumber());
+        existingMedic.setAddress(entity.getAddress());
+        existingMedic.setCrm(entity.getCrm());
+        existingMedic.setSpecialty(entity.getSpecialty());
+        existingMedic.setEmail(entity.getEmail());
+        existingMedic.setActive(entity.isActive());
+
+        medicDao.updateInformation(id, existingMedic);
+
+        return existingMedic;
     }
 }
