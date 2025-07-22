@@ -26,7 +26,7 @@ public class MedicalRecordController {
 
     // Operações CRUD básico no prontuário médico
 
-    // Cria um novo prontuário médico.
+    // Endpoint para criar um novo prontuario médico
     @PostMapping
     public ResponseEntity<ApiResponse<MedicalRecordResponseDto>> create(@Valid @RequestBody MedicalRecordCreateDto dto) {
         MedicalRecord entity = dto.toEntity();
@@ -41,7 +41,7 @@ public class MedicalRecordController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Retorna todos os prontuários médicos cadastrados.
+    // Endpoint para listar todos os prontuários médicos cadastrados
     @GetMapping
     public ResponseEntity<List<MedicalRecordResponseDto>> getAll() {
         List<MedicalRecord> records = medicalRecordService.findAll();
@@ -51,7 +51,7 @@ public class MedicalRecordController {
         return ResponseEntity.ok(dtos);
     }
 
-    // Retorna um prontuário específico pelo ID.
+    // Endpoint para buscar um prontuário médico pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable int id) {
         MedicalRecord record = medicalRecordService.findById(id);
@@ -62,7 +62,7 @@ public class MedicalRecordController {
         return ResponseEntity.ok(MedicalRecordResponseDto.fromEntity(record));
     }
 
-    // Atualiza os dados de um prontuário existente.
+    // Endpoint para atualizar dados de um prontuário médico existente
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id,
                                     @Valid @RequestBody MedicalRecordUpdateDto dto) {
@@ -83,7 +83,7 @@ public class MedicalRecordController {
         return ResponseEntity.ok(response);
     }
 
-    // Remove um prontuário pelo ID.
+    // Endpoint para "excluir um prontuário médico pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable int id) {
         boolean deleted = medicalRecordService.delete(id);
@@ -94,7 +94,7 @@ public class MedicalRecordController {
         return ResponseEntity.ok(new ApiResponse<>("Prontuário removido com sucesso."));
     }
 
-    // Buscar prontuário por paciente (e verificação de permissão do médico)
+    // Endpoint para buscar prontuário por paciente (e verificação de permissão do médico)
     @GetMapping("/{medicId}/patients/{patientId}/medical-record")
     public ResponseEntity<?> getMedicalRecordByPatient(
             @PathVariable int medicId,
@@ -118,6 +118,7 @@ public class MedicalRecordController {
 
     // Endpoints para adicionar dados clínicos
 
+    // Consultas
     @PostMapping("/{id}/consultations")
     public ResponseEntity<ApiResponse<Void>> addConsultation(@PathVariable int id,
                                                              @Valid @RequestBody ConsultationCreateDto dto) {
@@ -126,6 +127,7 @@ public class MedicalRecordController {
                 .body(new ApiResponse<>("Consulta adicionada ao prontuário com sucesso."));
     }
 
+    // Medicamentos
     @PostMapping("/{id}/medications")
     public ResponseEntity<ApiResponse<Void>> addMedication(@PathVariable int id,
                                                            @Valid @RequestBody MedicationCreateDto dto) {
@@ -134,6 +136,7 @@ public class MedicalRecordController {
                 .body(new ApiResponse<>("Medicamento adicionado ao prontuário com sucesso."));
     }
 
+    // Alergias
     @PostMapping("/{id}/allergies")
     public ResponseEntity<ApiResponse<Void>> addAllergy(@PathVariable int id,
                                                         @Valid @RequestBody AllergyCreateDto dto) {
@@ -142,6 +145,7 @@ public class MedicalRecordController {
                 .body(new ApiResponse<>("Alergia adicionada ao prontuário com sucesso."));
     }
 
+    //Vacinas
     @PostMapping("/{id}/vaccines")
     public ResponseEntity<ApiResponse<Void>> addVaccine(@PathVariable int id,
                                                         @Valid @RequestBody VaccineCreateDto dto) {
@@ -150,6 +154,7 @@ public class MedicalRecordController {
                 .body(new ApiResponse<>("Vacina adicionada ao prontuário com sucesso."));
     }
 
+    //Cirurgia
     @PostMapping("/{id}/surgeries")
     public ResponseEntity<ApiResponse<Void>> addSurgery(@PathVariable int id,
                                                         @Valid @RequestBody SurgeryCreateDto dto) {
@@ -158,11 +163,12 @@ public class MedicalRecordController {
                 .body(new ApiResponse<>("Cirurgia adicionada ao prontuário com sucesso."));
     }
 
-    @PostMapping("/{id}/family-history")
+    //Diagnostico
+    @PostMapping("/{id}/Diagnosis")
     public ResponseEntity<ApiResponse<Void>> addDiagnosis(@PathVariable int id,
                                                           @Valid @RequestBody DiagnosisCreateDto dto) {
         medicalRecordService.addFamilyHistory(id, dto.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Histórico familiar adicionado ao prontuário com sucesso."));
+                .body(new ApiResponse<>("Diagnostico adicionado ao prontuário com sucesso."));
     }
 }
