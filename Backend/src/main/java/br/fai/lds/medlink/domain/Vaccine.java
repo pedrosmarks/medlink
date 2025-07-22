@@ -2,6 +2,8 @@ package br.fai.lds.medlink.domain;
 
 import lombok.*;
 
+// Representa uma vacina aplicada ao paciente
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
