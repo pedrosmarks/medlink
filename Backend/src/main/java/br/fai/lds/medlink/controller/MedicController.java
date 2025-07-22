@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicCreateDto;
@@ -17,71 +18,105 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/medics")
+@RequestMapping("/medics")
 public class MedicController {
 
     private final MedicService medicService;
-    private final PatientService patientService; //
+    private final PatientService patientService;
 
     public MedicController(MedicService medicService, PatientService patientService) {
         this.medicService = medicService;
-        this.patientService = patientService; //
+        this.patientService = patientService;
     }
 
     @PostMapping
-    public ResponseEntity<MedicResponseDto> createMedic(@Valid @RequestBody MedicCreateDto dto) {
+    public ResponseEntity<ApiResponse<MedicResponseDto>> createMedic(@Valid @RequestBody MedicCreateDto dto) {
         Medic medic = dto.toEntity();
         int id = medicService.create(medic);
         medic.setId(id);
-        return new ResponseEntity<>(MedicResponseDto.fromEntity(medic), HttpStatus.CREATED);
+
+        ApiResponse<MedicResponseDto> response = new ApiResponse<>(
+                "Médico criado com sucesso!",
+                MedicResponseDto.fromEntity(medic)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicResponseDto>> getAllMedics() {
+    public ResponseEntity<ApiResponse<List<MedicResponseDto>>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
         List<MedicResponseDto> dtos = medics.stream()
                 .map(MedicResponseDto::fromEntity)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+
+        ApiResponse<List<MedicResponseDto>> response = new ApiResponse<>(
+                "Lista de médicos recuperada com sucesso.",
+                dtos
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicResponseDto> getMedicById(@PathVariable int id) {
+    public ResponseEntity<?> getMedicById(@PathVariable int id) {
         Medic medic = medicService.findById(id);
         if (medic == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Médico não encontrado para o ID: " + id));
         }
-        return ResponseEntity.ok(MedicResponseDto.fromEntity(medic));
+
+        ApiResponse<MedicResponseDto> response = new ApiResponse<>(
+                "Médico encontrado.",
+                MedicResponseDto.fromEntity(medic)
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicResponseDto> updateMedic(@PathVariable int id,
-                                                        @Valid @RequestBody MedicUpdateDto dto) {
+    public ResponseEntity<?> updateMedic(@PathVariable int id,
+                                         @Valid @RequestBody MedicUpdateDto dto) {
         Medic medic = medicService.findById(id);
         if (medic == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Médico não encontrado para atualização."));
         }
+
         dto.updateEntity(medic);
         Medic updated = medicService.update(id, medic);
-        return ResponseEntity.ok(MedicResponseDto.fromEntity(updated));
+
+        ApiResponse<MedicResponseDto> response = new ApiResponse<>(
+                "Médico atualizado com sucesso!",
+                MedicResponseDto.fromEntity(updated)
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deactivateMedic(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> deactivateMedic(@PathVariable int id) {
         boolean success = medicService.delete(id);
         if (!success) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Médico não encontrado para exclusão."));
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>("Médico removido com sucesso."));
     }
 
-    //  Listar pacientes vinculados ao médico
+    // Listar pacientes vinculados ao médico
     @GetMapping("/{id}/patients")
-    public ResponseEntity<List<PatientResponseDto>> getPatientsByMedic(@PathVariable("id") int medicId) {
-        List<Patient> patients = patientService.findByMedicId(medicId); // busca entidades
+    public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getPatientsByMedic(@PathVariable("id") int medicId) {
+        List<Patient> patients = patientService.findByMedicId(medicId);
         List<PatientResponseDto> dtos = patients.stream()
-                .map(PatientResponseDto::fromEntity) // converte para DTO
+                .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+
+        ApiResponse<List<PatientResponseDto>> response = new ApiResponse<>(
+                "Lista de pacientes do médico recuperada com sucesso.",
+                dtos
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
