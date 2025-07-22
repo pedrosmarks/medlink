@@ -5,4 +5,7 @@ import br.fai.lds.medlink.port.service.crud.CrudService;
 
 public interface MedicService extends CrudService<Medic> {
 
+
+
+
 }
