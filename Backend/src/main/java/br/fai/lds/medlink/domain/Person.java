@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 
+// Classe abstrata que representa uma pessoa genérica.
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
