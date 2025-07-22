@@ -11,13 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//Controlador responsável por gerenciar as operações de autenticação e recuperação de senha.
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/login")
+@RequestMapping("/login")
 public class AuthController {
 
+    // Serviço responsável pela lógica de autenticação e recuperação de senha.
     private final AuthenticationService authenticationService;
 
+    //Realiza o login do usuário (médico ou paciente).
     @PostMapping
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
 
@@ -43,6 +47,8 @@ public class AuthController {
                 .body("Credenciais inválidas");
     }
 
+
+    //Solicita o envio de um código de verificação para redefinição de senha.
     @PostMapping("/request-password-reset")
     public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
         boolean success = authenticationService.sendVerificationCode(dto.getIdentifier());
@@ -55,6 +61,7 @@ public class AuthController {
         return ResponseEntity.ok("Código de verificação enviado.");
     }
 
+    //Redefine a senha do usuário com base no código de verificação recebido.
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
         boolean success = authenticationService.resetPassword(dto);
