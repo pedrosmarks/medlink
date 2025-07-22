@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-// Representa um paciente no sistema,
+//Representa um paciente no sistema
 
 @Data
 @SuperBuilder
@@ -12,12 +12,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class Patient extends Person {
 
-
     private int id;
 
     @NotNull(message = "O endereco de email não pode estar em branco")
     private String email;
-
 
     @NotNull(message = "O plano não pode estar em branco")
     private String plan;
@@ -25,9 +23,10 @@ public class Patient extends Person {
     @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
 
+    private MedicalRecord medicalRecord;
+
     @Builder.Default
     private boolean active = true;
 
     private int medicId;
-
 }
