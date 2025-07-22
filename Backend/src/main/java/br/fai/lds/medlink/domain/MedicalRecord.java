@@ -47,4 +47,5 @@ public class MedicalRecord {
 
     @Builder.Default
     private List<Consultation> consultations = new ArrayList<>();
+
 }
