@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientUpdateDto;
@@ -25,53 +26,75 @@ public class PatientController {
 
     // Criar paciente
     @PostMapping
-    public ResponseEntity<PatientResponseDto> createPatient(@Valid @RequestBody PatientCreateDto dto) {
+    public ResponseEntity<ApiResponse<PatientResponseDto>> createPatient(@Valid @RequestBody PatientCreateDto dto) {
         Patient patient = dto.toEntity();
         int id = patientService.create(patient);
         patient.setId(id);
-        return new ResponseEntity<>(PatientResponseDto.fromEntity(patient), HttpStatus.CREATED);
+
+        ApiResponse<PatientResponseDto> response = new ApiResponse<>(
+                "Paciente criado com sucesso!",
+                PatientResponseDto.fromEntity(patient)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // Listar todos
     @GetMapping
-    public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
+    public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
         List<PatientResponseDto> dtos = patients.stream()
                 .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+
+        ApiResponse<List<PatientResponseDto>> response = new ApiResponse<>(
+                "Lista de pacientes carregada com sucesso.",
+                dtos
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     // Buscar por id
     @GetMapping("/{id}")
-    public ResponseEntity<PatientResponseDto> getPatientById(@PathVariable int id) {
+    public ResponseEntity<?> getPatientById(@PathVariable int id) {
         Patient patient = patientService.findById(id);
         if (patient == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Paciente não encontrado para o ID: " + id));
         }
-        return ResponseEntity.ok(PatientResponseDto.fromEntity(patient));
+        return ResponseEntity.ok(new ApiResponse<>(
+                "Paciente encontrado.",
+                PatientResponseDto.fromEntity(patient)
+        ));
     }
 
     // Atualizar paciente
     @PutMapping("/{id}")
-    public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable int id,
-                                                            @Valid @RequestBody PatientUpdateDto dto) {
+    public ResponseEntity<?> updatePatient(@PathVariable int id,
+                                           @Valid @RequestBody PatientUpdateDto dto) {
         Patient patient = patientService.findById(id);
         if (patient == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Paciente não encontrado para atualização."));
         }
         dto.updateEntity(patient);
         Patient updated = patientService.update(id, patient);
-        return ResponseEntity.ok(PatientResponseDto.fromEntity(updated));
+
+        return ResponseEntity.ok(new ApiResponse<>(
+                "Paciente atualizado com sucesso!",
+                PatientResponseDto.fromEntity(updated)
+        ));
     }
 
     // Inativar paciente
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deactivatePatient(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<Void>> deactivatePatient(@PathVariable int id) {
         boolean success = patientService.deactivate(id);
         if (!success) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Paciente não encontrado para inativação."));
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>("Paciente inativado com sucesso."));
     }
 }
