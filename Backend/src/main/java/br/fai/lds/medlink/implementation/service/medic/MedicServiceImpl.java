@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MedicServiceImpl  implements MedicService {
+public class MedicServiceImpl implements MedicService {
 
     private final MedicDao medicDao;
 
@@ -17,7 +17,6 @@ public class MedicServiceImpl  implements MedicService {
     public MedicServiceImpl(MedicDao medicDao) {
         this.medicDao = medicDao;
     }
-
 
     @Override
     public int create(Medic entity) {
@@ -36,10 +35,9 @@ public class MedicServiceImpl  implements MedicService {
         return true;
     }
 
-
     @Override
     public Medic findById(int id) {
-        return (Medic) medicDao.readById(id);
+        return medicDao.readById(id);
     }
 
     @Override
@@ -49,11 +47,7 @@ public class MedicServiceImpl  implements MedicService {
 
     @Override
     public Medic update(int id, Medic entity) {
+        // Implementação de atualização, se necessário no futuro
         throw new UnsupportedOperationException("Update not implemented yet.");
-    }
-
-    @Override
-    public Medic readById(int id) {
-        return null;
     }
 }
