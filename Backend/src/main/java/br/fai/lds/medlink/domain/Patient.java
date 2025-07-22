@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+// Representa um paciente no sistema,
 
 @Data
 @SuperBuilder
