@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Controlador REST responsável por gerenciar os médicos da aplicação
 @RestController
 @RequestMapping("/medics")
 public class MedicController {
@@ -24,11 +25,13 @@ public class MedicController {
     private final MedicService medicService;
     private final PatientService patientService;
 
+    // Injeção de dependências via construtor
     public MedicController(MedicService medicService, PatientService patientService) {
         this.medicService = medicService;
         this.patientService = patientService;
     }
 
+    // Endpoint para criar um novo médico
     @PostMapping
     public ResponseEntity<ApiResponse<MedicResponseDto>> createMedic(@Valid @RequestBody MedicCreateDto dto) {
         Medic medic = dto.toEntity();
@@ -43,6 +46,7 @@ public class MedicController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // Endpoint para listar todos os médicos cadastrados
     @GetMapping
     public ResponseEntity<ApiResponse<List<MedicResponseDto>>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
@@ -58,6 +62,7 @@ public class MedicController {
         return ResponseEntity.ok(response);
     }
 
+    // Endpoint para buscar um médico pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getMedicById(@PathVariable int id) {
         Medic medic = medicService.findById(id);
@@ -74,6 +79,7 @@ public class MedicController {
         return ResponseEntity.ok(response);
     }
 
+    // Endpoint para atualizar dados de um médico existente
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMedic(@PathVariable int id,
                                          @Valid @RequestBody MedicUpdateDto dto) {
@@ -94,6 +100,7 @@ public class MedicController {
         return ResponseEntity.ok(response);
     }
 
+    // Endpoint para "desativar" ou excluir um médico pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deactivateMedic(@PathVariable int id) {
         boolean success = medicService.delete(id);
