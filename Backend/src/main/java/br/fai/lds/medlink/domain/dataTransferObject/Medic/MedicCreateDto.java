@@ -12,6 +12,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+//DTO para criação de médico.
+
+
 @Data
 public class MedicCreateDto {
 
@@ -46,8 +49,11 @@ public class MedicCreateDto {
     @Email(message = "O e-mail deve ser válido")
     private String email;
 
+    @NotNull(message = "A senha não pode estar em branco")
     @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
     private String password;
+
+    //Converte este DTO em uma entidade Medic.
 
     public Medic toEntity() {
         Medic entity = new Medic();
