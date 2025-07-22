@@ -2,6 +2,8 @@ package br.fai.lds.medlink.domain;
 
 import lombok.*;
 
+
+//Representa uma consulta médica registrada no prontuário do paciente
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
