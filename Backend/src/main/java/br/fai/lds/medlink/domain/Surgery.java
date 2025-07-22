@@ -2,6 +2,8 @@ package br.fai.lds.medlink.domain;
 
 import lombok.*;
 
+//Representa uma cirurgia realizada pelo paciente.
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
