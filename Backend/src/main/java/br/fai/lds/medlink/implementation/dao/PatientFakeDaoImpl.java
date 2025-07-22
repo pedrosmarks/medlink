@@ -116,5 +116,9 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Patient> findAll() {
+        return patientList;
+    }
 
 }
