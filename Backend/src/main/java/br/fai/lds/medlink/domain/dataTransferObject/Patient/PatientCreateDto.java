@@ -4,12 +4,15 @@ import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Patient;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+
+// DTO para criação de pacientes no sistema.
 
 @Data
 public class PatientCreateDto {
@@ -36,6 +39,7 @@ public class PatientCreateDto {
     private Address address;
 
     @NotNull(message = "O endereço de email não pode estar em branco")
+    @Email(message = "O e-mail deve ser válido")
     private String email;
 
     @NotNull(message = "O plano não pode estar em branco")
