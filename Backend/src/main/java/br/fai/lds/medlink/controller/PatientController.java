@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Controlador REST responsável por gerenciar os paientes da aplicação
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
