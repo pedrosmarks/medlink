@@ -21,11 +21,12 @@ public class PatientController {
 
     private final PatientService patientService;
 
+    // Injeção de dependências via construtor
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
 
-    // Criar paciente
+    // Endpoint para criar um novo paciente
     @PostMapping
     public ResponseEntity<ApiResponse<PatientResponseDto>> createPatient(@Valid @RequestBody PatientCreateDto dto) {
         Patient patient = dto.toEntity();
@@ -40,7 +41,7 @@ public class PatientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Listar todos
+    // Endpoint para listar todos os pacientes cadastrados
     @GetMapping
     public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
@@ -56,7 +57,7 @@ public class PatientController {
         return ResponseEntity.ok(response);
     }
 
-    // Buscar por id
+    // Endpoint para buscar um paciente pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getPatientById(@PathVariable int id) {
         Patient patient = patientService.findById(id);
@@ -70,7 +71,7 @@ public class PatientController {
         ));
     }
 
-    // Atualizar paciente
+    // Endpoint para atualizar dados de um paciente existente
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePatient(@PathVariable int id,
                                            @Valid @RequestBody PatientUpdateDto dto) {
@@ -88,7 +89,7 @@ public class PatientController {
         ));
     }
 
-    // Inativar paciente
+    //Endpoint para "desativar" ou excluir um paciente pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deactivatePatient(@PathVariable int id) {
         boolean success = patientService.deactivate(id);
