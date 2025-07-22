@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+//Representa um médico no sistema
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
