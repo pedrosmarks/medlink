@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+// Representa o prontuário médico de um paciente
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
