@@ -12,6 +12,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
+
+//Representa o endereço de um paciente ou médico no sistema.
 public class Address {
 
     @NotBlank(message = "Nome da rua não pode estar em branco")
