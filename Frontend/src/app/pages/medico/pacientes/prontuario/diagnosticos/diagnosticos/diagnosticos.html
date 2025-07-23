@@ -2,8 +2,21 @@
   ← Voltar ao prontuário
 </button>
 <h2>Diagnósticos de {{ pacienteNome }}</h2>
+
+<div class="mb-3 d-flex gap-2">
+  <input type="text" class="form-control" [(ngModel)]="novoDiagnosticoNome" placeholder="Nome do diagnóstico">
+  <input type="date" class="form-control" [(ngModel)]="novoDiagnosticoData" placeholder="Data">
+  <button class="btn btn-success" (click)="adicionarDiagnostico()">Adicionar</button>
+</div>
+
 <div class="diagnosticos-grid">
-  <div class="diagnostico-card" *ngFor="let diag of diagnosticos">
+  <div class="diagnostico-card position-relative" *ngFor="let diag of diagnosticos; let i = index">
+    <button
+      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+      (click)="removerDiagnostico(i)"
+      title="Remover diagnóstico"
+      style="z-index:2"
+    >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="36" alt="Diagnóstico" />
     <div>
       <strong>Nome:</strong> {{ diag.nome }}<br>

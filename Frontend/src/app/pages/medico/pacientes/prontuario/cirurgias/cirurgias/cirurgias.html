@@ -2,8 +2,22 @@
   ← Voltar ao prontuário
 </button>
 <h2>Cirurgias de {{ pacienteNome }}</h2>
+
+<div class="mb-3 d-flex gap-2">
+  <input type="text" class="form-control" [(ngModel)]="novaCirurgiaNome" placeholder="Nome da cirurgia">
+  <input type="date" class="form-control" [(ngModel)]="novaCirurgiaData" placeholder="Data">
+  <input type="text" class="form-control" [(ngModel)]="novaCirurgiaDescricao" placeholder="Descrição">
+  <button class="btn btn-success" (click)="adicionarCirurgia()">Adicionar</button>
+</div>
+
 <div class="cirurgias-grid">
-  <div class="cirurgia-card" *ngFor="let cirurgia of cirurgias">
+  <div class="cirurgia-card position-relative" *ngFor="let cirurgia of cirurgias; let i = index">
+    <button
+      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+      (click)="removerCirurgia(i)"
+      title="Remover cirurgia"
+      style="z-index:2"
+    >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
     <div>
       <strong>Nome:</strong> {{ cirurgia.nome }}<br>

@@ -1,9 +1,23 @@
 <button class="btn btn-secondary mb-3" [routerLink]="['../']">
   ← Voltar ao prontuário
 </button>
+
 <h2>Vacinas de {{ pacienteNome }}</h2>
+
+<div class="mb-3 d-flex gap-2">
+  <input type="text" class="form-control" [(ngModel)]="novaVacinaNome" placeholder="Nome da vacina">
+  <input type="date" class="form-control" [(ngModel)]="novaVacinaData" placeholder="Data">
+  <button class="btn btn-success" (click)="adicionarVacina()">Adicionar</button>
+</div>
+
 <div class="vacinas-grid">
-  <div class="vacina-card" *ngFor="let vacina of vacinas">
+  <div class="vacina-card position-relative" *ngFor="let vacina of vacinas; let i = index">
+    <button
+      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+      (click)="removerVacina(i)"
+      title="Remover vacina"
+      style="z-index:2"
+    >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
     <div>
       <strong>Nome:</strong> {{ vacina.nome }}<br>

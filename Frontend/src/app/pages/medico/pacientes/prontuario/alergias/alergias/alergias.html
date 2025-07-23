@@ -1,9 +1,22 @@
 <button class="btn btn-secondary mb-3" [routerLink]="['../']">
   ← Voltar ao prontuário
 </button>
+
 <h2>Alergias de {{ pacienteNome }}</h2>
+
+<div class="mb-3 d-flex gap-2">
+  <input type="text" class="form-control" [(ngModel)]="novaAlergia" placeholder="Nova alergia">
+  <button class="btn btn-success" (click)="adicionarAlergia()">Adicionar</button>
+</div>
+
 <div class="alergias-grid">
-  <div class="alergia-card" *ngFor="let alergia of alergias">
+  <div class="alergia-card position-relative" *ngFor="let alergia of alergias; let i = index">
+    <button
+      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+      (click)="removerAlergia(i)"
+      title="Remover alergia"
+      style="z-index:2"
+    >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
     <div>
       <strong>Descrição:</strong> {{ alergia.descricao }}

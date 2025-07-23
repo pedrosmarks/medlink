@@ -15,6 +15,7 @@
   align-items: flex-start;
   gap: 1em;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  position: relative;
 }
 .alergia-card img {
   margin-top: 0.2em;
