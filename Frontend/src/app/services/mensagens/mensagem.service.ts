@@ -1,4 +1,3 @@
-// src/services/mensagens/mensagens.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -24,6 +23,7 @@ export class MensagensService {
   // Enviar nova mensagem
   enviarMensagem(mensagem: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/mensagens`, mensagem);
+    
   }
 
   // Marcar mensagem como lida

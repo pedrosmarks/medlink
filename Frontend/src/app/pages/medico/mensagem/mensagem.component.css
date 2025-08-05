@@ -1,3 +1,102 @@
-.card {
-  border-radius: 16px;
+/* src/app/pages/mensagens/mensagens.component.css */
+.mensagens-container {
+  display: flex;
+  height: 80vh;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.conversas-lista {
+  width: 30%;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.conversa-item {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.conversa-item:hover,
+.conversa-item.ativa {
+  background-color: #f0f0f0;
+}
+
+.conversa-item img {
+  margin-right: 0.8rem;
+  border-radius: 50%;
+}
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  background-color: #f8f9fa;
+}
+
+.mensagens-lista {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.mensagem {
+  margin-bottom: 1rem;
+}
+
+.mensagem.minha {
+  text-align: right;
+}
+
+.mensagem-conteudo {
+  display: inline-block;
+  max-width: 70%;
+  padding: 0.8rem;
+  border-radius: 12px;
+  background-color: #e9ecef;
+}
+
+.mensagem.minha .mensagem-conteudo {
+  background-color: #007bff;
+  color: white;
+}
+
+.enviar-mensagem {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+  gap: 0.5rem;
+}
+
+.novos-contatos {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.medico-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.medico-item:hover {
+  background-color: #f0f0f0;
+}
+
+.medico-item img {
+  margin-right: 0.5rem;
+  border-radius: 50%;
 }

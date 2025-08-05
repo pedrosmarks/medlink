@@ -94,17 +94,63 @@
   "mensagens": [
     {
       "id": "1",
-      "nome": "João da Silva",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
-      "novas": 2,
-      "resumo": "Boa tarde, Dr a receita a...."
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Olá, doutor! Gostaria de agendar uma consulta.",
+      "data": "2024-08-04T10:00:00",
+      "lida": false
     },
     {
       "id": "2",
-      "nome": "Maria Oliveira",
-      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
-      "novas": 1,
-      "resumo": "Olá, gostaria de agendar uma consulta."
+      "remetenteId": "medico_1",
+      "remetenteTipo": "medico",
+      "remetenteNome": "Dr. Carlos Silva",
+      "destinatarioId": "1",
+      "destinatarioTipo": "paciente",
+      "destinatarioNome": "João da Silva",
+      "texto": "Olá, João! Claro, vamos agendar. Que dia seria melhor para você?",
+      "data": "2024-08-04T10:05:00",
+      "lida": false
+    },
+    {
+      "id": "44de",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Você tá bom?",
+      "data": "2025-08-05T23:45:02.221Z",
+      "lida": false
+    },
+    {
+      "id": "1e91",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Sim doutor estou bom demais",
+      "data": "2025-08-05T23:45:10.358Z",
+      "lida": false
+    },
+    {
+      "id": "49d4",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "queria uma ajuda",
+      "data": "2025-08-05T23:45:15.356Z",
+      "lida": false
     }
   ],
   "pacientes": [
@@ -178,7 +224,6 @@
         2
       ],
       "requisicoesAcesso": [
-        {},
         {
           "medicoId": 1,
           "status": "pendente"
@@ -262,12 +307,41 @@
       "alergias": []
     }
   ],
+  "mensagem": [
+    {
+      "id": "10",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "5",
+      "mensagem": "vida que segue, to passando mal",
+      "data_hora": "04-08-2025 20:13:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    },
+    {
+      "id": "11",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "2",
+      "mensagem": "diga ai, oqq ta pegando?",
+      "data_hora": "04-08-2025 20:14:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    },
+    {
+      "id": "12",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "5",
+      "mensagem": "vida que segue, to passando mal",
+      "data_hora": "04-08-2025 20:15:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    }
+  ],
   "perfil": [
     {
       "id": "1",
       "nome": "Dr. Pedro Almeida",
       "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-      "especialidade": "Cardiologia",
+      "especialidade": "Cardiologia muito legal",
       "crm": "123456-SP",
       "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
       "cpf": "123.456.789-00",

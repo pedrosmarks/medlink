@@ -1,21 +1,55 @@
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-10">
-      <div class="text-center mb-4">
-        <img src="https://cdn-icons-png.flaticon.com/512/726/726623.png" width="70" alt="Mensagens">
-        <h2 class="mt-2">Mensagens</h2>
+<!-- src/app/pages/mensagens/mensagens.component.html -->
+<div class="mensagens-container">
+  <div class="conversas-lista">
+    <h3>Conversas</h3>
+    
+    <!-- Lista de médicos para nova conversa -->
+    <div class="novos-contatos">
+      <h5>Iniciar nova conversa</h5>
+      <div class="medico-item" *ngFor="let medico of medicos" (click)="iniciarNovaConversa(medico)">
+        <img [src]="medico.avatar" width="30" [alt]="medico.nome">
+        <span>{{ medico.nome }}</span>
       </div>
-      <div class="card p-4">
-        <div *ngFor="let msg of mensagens" class="d-flex align-items-center mb-4">
-          <img [src]="msg.avatar" alt="Avatar" width="70" height="70" class="rounded-circle me-4 border">
-          <div>
-            <h5 class="mb-1">{{ msg.nome }}</h5>
-            <div *ngIf="msg.novas > 0" class="text-success">{{ msg.novas }} Novas mensagens</div>
-            <div *ngIf="msg.novas === 0" class="text-muted">Nenhuma nova mensagem</div>
-            <div class="text-secondary">{{ msg.resumo }}</div>
-          </div>
+    </div>
+
+    <!-- Lista de conversas existentes -->
+    <div class="conversa-item" 
+         *ngFor="let conversa of conversas" 
+         (click)="selecionarConversa(conversa)"
+         [class.ativa]="destinatarioSelecionado?.usuario.id === conversa.usuario.id">
+      <img [src]="conversa.usuario.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'" 
+           width="40" [alt]="conversa.usuario.nome">
+      <div>
+        <strong>{{ conversa.usuario.nome }}</strong>
+        <p>{{ conversa.ultimaMensagem.texto | slice:0:50 }}...</p>
+        <small>{{ conversa.ultimaMensagem.data | date:'dd/MM HH:mm' }}</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-area" *ngIf="destinatarioSelecionado">
+    <div class="chat-header">
+      <h4>{{ destinatarioSelecionado.usuario.nome }}</h4>
+    </div>
+    
+    <div class="mensagens-lista">
+      <div class="mensagem" 
+           *ngFor="let mensagem of destinatarioSelecionado.mensagens"
+           [class.minha]="mensagem.remetenteId === usuarioAtual.id">
+        <div class="mensagem-conteudo">
+          <p>{{ mensagem.texto }}</p>
+          <small>{{ mensagem.data | date:'dd/MM HH:mm' }}</small>
         </div>
       </div>
+    </div>
+
+    <div class="enviar-mensagem">
+      <input type="text" 
+             class="form-control" 
+             [(ngModel)]="novaMensagem" 
+             placeholder="Digite sua mensagem..."
+             (keyup.enter)="enviarMensagem()">
+      <button class="btn btn-primary" (click)="enviarMensagem()">Enviar</button>
     </div>
   </div>
 </div>
