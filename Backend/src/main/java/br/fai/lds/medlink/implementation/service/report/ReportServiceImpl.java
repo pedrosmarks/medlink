@@ -7,10 +7,11 @@ import br.fai.lds.medlink.domain.dataTransferObject.Report.PlanTypeReportDto;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class ReportServiceImpl  implements ReportService {
     @Autowired
     private PatientDao patientDao;

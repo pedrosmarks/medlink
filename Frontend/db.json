@@ -151,6 +151,18 @@
       "texto": "queria uma ajuda",
       "data": "2025-08-05T23:45:15.356Z",
       "lida": false
+    },
+    {
+      "id": "2716",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "opaaa",
+      "data": "2025-08-06T16:07:58.197Z",
+      "lida": false
     }
   ],
   "pacientes": [
@@ -184,12 +196,21 @@
         {
           "nome": "COVID-19",
           "data": "2023-01-15"
+        },
+        {
+          "nome": "Febre amarela",
+          "data": "2025-08-06"
         }
       ],
       "medicamentos": [
         {
           "nome": "Losartana",
           "dosagem": "50mg"
+        },
+        {
+          "nome": "Tylenol",
+          "dosagem": "2 por dia",
+          "inicio": "2025-08-07"
         }
       ],
       "cirurgias": [
