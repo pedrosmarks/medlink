@@ -1,0 +1,48 @@
+<div class="container mt-4" *ngIf="paciente">
+  <h2>Perfil do Paciente</h2>
+  <div *ngIf="mensagem" class="alert alert-success">{{ mensagem }}</div>
+  <form *ngIf="editando; else visualizar" (ngSubmit)="salvar()">
+    <div class="mb-3">
+      <label class="form-label">Nome</label>
+      <input class="form-control" [(ngModel)]="paciente.nome" name="nome" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">E-mail</label>
+      <input class="form-control" [(ngModel)]="paciente.email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Telefone</label>
+      <input class="form-control" [(ngModel)]="paciente.telefone" name="telefone">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">CPF</label>
+      <input class="form-control" [(ngModel)]="paciente.cpf" name="cpf" disabled>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Idade</label>
+      <input type="number" class="form-control" [(ngModel)]="paciente.idade" name="idade">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tipo Sanguíneo</label>
+      <input class="form-control" [(ngModel)]="paciente.tipoSanguineo" name="tipoSanguineo">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Observações</label>
+      <textarea class="form-control" [(ngModel)]="paciente.observacoes" name="observacoes"></textarea>
+    </div>
+    <button class="btn btn-success" type="submit">Salvar</button>
+    <button class="btn btn-secondary ms-2" type="button" (click)="editando = false">Cancelar</button>
+  </form>
+  <ng-template #visualizar>
+    <div class="card p-3">
+      <div><strong>Nome:</strong> {{ paciente.nome }}</div>
+      <div><strong>E-mail:</strong> {{ paciente.email }}</div>
+      <div><strong>Telefone:</strong> {{ paciente.telefone }}</div>
+      <div><strong>CPF:</strong> {{ paciente.cpf }}</div>
+      <div><strong>Idade:</strong> {{ paciente.idade }}</div>
+      <div><strong>Tipo Sanguíneo:</strong> {{ paciente.tipoSanguineo }}</div>
+      <div><strong>Observações:</strong> {{ paciente.observacoes }}</div>
+      <button class="btn btn-primary mt-3" (click)="editando = true">Editar Perfil</button>
+    </div>
+  </ng-template>
+</div>

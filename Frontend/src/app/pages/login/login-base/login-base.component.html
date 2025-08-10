@@ -1,22 +1,13 @@
-<form>
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Usuário</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-    
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Senha</label>
-    <input type="password" class="form-control" id="exampleInputPassword1">
-  </div>
-  
-  
-  <div class="d-flex justify-content-center"><button type="submit" class="btn btn-primary">Entrar</button></div>
-  <div class="d-flex justify-content-center"><a>Esqueci minha senha</a></div>
-<br>
-<br>
-  
-
-  <div class="d-flex justify-content-center"><p>Não tem cadastro?</p></div>
-  <div class="d-flex justify-content-center"><button type="submit" class="btn btn-primary">Cadastre-se</button></div>
-  
-</form>
+<div class="login-container">
+  <form>
+    <div class="mb-3">
+      <label>Usuário</label>
+      <input class="form-control" [(ngModel)]="usuario" name="usuario" required>
+    </div>
+    <div class="mb-3">
+      <label>Senha</label>
+      <input type="password" class="form-control" [(ngModel)]="senha" name="senha" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Entrar</button>
+  </form>
+</div>

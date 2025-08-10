@@ -1,0 +1,23 @@
+<div class="container mt-4">
+  <h2>Requisições de Acesso</h2>
+  <div *ngIf="requisicoes.length === 0" class="alert alert-info mt-3">
+    Nenhuma requisição de acesso no momento.
+  </div>
+  <div *ngFor="let req of requisicoes" class="card mb-3 p-3">
+    <div>
+      <strong>Médico:</strong> {{ getNomeMedico(req.medicoId) }}
+    </div>
+    <div>
+      <strong>Status:</strong>
+      <span [ngClass]="{
+        'text-warning': req.status === 'pendente',
+        'text-success': req.status === 'aprovado',
+        'text-danger': req.status === 'recusado'
+      }">{{ req.status }}</span>
+    </div>
+    <div *ngIf="req.status === 'pendente'" class="mt-2">
+      <button class="btn btn-success btn-sm me-2" (click)="aprovar(req.medicoId)">Aprovar</button>
+      <button class="btn btn-danger btn-sm" (click)="recusar(req.medicoId)">Recusar</button>
+    </div>
+  </div>
+</div>

@@ -1,14 +1,20 @@
-
 <div class="container mt-5">
   <div class="login">
-  <tabset class="tabset-custom">
-    <tab heading="Paciente" id="tab1">
-      <app-login-base></app-login-base>
-    </tab>
-    <tab heading="Médico(a)">
-      <app-login-base></app-login-base>
-    </tab>
-  </tabset>
-</div>
-
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="aba === 'paciente'" (click)="aba = 'paciente'">Paciente</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="aba === 'medico'" (click)="aba = 'medico'">Médico(a)</a>
+      </li>
+    </ul>
+    <div class="tab-content mt-3">
+      <div *ngIf="aba === 'paciente'">
+        <app-login-base [perfil]="'paciente'"></app-login-base>
+      </div>
+      <div *ngIf="aba === 'medico'">
+        <app-login-base [perfil]="'medico'"></app-login-base>
+      </div>
+    </div>
+  </div>
 </div>

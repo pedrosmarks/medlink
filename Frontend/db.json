@@ -175,7 +175,7 @@
       "tipoSanguineo": "A+",
       "telefone": "35 9xxxx-xxxx",
       "email": "joao@exemplo.com.br",
-      "observacoes": "Paciente faz hemodialise",
+      "observacoes": "",
       "especialistasAutorizados": [
         1,
         2
@@ -183,7 +183,7 @@
       "requisicoesAcesso": [
         {
           "medicoId": 3,
-          "status": "pendente"
+          "status": "aprovado"
         }
       ],
       "consultas": [
@@ -242,12 +242,13 @@
       "email": "maria@exemplo.com.br",
       "observacoes": "Paciente diabética",
       "especialistasAutorizados": [
-        2
+        2,
+        1
       ],
       "requisicoesAcesso": [
         {
           "medicoId": 1,
-          "status": "pendente"
+          "status": "aprovado"
         }
       ],
       "consultas": [
@@ -370,6 +371,34 @@
       "tipoSanguineo": "O+",
       "telefone": "(11) 99999-8888",
       "email": "pedro.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
+    },
+    {
+      "id": "2",
+      "nome": "Dr. jose Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia muito legal",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "jose.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
+    },
+    {
+      "id": "3",
+      "nome": "Dr. manoel Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia muito legal",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "manoel.almeida@medlink.com",
       "observacoes": "Atende convênios e particular e tb isso aqui."
     }
   ],
