@@ -13,6 +13,7 @@ import java.util.List;
 // Controlador REST responsável por fornecer os relatórios disponíveis ao médico
 @RestController
 @RequestMapping("/report")
+@CrossOrigin
 public class ReportController {
 
     @Autowired
