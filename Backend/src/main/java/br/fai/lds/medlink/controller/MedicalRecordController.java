@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 // Controlador responsável pelo gerenciamento dos Prontuários Médicos.
 @RestController
 @RequestMapping("/medical-records")
+@CrossOrigin
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
