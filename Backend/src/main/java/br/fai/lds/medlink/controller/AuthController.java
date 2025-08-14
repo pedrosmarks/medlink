@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginResponseDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
+import br.fai.lds.medlink.domain.dataTransferObject.Login.FrontendLoginDTO;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/login")
+@CrossOrigin
 public class AuthController {
 
     // Serviço responsável pela lógica de autenticação e recuperação de senha.
@@ -23,9 +25,11 @@ public class AuthController {
 
     //Realiza o login do usuário (médico ou paciente).
     @PostMapping
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody FrontendLoginDTO frontendLoginDTO) {
+        String email = frontendLoginDTO.getUsuario();
+        String password = frontendLoginDTO.getSenha();
 
-        var medic = authenticationService.authenticateMedic(loginDTO.getEmail(), loginDTO.getPassword());
+        var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
             return ResponseEntity.ok(new LoginResponseDTO(
                     medic.getId(),
@@ -34,7 +38,7 @@ public class AuthController {
             ));
         }
 
-        var patient = authenticationService.authenticatePatient(loginDTO.getEmail(), loginDTO.getPassword());
+        var patient = authenticationService.authenticatePatient(email, password);
         if (patient != null) {
             return ResponseEntity.ok(new LoginResponseDTO(
                     patient.getId(),
