@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 // Controlador REST responsável por gerenciar os paientes da aplicação
 @RestController
 @RequestMapping("/patients")
+@CrossOrigin
 public class PatientController {
 
     private final PatientService patientService;
