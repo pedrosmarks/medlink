@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Controlador REST responsável por gerenciar os médicos da aplicação
+// Controlador REST consolidado para gerenciar os médicos da aplicação
 @RestController
 @RequestMapping("/medics")
 @CrossOrigin
@@ -126,5 +126,27 @@ public class MedicController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    // Endpoint para autenticação de médico (compatibilidade com frontend)
+    @GetMapping("/auth")
+    public ResponseEntity<ApiResponse<MedicResponseDto>> authenticateMedic(
+            @RequestParam String usuario, 
+            @RequestParam String senha) {
+        
+        // Simulação de autenticação - em produção usar Spring Security
+        if ("admin".equals(usuario) && "123".equals(senha)) {
+            Medic medic = medicService.findById(1); // Busca médico padrão
+            if (medic != null) {
+                ApiResponse<MedicResponseDto> response = new ApiResponse<>(
+                        "Login realizado com sucesso.",
+                        MedicResponseDto.fromEntity(medic)
+                );
+                return ResponseEntity.ok(response);
+            }
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse<>("Credenciais inválidas."));
     }
 }
