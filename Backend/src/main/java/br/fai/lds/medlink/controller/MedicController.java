@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 // Controlador REST consolidado para gerenciar os médicos da aplicação
 @RestController
 @RequestMapping("/medics")
-@CrossOrigin
 public class MedicController {
 
     private final MedicService medicService;
