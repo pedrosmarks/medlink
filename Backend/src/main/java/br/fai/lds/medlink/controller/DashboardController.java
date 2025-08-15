@@ -8,7 +8,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/dashboard")
-@CrossOrigin
 public class DashboardController {
 
     @GetMapping
