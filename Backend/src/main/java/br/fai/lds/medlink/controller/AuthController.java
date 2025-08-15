@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginResponseDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/login")
+@RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
 
@@ -24,57 +25,59 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     //Realiza o login do usuário (médico ou paciente).
-    @PostMapping
-    public ResponseEntity<?> login(@RequestBody FrontendLoginDTO frontendLoginDTO) {
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody FrontendLoginDTO frontendLoginDTO) {
         String email = frontendLoginDTO.getUsuario();
         String password = frontendLoginDTO.getSenha();
 
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
-            return ResponseEntity.ok(new LoginResponseDTO(
+            LoginResponseDTO response = new LoginResponseDTO(
                     medic.getId(),
                     medic.getName(),
                     "MEDIC"
-            ));
+            );
+            return ResponseEntity.ok(new ApiResponse<>("Login realizado com sucesso.", response));
         }
 
         var patient = authenticationService.authenticatePatient(email, password);
         if (patient != null) {
-            return ResponseEntity.ok(new LoginResponseDTO(
+            LoginResponseDTO response = new LoginResponseDTO(
                     patient.getId(),
                     patient.getName(),
                     "PATIENT"
-            ));
+            );
+            return ResponseEntity.ok(new ApiResponse<>("Login realizado com sucesso.", response));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("Credenciais inválidas");
+                .body(new ApiResponse<>("Credenciais inválidas."));
     }
 
 
     //Solicita o envio de um código de verificação para redefinição de senha.
     @PostMapping("/request-password-reset")
-    public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
+    public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
         boolean success = authenticationService.sendVerificationCode(dto.getIdentifier());
 
         if (!success) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Usuário não encontrado com esse e-mail ou CPF.");
+                    .body(new ApiResponse<>("Usuário não encontrado com esse e-mail ou CPF."));
         }
 
-        return ResponseEntity.ok("Código de verificação enviado.");
+        return ResponseEntity.ok(new ApiResponse<>("Código de verificação enviado."));
     }
 
     //Redefine a senha do usuário com base no código de verificação recebido.
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
         boolean success = authenticationService.resetPassword(dto);
 
         if (!success) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Código inválido ou expirado.");
+                    .body(new ApiResponse<>("Código inválido ou expirado."));
         }
 
-        return ResponseEntity.ok("Senha redefinida com sucesso.");
+        return ResponseEntity.ok(new ApiResponse<>("Senha redefinida com sucesso."));
     }
 }
