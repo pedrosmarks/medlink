@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@CrossOrigin
 public class AuthController {
 
     // Serviço responsável pela lógica de autenticação e recuperação de senha.
