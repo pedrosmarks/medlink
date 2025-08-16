@@ -22,10 +22,15 @@ export class PerfilComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.perfilReadService.getPerfil().subscribe(data => {
-      this.perfil = data[0]; // Supondo que só existe um perfil
+  const medicoId = localStorage.getItem('userId');
+ 
+  if (medicoId) {
+    this.perfilReadService.getPerfilById(medicoId).subscribe(data => {
+      console.log('Perfil recebido:', data);
+      this.perfil = data;
     });
   }
+}
 
   editar() {
     this.editando = true;

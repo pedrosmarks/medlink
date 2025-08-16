@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div *ngFor="let card of cards" class="col-md-4 mb-4">
+    <div *ngFor="let card of cards" [ngClass]="card.size" class="mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-body">
           <h5 class="card-title">{{ card.title }}</h5>

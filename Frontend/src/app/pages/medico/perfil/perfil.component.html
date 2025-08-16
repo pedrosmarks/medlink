@@ -1,17 +1,14 @@
 <div class="perfil-container" *ngIf="perfil">
-  <div class="perfil-avatar">
-    <img [src]="perfil.avatar" alt="Avatar" />
-  </div>
   <div class="perfil-campos">
     <div class="perfil-linha">
       <label>Nome:</label>
-      <span *ngIf="!editando">{{ perfil.nome }}</span>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.nome" name="nome" required />
+      <span *ngIf="!editando">{{ perfil.name }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.name" name="name" required />
     </div>
     <div class="perfil-linha">
       <label>Especialidade:</label>
-      <span *ngIf="!editando">{{ perfil.especialidade }}</span>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.especialidade" name="especialidade" required />
+      <span *ngIf="!editando">{{ perfil.specialty }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.specialty" name="specialty" required />
     </div>
     <div class="perfil-linha">
       <label>CRM:</label>
@@ -19,29 +16,24 @@
       <input *ngIf="editando" type="text" [(ngModel)]="perfil.crm" name="crm" required />
     </div>
     <div class="perfil-linha">
-      <label>Descrição:</label>
-      <span *ngIf="!editando">{{ perfil.descricao }}</span>
-      <textarea *ngIf="editando" [(ngModel)]="perfil.descricao" name="descricao"></textarea>
-    </div>
-    <div class="perfil-linha">
       <label>CPF:</label>
       <span *ngIf="!editando">{{ perfil.cpf }}</span>
       <input *ngIf="editando" type="text" [(ngModel)]="perfil.cpf" name="cpf" />
     </div>
     <div class="perfil-linha">
-      <label>Idade:</label>
-      <span *ngIf="!editando">{{ perfil.idade }}</span>
-      <input *ngIf="editando" type="number" [(ngModel)]="perfil.idade" name="idade" />
+      <label>Data de Nascimento:</label>
+      <span *ngIf="!editando">{{ perfil.birthDate }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.birthDate" name="birthDate" />
     </div>
     <div class="perfil-linha">
-      <label>Tipo Sanguíneo:</label>
-      <span *ngIf="!editando">{{ perfil.tipoSanguineo }}</span>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.tipoSanguineo" name="tipoSanguineo" />
+      <label>Gênero:</label>
+      <span *ngIf="!editando">{{ perfil.gender }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.gender" name="gender" />
     </div>
     <div class="perfil-linha">
       <label>Telefone:</label>
-      <span *ngIf="!editando">{{ perfil.telefone }}</span>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.telefone" name="telefone" />
+      <span *ngIf="!editando">{{ perfil.phoneNumber }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.phoneNumber" name="phoneNumber" />
     </div>
     <div class="perfil-linha">
       <label>Email:</label>
@@ -49,9 +41,26 @@
       <input *ngIf="editando" type="email" [(ngModel)]="perfil.email" name="email" />
     </div>
     <div class="perfil-linha">
-      <label>Observações:</label>
-      <span *ngIf="!editando">{{ perfil.observacoes }}</span>
-      <textarea *ngIf="editando" [(ngModel)]="perfil.observacoes" name="observacoes"></textarea>
+      <label>Endereço:</label>
+      <span *ngIf="!editando">
+        {{ perfil.address?.street }}, {{ perfil.address?.number }} {{ perfil.address?.complement }}<br>
+        {{ perfil.address?.neighborhood }}, {{ perfil.address?.city }} - {{ perfil.address?.state }}<br>
+        CEP: {{ perfil.address?.zipCode }}
+      </span>
+      <div *ngIf="editando">
+        <input type="text" [(ngModel)]="perfil.address.street" name="street" placeholder="Rua" />
+        <input type="text" [(ngModel)]="perfil.address.number" name="number" placeholder="Número" />
+        <input type="text" [(ngModel)]="perfil.address.complement" name="complement" placeholder="Complemento" />
+        <input type="text" [(ngModel)]="perfil.address.neighborhood" name="neighborhood" placeholder="Bairro" />
+        <input type="text" [(ngModel)]="perfil.address.city" name="city" placeholder="Cidade" />
+        <input type="text" [(ngModel)]="perfil.address.state" name="state" placeholder="Estado" />
+        <input type="text" [(ngModel)]="perfil.address.zipCode" name="zipCode" placeholder="CEP" />
+      </div>
+    </div>
+    <div class="perfil-linha">
+      <label>Ativo:</label>
+      <span *ngIf="!editando">{{ perfil.active ? 'Sim' : 'Não' }}</span>
+      <input *ngIf="editando" type="checkbox" [(ngModel)]="perfil.active" name="active" />
     </div>
   </div>
 

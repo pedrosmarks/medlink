@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DashboardReadService } from '../../../services/dashboard/dashboard-read.service';
 import { HttpClientModule } from '@angular/common/http';
 
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
