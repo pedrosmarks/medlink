@@ -43,7 +43,7 @@ public class MedicFakeDaoImpl implements MedicDao {
                         .state("São Paulo")
                         .zipCode("01310-100")
                         .build())
-                .crm("123456-SP")
+                .crm("123456-SPA")
                 .specialty("Cardiologia")
                 .email("pedro.almeida@medlink.com")
                 .active(true)
