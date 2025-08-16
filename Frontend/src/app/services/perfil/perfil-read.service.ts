@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PerfilReadService {
 
-  private apiUrl = 'http://localhost:3000/perfil';
+  private apiUrl = 'http://localhost:8080/perfil';
 
   constructor(private http: HttpClient) { }
 
