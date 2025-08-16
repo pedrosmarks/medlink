@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class DashboardReadService {
 
-  private apiUrl = 'http://localhost:3000/dashboard'; // URL do endpoint do json-server
+  private apiUrl = 'http://localhost:8080/dashboard'; // URL do endpoint do json-server
 
   constructor(private http: HttpClient) { }
 

@@ -1,5 +1,5 @@
 <div class="login-container">
-  <form>
+  <form (ngSubmit)="login()">
     <div class="mb-3">
       <label>Usuário</label>
       <input class="form-control" [(ngModel)]="usuario" name="usuario" required>
@@ -9,5 +9,6 @@
       <input type="password" class="form-control" [(ngModel)]="senha" name="senha" required>
     </div>
     <button class="btn btn-primary" type="submit">Entrar</button>
+    <div *ngIf="erro" class="alert alert-danger mt-2">{{ erro }}</div>
   </form>
 </div>

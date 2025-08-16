@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { LoginService } from '../../../services/login/login';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,7 +17,7 @@ export class LoginBaseComponent {
   senha = '';
   erro = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private loginService: LoginService, private router: Router) {}
 
   login() {
     if (!this.usuario || !this.senha) {
@@ -25,26 +25,28 @@ export class LoginBaseComponent {
       return;
     }
 
-    if (this.perfil === 'medico') {
-      this.http.get<any[]>(`http://localhost:3000/medicos?usuario=${this.usuario}&senha=${this.senha}`)
-        .subscribe(medicos => {
-          if (medicos.length) {
-            localStorage.setItem('medicoId', medicos[0].id);
-            this.router.navigate(['/medico']);
-          } else {
-            this.erro = 'Usuário ou senha inválidos!';
-          }
-        });
-    } else if (this.perfil === 'paciente') {
-      this.http.get<any[]>(`http://localhost:3000/pacientes?usuario=${this.usuario}&senha=${this.senha}`)
-        .subscribe(pacientes => {
-          if (pacientes.length) {
-            localStorage.setItem('pacienteId', pacientes[0].id);
-            this.router.navigate(['/paciente']);
-          } else {
-            this.erro = 'Usuário ou senha inválidos!';
-          }
-        });
+    this.loginService.login(this.usuario, this.senha)
+  .subscribe({
+    next: (response) => {
+      // O backend retorna { data: { id, name, profile } }
+      if (response?.data?.id && response?.data?.profile) {
+        localStorage.setItem('userId', response.data.id);
+        localStorage.setItem('userProfile', response.data.profile);
+
+        if (response.data.profile === 'MEDIC') {
+          this.router.navigate(['/medico/dashboard']);
+        } else if (response.data.profile === 'PATIENT') {
+          this.router.navigate(['/paciente/dashboard']);
+        } else {
+          this.erro = 'Tipo de usuário desconhecido!';
+        }
+      } else {
+        this.erro = 'Usuário ou senha inválidos!';
+      }
+    },
+    error: () => {
+      this.erro = 'Usuário ou senha inválidos!';
     }
+  });
   }
 }
