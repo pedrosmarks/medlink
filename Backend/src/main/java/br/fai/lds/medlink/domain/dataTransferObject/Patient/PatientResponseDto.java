@@ -8,7 +8,6 @@ import java.time.LocalDate;
 
 @Data
 public class PatientResponseDto {
-
     private String name;
     private Gender gender;
     private LocalDate birthdate;
@@ -22,7 +21,7 @@ public class PatientResponseDto {
         PatientResponseDto dto = new PatientResponseDto();
         dto.setName(entity.getName());
         dto.setGender(entity.getGender());
-        dto.setBirthdate(entity.getBirthDate());  // incluído birthdate aqui
+        dto.setBirthdate(entity.getBirthDate());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setAddress(entity.getAddress());
         dto.setEmail(entity.getEmail());

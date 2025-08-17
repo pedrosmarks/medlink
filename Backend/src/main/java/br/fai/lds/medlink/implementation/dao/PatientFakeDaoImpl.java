@@ -1,8 +1,6 @@
 package br.fai.lds.medlink.implementation.dao;
 
-import br.fai.lds.medlink.domain.Address;
-import br.fai.lds.medlink.domain.Gender;
-import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -19,22 +17,35 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     private static List<Patient> patientList = new ArrayList<>();
     private static int ID = 1;
+    private static boolean initialized = false; // Flag para evitar duplicação
 
     private int getNextId() {
         return ID++;
     }
 
     public PatientFakeDaoImpl() {
+        // Só inicializa se ainda não foi inicializado
+        if (!initialized) {
+            initializeData();
+            initialized = true;
+        }
+    }
+
+    private void initializeData() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+        // Paciente 1 - João da Silva
         patientList.add(Patient.builder()
                 .id(getNextId())
                 .name("João da Silva")
-                .cpf("123.456.789-10")
+                .cpf("xxx.xxx.xxx-xx")
                 .password("123")
                 .gender(Gender.MASCULINO)
-                .birthDate(LocalDate.parse("01.01.1990", formatter))
-                .phoneNumber("35 99999-9999")
+                .birthDate(LocalDate.parse("01.01.1994", formatter))
+                .phoneNumber("35 9xxxx-xxxx")
+                .avatar("https://cdn-icons-png.flaticon.com/512/921/921347.png")
+                .bloodType("A+")
+                .observations("")
                 .address(Address.builder()
                         .street("Rua A")
                         .number("123")
@@ -49,16 +60,47 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .susCard("123456")
                 .medicId(1)
                 .active(true)
+                .especialistasAutorizados(List.of(
+                        new EspecialistaAutorizado(1L),
+                        new EspecialistaAutorizado(2L)
+                ))
+                .requisicoesAcesso(List.of(
+                        new RequisicaoAcesso(3, "aprovado")
+                ))
+                .consultas(List.of(
+                        new Consulta("2024-06-10", "Consulta de rotina")
+                ))
+                .vacinas(List.of(
+                        new Vacina("COVID-19", "2023-01-15"),
+                        new Vacina("Febre amarela", "2025-08-06")
+                ))
+                .medicamentos(List.of(
+                        new Medicamento("Losartana", "50mg", null),
+                        new Medicamento("Tylenol", "2 por dia", "2025-08-07")
+                ))
+                .cirurgias(List.of(
+                        new Cirurgia("Apendicectomia", "2015-08-20")
+                ))
+                .diagnosticos(List.of(
+                        new Diagnostico("Hipertensão", "2022-03-01")
+                ))
+                .alergias(List.of(
+                        new Alergia("top")
+                ))
                 .build());
 
+        // Paciente 2 - Maria Oliveira
         patientList.add(Patient.builder()
                 .id(getNextId())
                 .name("Maria Oliveira")
-                .cpf("987.654.321-00")
+                .cpf("yyy.yyy.yyy-yy")
                 .password("123")
                 .gender(Gender.FEMININO)
-                .birthDate(LocalDate.parse("15.05.1985", formatter))
-                .phoneNumber("11 88888-8888")
+                .birthDate(LocalDate.parse("15.05.1979", formatter))
+                .phoneNumber("11 9xxxx-xxxx")
+                .avatar("https://cdn-icons-png.flaticon.com/512/921/921347.png")
+                .bloodType("B-")
+                .observations("Paciente diabética")
                 .address(Address.builder()
                         .street("Rua B")
                         .number("456")
@@ -71,11 +113,83 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .email("maria@exemplo.com.br")
                 .plan("Convênio")
                 .susCard("654321")
+                .medicId(2)
+                .active(true)
+                .especialistasAutorizados(List.of(
+                        new EspecialistaAutorizado(2L),
+                        new EspecialistaAutorizado(1L)
+                ))
+                .requisicoesAcesso(List.of(
+                        new RequisicaoAcesso(1, "aprovado")
+                ))
+                .consultas(List.of(
+                        new Consulta("2024-05-20", "Avaliação de rotina")
+                ))
+                .vacinas(List.of(
+                        new Vacina("Influenza", "2023-03-10")
+                ))
+                .medicamentos(List.of(
+                        new Medicamento("Metformina", "850mg", null)
+                ))
+                .cirurgias(List.of())
+                .diagnosticos(List.of(
+                        new Diagnostico("Diabetes Tipo 2", "2020-09-15")
+                ))
+                .alergias(List.of(
+                        new Alergia("Penicilina")
+                ))
+                .build());
+
+        // Paciente 3 - Carlos Pereira
+        patientList.add(Patient.builder()
+                .id(getNextId())
+                .name("Carlos Pereira")
+                .cpf("zzz.zzz.zzz-zz")
+                .password("123")
+                .gender(Gender.MASCULINO)
+                .birthDate(LocalDate.parse("15.05.1972", formatter))
+                .phoneNumber("21 9xxxx-xxxx")
+                .avatar("https://cdn-icons-png.flaticon.com/512/921/921347.png")
+                .bloodType("O+")
+                .observations("Paciente com histórico de cirurgia cardíaca")
+                .address(Address.builder()
+                        .street("Rua C")
+                        .number("789")
+                        .complement("")
+                        .neighborhood("Centro")
+                        .city("Rio de Janeiro")
+                        .state("Rio de Janeiro")
+                        .zipCode("20000-000")
+                        .build())
+                .email("carlos@exemplo.com.br")
+                .plan("Convênio")
+                .susCard("789123")
                 .medicId(1)
                 .active(true)
+                .especialistasAutorizados(List.of(
+                        new EspecialistaAutorizado(1L)
+                ))
+                .requisicoesAcesso(List.of())
+                .consultas(List.of(
+                        new Consulta("2024-04-15", "Pós-operatório")
+                ))
+                .vacinas(List.of(
+                        new Vacina("Hepatite B", "2022-11-05")
+                ))
+                .medicamentos(List.of(
+                        new Medicamento("AAS", "100mg", null)
+                ))
+                .cirurgias(List.of(
+                        new Cirurgia("Revascularização do miocárdio", "2023-12-01")
+                ))
+                .diagnosticos(List.of(
+                        new Diagnostico("Cardiopatia isquêmica", "2023-10-20")
+                ))
+                .alergias(List.of())
                 .build());
     }
 
+    // Resto dos métodos permanecem iguais...
     @Override
     public void create(Patient entity) {
         entity.setId(getNextId());
@@ -144,5 +258,4 @@ public class PatientFakeDaoImpl implements PatientDao {
     public List<Patient> findAll() {
         return patientList;
     }
-
 }

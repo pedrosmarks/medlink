@@ -1,32 +1,72 @@
 package br.fai.lds.medlink.domain;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
-//Representa um paciente no sistema
+import lombok.Builder;
+import lombok.Data;
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
-@SuperBuilder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Patient extends Person {
-
+@Builder
+public class Patient {
     private int id;
-
-    @NotNull(message = "O endereco de email não pode estar em branco")
+    private String name;
+    private String cpf;
+    private String password;
+    private Gender gender;
+    private LocalDate birthDate;
+    private String phoneNumber;
+    private String avatar;
+    private String bloodType;
+    private String observations;
+    private Address address;
     private String email;
-
-    @NotNull(message = "O plano não pode estar em branco")
     private String plan;
-
-    @NotNull(message = "O cartão do SUS não pode estar em branco")
     private String susCard;
-
-    private MedicalRecord medicalRecord;
-
-    @Builder.Default
-    private boolean active = true;
-
     private int medicId;
+    private boolean active;
+    private List<EspecialistaAutorizado> especialistasAutorizados;
+    private List<RequisicaoAcesso> requisicoesAcesso;
+    private List<Consulta> consultas;
+    private List<Vacina> vacinas;
+    private List<Medicamento> medicamentos;
+    private List<Cirurgia> cirurgias;
+    private List<Diagnostico> diagnosticos;
+    private List<Alergia> alergias;
+
+    public Patient() {}
+
+    public Patient(int id, String name, String cpf, String password, Gender gender,
+                   LocalDate birthDate, String phoneNumber, String avatar, String bloodType,
+                   String observations, Address address, String email, String plan,
+                   String susCard, int medicId, boolean active,
+                   List<EspecialistaAutorizado> especialistasAutorizados,
+                   List<RequisicaoAcesso> requisicoesAcesso, List<Consulta> consultas,
+                   List<Vacina> vacinas, List<Medicamento> medicamentos,
+                   List<Cirurgia> cirurgias, List<Diagnostico> diagnosticos,
+                   List<Alergia> alergias) {
+        this.id = id;
+        this.name = name;
+        this.cpf = cpf;
+        this.password = password;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.phoneNumber = phoneNumber;
+        this.avatar = avatar;
+        this.bloodType = bloodType;
+        this.observations = observations;
+        this.address = address;
+        this.email = email;
+        this.plan = plan;
+        this.susCard = susCard;
+        this.medicId = medicId;
+        this.active = active;
+        this.especialistasAutorizados = especialistasAutorizados;
+        this.requisicoesAcesso = requisicoesAcesso;
+        this.consultas = consultas;
+        this.vacinas = vacinas;
+        this.medicamentos = medicamentos;
+        this.cirurgias = cirurgias;
+        this.diagnosticos = diagnosticos;
+        this.alergias = alergias;
+    }
 }

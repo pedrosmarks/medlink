@@ -172,4 +172,8 @@ public class MedicalRecordController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Diagnostico adicionado ao prontuário com sucesso."));
     }
+
+
+
+
 }

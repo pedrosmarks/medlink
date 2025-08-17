@@ -38,15 +38,9 @@ public class ReportServiceImpl  implements ReportService {
 
     @Override
     public List<ConsultationReportDto> getConsultationReport() {
-        return patientDao.findAll().stream()
-                .flatMap(p -> p.getMedicalRecord().getConsultations().stream()
-                        .map(c -> ConsultationReportDto.builder()
-                                .patientName(p.getName())
-                                .date(c.getDate().toString())
-                                .reason(c.getReason())
-                                .build()))
-                .collect(Collectors.toList());
+        return List.of();
     }
+
 
     @Override
     public List<PatientReportDto> getPatientReport() {

@@ -8,31 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    private final PatientDao patientDao;
-
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao) {
-        this.patientDao = patientDao;
-    }
+    private PatientDao patientDao;
 
     @Override
     public int create(Patient entity) {
         patientDao.create(entity);
-        return entity.getId();
+        return 0;
     }
 
     @Override
-    public boolean deactivate(int id) {
-        return patientDao.deactivate(id);
-    }
-
-    @Override
-    public boolean delete(int id) {
+    public boolean remove(int id) {
         return patientDao.remove(id);
     }
 
@@ -42,26 +32,42 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<Patient> findAll() {
-        return patientDao.readAll();
+    public Patient findByEmail(String email) {
+        return patientDao.findByEmail(email);
     }
 
     @Override
-    public Patient update(int id, Patient entity) {
-        // Implementação futura, se necessário
-        throw new UnsupportedOperationException("Update not implemented yet.");
+    public List<Patient> findAll() {
+        return patientDao.findAll();
+    }
+
+    @Override
+    public void updateInformation(int id, Patient entity) {
+        patientDao.updateInformation(id, entity);
+    }
+
+    @Override
+    public boolean deactivate(int id) {
+        return patientDao.deactivate(id);
+    }
+
+    @Override
+    public boolean delete(int id) {
+        return false;
     }
 
     @Override
     public List<PatientResponseDto> getPatientsByMedicId(int medicId) {
-        List<Patient> patients = patientDao.findByMedicId(medicId);
-        return patients.stream()
-                .map(PatientResponseDto::fromEntity)
-                .collect(Collectors.toList());
+        return List.of();
     }
 
     @Override
     public List<Patient> findByMedicId(int medicId) {
         return patientDao.findByMedicId(medicId);
+    }
+
+    @Override
+    public Patient update(int id, Patient entity) {
+        return null;
     }
 }
