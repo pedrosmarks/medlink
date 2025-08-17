@@ -1,0 +1,431 @@
+{
+  "dashboard": [
+    {
+      "id": "1",
+      "title": "Novos pacientes",
+      "text": "Você tem 10 novos pacientes.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "2",
+      "title": "Consultas agendadas",
+      "text": "Você tem 5 consultas marcadas para hoje.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "3",
+      "title": "Mensagens não lidas",
+      "text": "3 mensagens aguardando resposta.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "4",
+      "title": "Exames pendentes",
+      "text": "2 exames aguardando análise.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "5",
+      "title": "Relatórios disponíveis",
+      "text": "Novos relatórios prontos para revisão.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "6",
+      "title": "Solicitações de receita",
+      "text": "1 solicitação de receita pendente.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "7",
+      "title": "Avisos importantes",
+      "text": "Há 2 avisos importantes para você.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "8",
+      "title": "Pacientes em acompanhamento",
+      "text": "Você está acompanhando 8 pacientes.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "9",
+      "title": "Consultas do dia",
+      "text": "Hoje você tem 4 consultas agendadas.",
+      "size": "col-md-3"
+    },
+    {
+      "id": "10",
+      "title": "Teleconsultas agendadas",
+      "text": "2 teleconsultas marcadas para esta semana.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "11",
+      "title": "Pendências administrativas",
+      "text": "Você possui 3 pendências administrativas.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "12",
+      "title": "Aniversariantes do mês",
+      "text": "2 pacientes fazem aniversário este mês.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "13",
+      "title": "Feedbacks recebidos",
+      "text": "Você recebeu 5 novos feedbacks.",
+      "size": "col-md-4"
+    },
+    {
+      "id": "14",
+      "title": "Alertas de saúde pública",
+      "text": "Novo alerta de saúde pública disponível.",
+      "size": "col-md-6"
+    },
+    {
+      "id": "15",
+      "title": "Atualizações do sistema",
+      "text": "O sistema foi atualizado recentemente.",
+      "size": "col-md-6"
+    }
+  ],
+  "mensagens": [
+    {
+      "id": "1",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Olá, doutor! Gostaria de agendar uma consulta.",
+      "data": "2024-08-04T10:00:00",
+      "lida": false
+    },
+    {
+      "id": "2",
+      "remetenteId": "medico_1",
+      "remetenteTipo": "medico",
+      "remetenteNome": "Dr. Carlos Silva",
+      "destinatarioId": "1",
+      "destinatarioTipo": "paciente",
+      "destinatarioNome": "João da Silva",
+      "texto": "Olá, João! Claro, vamos agendar. Que dia seria melhor para você?",
+      "data": "2024-08-04T10:05:00",
+      "lida": false
+    },
+    {
+      "id": "44de",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Você tá bom?",
+      "data": "2025-08-05T23:45:02.221Z",
+      "lida": false
+    },
+    {
+      "id": "1e91",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "Sim doutor estou bom demais",
+      "data": "2025-08-05T23:45:10.358Z",
+      "lida": false
+    },
+    {
+      "id": "49d4",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "queria uma ajuda",
+      "data": "2025-08-05T23:45:15.356Z",
+      "lida": false
+    },
+    {
+      "id": "2716",
+      "remetenteId": "1",
+      "remetenteTipo": "paciente",
+      "remetenteNome": "João da Silva",
+      "destinatarioId": "medico_1",
+      "destinatarioTipo": "medico",
+      "destinatarioNome": "Dr. Carlos Silva",
+      "texto": "opaaa",
+      "data": "2025-08-06T16:07:58.197Z",
+      "lida": false
+    }
+  ],
+  "pacientes": [
+    {
+      "id": "1",
+      "nome": "João da Silva",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "cpf": "xxx.xxx.xxx-xx",
+      "idade": 30,
+      "tipoSanguineo": "A+",
+      "telefone": "35 9xxxx-xxxx",
+      "email": "joao@exemplo.com.br",
+      "observacoes": "",
+      "especialistasAutorizados": [
+        1,
+        2
+      ],
+      "requisicoesAcesso": [
+        {
+          "medicoId": 3,
+          "status": "aprovado"
+        }
+      ],
+      "consultas": [
+        {
+          "data": "2024-06-10",
+          "descricao": "Consulta de rotina"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "COVID-19",
+          "data": "2023-01-15"
+        },
+        {
+          "nome": "Febre amarela",
+          "data": "2025-08-06"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "Losartana",
+          "dosagem": "50mg"
+        },
+        {
+          "nome": "Tylenol",
+          "dosagem": "2 por dia",
+          "inicio": "2025-08-07"
+        }
+      ],
+      "cirurgias": [
+        {
+          "nome": "Apendicectomia",
+          "data": "2015-08-20"
+        }
+      ],
+      "diagnosticos": [
+        {
+          "nome": "Hipertensão",
+          "data": "2022-03-01"
+        }
+      ],
+      "alergias": [
+        {
+          "descricao": "top"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "nome": "Maria Oliveira",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "cpf": "yyy.yyy.yyy-yy",
+      "idade": 45,
+      "tipoSanguineo": "B-",
+      "telefone": "11 9xxxx-xxxx",
+      "email": "maria@exemplo.com.br",
+      "observacoes": "Paciente diabética",
+      "especialistasAutorizados": [
+        2,
+        1
+      ],
+      "requisicoesAcesso": [
+        {
+          "medicoId": 1,
+          "status": "aprovado"
+        }
+      ],
+      "consultas": [
+        {
+          "data": "2024-05-20",
+          "descricao": "Avaliação de rotina"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "Influenza",
+          "data": "2023-03-10"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "Metformina",
+          "dosagem": "850mg"
+        }
+      ],
+      "cirurgias": [],
+      "diagnosticos": [
+        {
+          "nome": "Diabetes Tipo 2",
+          "data": "2020-09-15"
+        }
+      ],
+      "alergias": [
+        {
+          "descricao": "Penicilina"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "nome": "Carlos Pereira",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/921/921347.png",
+      "cpf": "zzz.zzz.zzz-zz",
+      "idade": 52,
+      "tipoSanguineo": "O+",
+      "telefone": "21 9xxxx-xxxx",
+      "email": "carlos@exemplo.com.br",
+      "observacoes": "Paciente com histórico de cirurgia cardíaca",
+      "especialistasAutorizados": [
+        1
+      ],
+      "requisicoesAcesso": [],
+      "consultas": [
+        {
+          "data": "2024-04-15",
+          "descricao": "Pós-operatório"
+        }
+      ],
+      "vacinas": [
+        {
+          "nome": "Hepatite B",
+          "data": "2022-11-05"
+        }
+      ],
+      "medicamentos": [
+        {
+          "nome": "AAS",
+          "dosagem": "100mg"
+        }
+      ],
+      "cirurgias": [
+        {
+          "nome": "Revascularização do miocárdio",
+          "data": "2023-12-01"
+        }
+      ],
+      "diagnosticos": [
+        {
+          "nome": "Cardiopatia isquêmica",
+          "data": "2023-10-20"
+        }
+      ],
+      "alergias": []
+    }
+  ],
+  "mensagem": [
+    {
+      "id": "10",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "5",
+      "mensagem": "vida que segue, to passando mal",
+      "data_hora": "04-08-2025 20:13:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    },
+    {
+      "id": "11",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "2",
+      "mensagem": "diga ai, oqq ta pegando?",
+      "data_hora": "04-08-2025 20:14:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    },
+    {
+      "id": "12",
+      "id_medico": "2",
+      "id_paciente": "5",
+      "enviado_por": "5",
+      "mensagem": "vida que segue, to passando mal",
+      "data_hora": "04-08-2025 20:15:44",
+      "ultima_modificacao": "04-08-2025 20:23:44"
+    }
+  ],
+  "perfil": [
+    {
+      "id": "1",
+      "nome": "Dr. Pedro Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia muito legal",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "pedro.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
+    },
+    {
+      "id": "2",
+      "nome": "Dr. jose Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia muito legal",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "jose.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
+    },
+    {
+      "id": "3",
+      "nome": "Dr. manoel Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia muito legal",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "manoel.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular e tb isso aqui."
+    }
+  ],
+  "relatorios": [
+    {
+      "id": "1",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "titulo": "Relatório de atendimentos",
+      "descricao": "Resumo dos atendimentos realizados no mês."
+    },
+    {
+      "id": "2",
+      "icone": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "titulo": "Relatório financeiro",
+      "descricao": "Resumo financeiro mensal."
+    }
+  ],
+  "notificacoes": [
+    {
+      "id": "1",
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
+      "mensagem": "Nova atualização disponível no sistema."
+    },
+    {
+      "id": "2",
+      "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
+      "mensagem": "Consulta agendada para amanhã às 10h."
+    }
+  ]
+}
