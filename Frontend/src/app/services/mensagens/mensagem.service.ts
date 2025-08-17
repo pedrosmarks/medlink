@@ -35,4 +35,7 @@ export class MensagensService {
   getMedicos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/medicos`);
   }
+  getPacientes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/pacientes`);
+ } 
 }

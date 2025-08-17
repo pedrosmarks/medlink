@@ -1,3 +1,218 @@
-.buttons{
-    color:black;
+.medico-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  padding: 25px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+.logo .subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  display: block;
+  margin-top: 4px;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin-bottom: 5px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  border-left: 4px solid transparent;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border-left-color: rgba(255,255,255,0.3);
+}
+
+.nav-link.active {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border-left-color: white;
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  margin-right: 12px;
+  width: 20px;
+}
+
+.nav-text {
+  font-size: 1rem;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: white;
+  padding: 2px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  line-height: 1.2;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.05);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 0;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar-footer {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .user-info {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .nav-link {
+    padding: 12px 20px;
+  }
+  
+  .nav-text {
+    font-size: 0.9rem;
+  }
+  
+  .sidebar-header {
+    padding: 20px 15px;
+  }
+  
+  .logo h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animações suaves */
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+
+.nav-link:hover::before {
+  left: 100%;
 }

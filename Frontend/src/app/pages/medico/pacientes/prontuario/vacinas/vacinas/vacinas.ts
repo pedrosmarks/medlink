@@ -43,22 +43,31 @@ export class Vacinas implements OnInit {
       nome: this.novaVacinaNome.trim(),
       data: this.novaVacinaData
     };
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      vacinas: [...this.vacinas, nova]
-    }).subscribe(() => {
-      this.vacinas.push(nova);
-      this.novaVacinaNome = '';
-      this.novaVacinaData = '';
+
+    // Buscar paciente completo
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const vacinasAtualizadas = [...(paciente.vacinas || []), nova];
+      const pacienteAtualizado = { ...paciente, vacinas: vacinasAtualizadas };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.vacinas = vacinasAtualizadas;
+          this.novaVacinaNome = '';
+          this.novaVacinaData = '';
+        });
     });
   }
 
   removerVacina(index: number) {
-    const novasVacinas = this.vacinas.slice();
-    novasVacinas.splice(index, 1);
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      vacinas: novasVacinas
-    }).subscribe(() => {
-      this.vacinas = novasVacinas;
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const novasVacinas = paciente.vacinas.slice();
+      novasVacinas.splice(index, 1);
+      const pacienteAtualizado = { ...paciente, vacinas: novasVacinas };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.vacinas = novasVacinas;
+        });
     });
   }
 }

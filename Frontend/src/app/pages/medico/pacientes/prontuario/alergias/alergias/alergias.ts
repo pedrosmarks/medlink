@@ -39,22 +39,30 @@ export class Alergias implements OnInit {
   adicionarAlergia() {
     if (!this.novaAlergia.trim()) return;
     const nova = { descricao: this.novaAlergia.trim() };
-    // Atualiza no backend (json-server)
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      alergias: [...this.alergias, nova]
-    }).subscribe(() => {
-      this.alergias.push(nova);
-      this.novaAlergia = '';
+
+    // Buscar paciente completo antes de atualizar
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const alergiasAtualizadas = [...(paciente.alergias || []), nova];
+      const pacienteAtualizado = { ...paciente, alergias: alergiasAtualizadas };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.alergias = alergiasAtualizadas;
+          this.novaAlergia = '';
+        });
     });
   }
 
   removerAlergia(index: number) {
-  const novasAlergias = this.alergias.slice();
-  novasAlergias.splice(index, 1);
-  this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-    alergias: novasAlergias
-  }).subscribe(() => {
-    this.alergias = novasAlergias;
-  });
-}
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const novasAlergias = paciente.alergias.slice();
+      novasAlergias.splice(index, 1);
+      const pacienteAtualizado = { ...paciente, alergias: novasAlergias };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.alergias = novasAlergias;
+        });
+    });
+  }
 }

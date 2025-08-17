@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 // Controlador REST consolidado para gerenciar os médicos da aplicação
 @RestController
-@RequestMapping("/medics")
+@RequestMapping("/medicos")
 public class MedicController {
 
     private final MedicService medicService;
@@ -130,9 +130,9 @@ public class MedicController {
     // Endpoint para autenticação de médico (compatibilidade com frontend)
     @GetMapping("/auth")
     public ResponseEntity<ApiResponse<MedicResponseDto>> authenticateMedic(
-            @RequestParam String usuario, 
+            @RequestParam String usuario,
             @RequestParam String senha) {
-        
+
         // Simulação de autenticação - em produção usar Spring Security
         if ("admin".equals(usuario) && "123".equals(senha)) {
             Medic medic = medicService.findById(1); // Busca médico padrão
@@ -144,7 +144,7 @@ public class MedicController {
                 return ResponseEntity.ok(response);
             }
         }
-        
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse<>("Credenciais inválidas."));
     }

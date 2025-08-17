@@ -1,0 +1,36 @@
+<div class="vacinas-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../']">
+      ← Voltar ao Prontuário
+    </button>
+    <h2>Minhas Vacinas</h2>
+    <p>{{ pacienteNome }}</p>
+  </div>
+
+  <div class="content">
+    <div *ngIf="carregando" class="loading">
+      <p>Carregando vacinas...</p>
+    </div>
+
+    <div *ngIf="!carregando && vacinas.length === 0" class="empty-state">
+      <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="80" alt="Sem vacinas" />
+      <h4>Nenhuma vacina encontrada</h4>
+      <p>Você ainda não possui vacinas registradas no sistema.</p>
+    </div>
+
+    <div *ngIf="!carregando && vacinas.length > 0" class="vacinas-list">
+      <div class="vacina-card" *ngFor="let vacina of vacinas; let i = index">
+        <div class="vacina-header">
+          <h4>{{ vacina.nome || 'Vacina' }}</h4>
+          <span class="data">{{ vacina.data | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="vacina-body">
+          <p><strong>Lote:</strong> {{ vacina.lote || 'Não informado' }}</p>
+          <p *ngIf="vacina.fabricante"><strong>Fabricante:</strong> {{ vacina.fabricante }}</p>
+          <p *ngIf="vacina.doses"><strong>Doses:</strong> {{ vacina.doses }}</p>
+          <p *ngIf="vacina.observacoes"><strong>Observações:</strong> {{ vacina.observacoes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

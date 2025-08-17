@@ -1,56 +1,67 @@
-<button class="btn btn-secondary mb-3" [routerLink]="['../../']">
-  ← Voltar aos pacientes
-</button>
-<div class="prontuario-cards">
-  <h3>Prontuário Médico</h3>
-  <div class="cards-grid">
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="40" alt="Consultas" />
-      <h4>Consultas</h4>
-      <p>Consultas realizadas</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['consultas']">
-        Acessar
-      </button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="40" alt="Vacinas" />
-      <h4>Vacinas</h4>
-      <p>Cartão de vacina eletrônico</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['vacinas']">
-        Acessar
-      </button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="40" alt="Medicamentos" />
-      <h4>Medicamentos</h4>
-      <p>Lista de medicamentos utilizado pelo paciente</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['medicamentos']">
-        Acessar
-      </button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="40" alt="Cirurgias" />
-      <h4>Cirurgias</h4>
-      <p>Procedimentos cirúrgicos já realizados</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['cirurgias']">
-        Acessar
-      </button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="40" alt="Diagnósticos" />
-      <h4>Diagnósticos</h4>
-      <p>Diagnósticos</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['diagnosticos']">
-        Acessar
-      </button>
-    </div>
-    <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="40" alt="Alergias" />
-      <h4>Alergias</h4>
-      <p>Lista de medicamentos que NÃO pode ser receitada ao paciente</p>
-      <button class="btn btn-outline-primary mt-2" [routerLink]="['alergias']">
-        Acessar
-      </button>
+<div class="prontuario-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../../']">
+      ← Voltar aos pacientes
+    </button>
+    <h2>Prontuário Médico</h2>
+    <p>Dr. {{ medicoNome }} - Visualizando dados de: <strong>{{ pacienteNome }}</strong></p>
+  </div>
+
+  <div class="prontuario-cards">
+    <div class="cards-grid">
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="50" alt="Consultas" />
+        <h4>Consultas</h4>
+        <p>Consultas realizadas pelo paciente</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['consultas']">
+          Ver Consultas
+        </button>
+      </div>
+      
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="50" alt="Vacinas" />
+        <h4>Vacinas</h4>
+        <p>Cartão de vacina eletrônico</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['vacinas']">
+          Ver Vacinas
+        </button>
+      </div>
+      
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="50" alt="Medicamentos" />
+        <h4>Medicamentos</h4>
+        <p>Medicamentos utilizados pelo paciente</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['medicamentos']">
+          Ver Medicamentos
+        </button>
+      </div>
+      
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="50" alt="Cirurgias" />
+        <h4>Cirurgias</h4>
+        <p>Procedimentos cirúrgicos já realizados</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['cirurgias']">
+          Ver Cirurgias
+        </button>
+      </div>
+      
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="50" alt="Diagnósticos" />
+        <h4>Diagnósticos</h4>
+        <p>Diagnósticos médicos do paciente</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['diagnosticos']">
+          Ver Diagnósticos
+        </button>
+      </div>
+      
+      <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="50" alt="Alergias" />
+        <h4>Alergias</h4>
+        <p>Alergias e restrições do paciente</p>
+        <button class="btn btn-primary mt-2" [routerLink]="['alergias']">
+          Ver Alergias
+        </button>
+      </div>
     </div>
   </div>
 </div>

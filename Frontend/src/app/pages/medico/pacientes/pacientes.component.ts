@@ -50,10 +50,10 @@ export class PacientesComponent implements OnInit {
     return;
   }
   this.resultadosBusca = this.todosPacientes.filter(p =>
-    p.nome.toLowerCase().includes(termo) &&
-    !p.especialistasAutorizados.includes(this.medicoId) &&
-    !(p.requisicoesAcesso || []).some((req: any) => req.medicoId === this.medicoId && req.status === 'pendente')
-  );
+  p.nome && p.nome.toLowerCase().includes(termo) &&
+  !p.especialistasAutorizados.includes(this.medicoId) &&
+  !(p.requisicoesAcesso || []).some((req: any) => req.medicoId === this.medicoId && req.status === 'pendente')
+);
 }
 
   adicionarEspecialista(paciente: any) {

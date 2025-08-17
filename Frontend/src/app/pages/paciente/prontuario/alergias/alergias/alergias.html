@@ -1,0 +1,36 @@
+<div class="alergias-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../']">
+      ← Voltar ao Prontuário
+    </button>
+    <h2>Minhas Alergias</h2>
+    <p>{{ pacienteNome }}</p>
+  </div>
+
+  <div class="content">
+    <div *ngIf="carregando" class="loading">
+      <p>Carregando alergias...</p>
+    </div>
+
+    <div *ngIf="!carregando && alergias.length === 0" class="empty-state">
+      <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="80" alt="Sem alergias" />
+      <h4>Nenhuma alergia encontrada</h4>
+      <p>Você ainda não possui alergias registradas no sistema.</p>
+    </div>
+
+    <div *ngIf="!carregando && alergias.length > 0" class="alergias-list">
+      <div class="alergia-card" *ngFor="let alergia of alergias; let i = index">
+        <div class="alergia-header">
+          <h4>{{ alergia.nome || 'Alergia' }}</h4>
+          <span class="severidade" [class]="alergia.severidade">{{ alergia.severidade || 'Moderada' }}</span>
+        </div>
+        <div class="alergia-body">
+          <p><strong>Tipo:</strong> {{ alergia.tipo || 'Não informado' }}</p>
+          <p *ngIf="alergia.sintomas"><strong>Sintomas:</strong> {{ alergia.sintomas }}</p>
+          <p *ngIf="alergia.dataIdentificacao"><strong>Identificada em:</strong> {{ alergia.dataIdentificacao | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="alergia.observacoes"><strong>Observações:</strong> {{ alergia.observacoes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

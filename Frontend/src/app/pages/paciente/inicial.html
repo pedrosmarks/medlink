@@ -1,72 +1,111 @@
-<div class="container-fluid" >
-    <div class="row flex-nowrap" >
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <span class="fs-5 d-none d-sm-inline buttons">Área do paciente</span>
-                </a>
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a [routerLink]="['/paciente/dashboard']" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faDesktop"></fa-icon>
-                                Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/perfil']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faCircleUser"></fa-icon>
-                                Perfil</span></a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/medico']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faHospitalUser"></fa-icon>
-                                Medicos</span></a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/prontuario']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faFileInvoice"></fa-icon>
-                                Prontuário</span></a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/mensagem']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faMessage"></fa-icon>
-                                Mensagem</span></a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/requisicoes']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faBell"></fa-icon>
-                                Requisições</span></a>
-                    </li>
-                    <li>
-                        <a [routerLink]="['/paciente/notificacoes']" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline buttons">
-                                <fa-icon [icon]="faBell"></fa-icon>
-                                Notificações</span></a>
-                    </li>
-                </ul>
-                <hr>
-                <div class="dropdown pb-4">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline mx-1">loser</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
-                    </ul>
-                </div>
-            </div>
+<div class="sidebar-container">
+  <aside class="modern-sidebar">
+    <!-- Header da Sidebar -->
+    <div class="sidebar-header">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <fa-icon [icon]="faUser" class="logo-fa-icon"></fa-icon>
         </div>
-        <div class="col py-3">
-            <router-outlet></router-outlet>
-        </div>
+        <h1 class="sidebar-title">Área do Paciente</h1>
+      </div>
     </div>
+
+    <!-- Navegação Principal -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/dashboard']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faDesktop"></fa-icon>
+            </div>
+            <span class="nav-text">Dashboard</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/perfil']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faCircleUser"></fa-icon>
+            </div>
+            <span class="nav-text">Perfil</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/medico']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faHospitalUser"></fa-icon>
+            </div>
+            <span class="nav-text">Médicos</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/prontuario']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faFileInvoice"></fa-icon>
+            </div>
+            <span class="nav-text">Prontuário</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/mensagem']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faMessage"></fa-icon>
+            </div>
+            <span class="nav-text">Mensagens</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/requisicoes']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faBell"></fa-icon>
+            </div>
+            <span class="nav-text">Requisições</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a [routerLink]="['/paciente/notificacoes']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faBell"></fa-icon>
+            </div>
+            <span class="nav-text">Notificações</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Seção do Usuário -->
+    <div class="user-section">
+      <div class="user-info">
+        <div class="user-avatar">
+          <fa-icon [icon]="faUser" class="avatar-icon"></fa-icon>
+        </div>
+        <div class="user-details">
+          <h3 class="user-name">{{ userName }}</h3>
+          <p class="user-email">{{ userEmail }}</p>
+        </div>
+      </div>
+      
+      <button class="logout-button" (click)="onLogout()" title="Sair do sistema">
+        <fa-icon [icon]="faSignOutAlt" class="logout-icon"></fa-icon>
+        <span class="logout-text">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>  

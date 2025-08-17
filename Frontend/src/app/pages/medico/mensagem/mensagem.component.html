@@ -3,12 +3,12 @@
   <div class="conversas-lista">
     <h3>Conversas</h3>
     
-    <!-- Lista de médicos para nova conversa -->
+    <!-- Lista de pacientes para nova conversa -->
     <div class="novos-contatos">
       <h5>Iniciar nova conversa</h5>
-      <div class="medico-item" *ngFor="let medico of medicos" (click)="iniciarNovaConversa(medico)">
-        <img [src]="medico.avatar" width="30" [alt]="medico.nome">
-        <span>{{ medico.nome }}</span>
+      <div class="medico-item" *ngFor="let paciente of pacientes" (click)="iniciarNovaConversa(paciente)">
+        <img [src]="paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'" width="30" [alt]="paciente.nome">
+        <span>{{ paciente.nome }}</span>
       </div>
     </div>
 
@@ -32,10 +32,10 @@
       <h4>{{ destinatarioSelecionado.usuario.nome }}</h4>
     </div>
     
-    <div class="mensagens-lista">
+    <div class="mensagens-lista" #mensagensContainer>
       <div class="mensagem" 
            *ngFor="let mensagem of destinatarioSelecionado.mensagens"
-           [class.minha]="mensagem.remetenteId === usuarioAtual.id">
+           [class.minha]="mensagem.remetenteId === 'medico_' + usuarioAtual.id && mensagem.remetenteTipo === 'medico'">
         <div class="mensagem-conteudo">
           <p>{{ mensagem.texto }}</p>
           <small>{{ mensagem.data | date:'dd/MM HH:mm' }}</small>

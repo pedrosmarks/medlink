@@ -1,0 +1,21 @@
+<button class="btn btn-secondary mb-3" [routerLink]="['../']">
+  ← Voltar ao prontuário
+</button>
+<h2>Cirurgias de {{ pacienteNome }}</h2>
+
+
+
+<div class="cirurgias-grid">
+  <div class="cirurgia-card position-relative" *ngFor="let cirurgia of cirurgias; let i = index">
+    >
+    <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
+    <div>
+      <strong>Nome:</strong> {{ cirurgia.nome }}<br>
+      <strong>Data:</strong> {{ cirurgia.data | date:'dd/MM/yyyy' }}<br>
+      <strong>Descrição:</strong> {{ cirurgia.descricao }}
+    </div>
+  </div>
+  <div *ngIf="cirurgias.length === 0" class="text-muted">
+    Nenhuma cirurgia cadastrada para este paciente.
+  </div>
+</div>

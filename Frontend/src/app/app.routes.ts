@@ -88,7 +88,42 @@ export const routes: Routes = [
       { path: 'medico', component: PacienteMedicoComponent},
       { path: 'mensagem', component: PacienteMensagemComponent },
       { path: 'notificacoes', component: NotificacoesComponent },
-      { path: 'prontuario', component: PacienteProntuarioComponent },
+      { 
+        path: 'prontuario', 
+        component: PacienteProntuarioComponent,
+        children: [
+          {
+            path: 'consultas',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/consultas/consultas/consultas').then(m => m.Consultas)
+          },
+          {
+            path: 'vacinas',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/vacinas/vacinas/vacinas').then(m => m.Vacinas)
+          },
+          {
+            path: 'medicamentos',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/medicamentos/medicamentos/medicamentos').then(m => m.Medicamentos)
+          },
+          {
+            path: 'cirurgias',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/cirurgias/cirurgias/cirurgias').then(m => m.Cirurgias)
+          },
+          {
+            path: 'diagnosticos',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/diagnosticos/diagnosticos/diagnosticos').then(m => m.Diagnosticos)
+          },
+          {
+            path: 'alergias',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/alergias/alergias/alergias').then(m => m.Alergias)
+          }
+        ]
+      },
       { path: 'requisicoes', component: PacienteRequisicoesComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

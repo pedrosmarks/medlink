@@ -1,0 +1,36 @@
+<div class="medicamentos-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../']">
+      ← Voltar ao Prontuário
+    </button>
+    <h2>Meus Medicamentos</h2>
+    <p>{{ pacienteNome }}</p>
+  </div>
+
+  <div class="content">
+    <div *ngIf="carregando" class="loading">
+      <p>Carregando medicamentos...</p>
+    </div>
+
+    <div *ngIf="!carregando && medicamentos.length === 0" class="empty-state">
+      <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="80" alt="Sem medicamentos" />
+      <h4>Nenhum medicamento encontrado</h4>
+      <p>Você ainda não possui medicamentos registrados no sistema.</p>
+    </div>
+
+    <div *ngIf="!carregando && medicamentos.length > 0" class="medicamentos-list">
+      <div class="medicamento-card" *ngFor="let medicamento of medicamentos; let i = index">
+        <div class="medicamento-header">
+          <h4>{{ medicamento.nome || 'Medicamento' }}</h4>
+          <span class="status" [class.ativo]="medicamento.ativo">{{ medicamento.ativo ? 'Ativo' : 'Inativo' }}</span>
+        </div>
+        <div class="medicamento-body">
+          <p><strong>Dosagem:</strong> {{ medicamento.dosagem || 'Não informado' }}</p>
+          <p *ngIf="medicamento.frequencia"><strong>Frequência:</strong> {{ medicamento.frequencia }}</p>
+          <p *ngIf="medicamento.dataInicio"><strong>Início:</strong> {{ medicamento.dataInicio | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="medicamento.observacoes"><strong>Observações:</strong> {{ medicamento.observacoes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

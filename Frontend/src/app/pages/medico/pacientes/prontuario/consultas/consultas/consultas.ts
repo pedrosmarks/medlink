@@ -27,6 +27,7 @@ export class Consultas implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.parent?.snapshot.paramMap.get('id');
+    console.log('ID recebido:', id); 
     this.pacienteId = id ?? '';
     this.pacientesReadService.getPacientes().subscribe(pacientes => {
       const paciente = pacientes.find((p: any) => String(p.id) === String(id));
@@ -38,27 +39,35 @@ export class Consultas implements OnInit {
   }
 
   adicionarConsulta() {
-    if (!this.novaConsultaData || !this.novaConsultaDescricao.trim()) return;
-    const nova = {
-      data: this.novaConsultaData,
-      descricao: this.novaConsultaDescricao.trim()
-    };
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      consultas: [...this.consultas, nova]
-    }).subscribe(() => {
-      this.consultas.push(nova);
-      this.novaConsultaData = '';
-      this.novaConsultaDescricao = '';
-    });
-  }
+  if (!this.novaConsultaData || !this.novaConsultaDescricao.trim()) return;
+  const nova = {
+    data: this.novaConsultaData,
+    descricao: this.novaConsultaDescricao.trim()
+  };
 
-  removerConsulta(index: number) {
-    const novasConsultas = this.consultas.slice();
+  // Buscar paciente completo
+  this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+    const consultasAtualizadas = [...(paciente.consultas || []), nova];
+    const pacienteAtualizado = { ...paciente, consultas: consultasAtualizadas };
+
+    this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+      .subscribe(() => {
+        this.consultas = consultasAtualizadas;
+        this.novaConsultaData = '';
+        this.novaConsultaDescricao = '';
+      });
+  });
+}
+removerConsulta(index: number) {
+  this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+    const novasConsultas = paciente.consultas.slice();
     novasConsultas.splice(index, 1);
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      consultas: novasConsultas
-    }).subscribe(() => {
-      this.consultas = novasConsultas;
-    });
-  }
+    const pacienteAtualizado = { ...paciente, consultas: novasConsultas };
+
+    this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+      .subscribe(() => {
+        this.consultas = novasConsultas;
+      });
+  });
+}
 }

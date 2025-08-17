@@ -45,23 +45,32 @@ export class Medicamentos implements OnInit {
       dosagem: this.novoMedicamentoDosagem.trim(),
       inicio: this.novoMedicamentoInicio
     };
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      medicamentos: [...this.medicamentos, novo]
-    }).subscribe(() => {
-      this.medicamentos.push(novo);
-      this.novoMedicamentoNome = '';
-      this.novoMedicamentoDosagem = '';
-      this.novoMedicamentoInicio = '';
+
+    // Buscar paciente completo antes de atualizar
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const medicamentosAtualizados = [...(paciente.medicamentos || []), novo];
+      const pacienteAtualizado = { ...paciente, medicamentos: medicamentosAtualizados };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.medicamentos = medicamentosAtualizados;
+          this.novoMedicamentoNome = '';
+          this.novoMedicamentoDosagem = '';
+          this.novoMedicamentoInicio = '';
+        });
     });
   }
 
   removerMedicamento(index: number) {
-    const novosMedicamentos = this.medicamentos.slice();
-    novosMedicamentos.splice(index, 1);
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      medicamentos: novosMedicamentos
-    }).subscribe(() => {
-      this.medicamentos = novosMedicamentos;
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const novosMedicamentos = paciente.medicamentos.slice();
+      novosMedicamentos.splice(index, 1);
+      const pacienteAtualizado = { ...paciente, medicamentos: novosMedicamentos };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.medicamentos = novosMedicamentos;
+        });
     });
   }
 }

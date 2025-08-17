@@ -1,9 +1,8 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.implementation.service.mensagem.MensagemServiceImpl;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,34 +11,32 @@ import java.util.Map;
 @CrossOrigin
 public class MensagemController {
 
-    private static List<Map<String, Object>> mensagens = new ArrayList<>();
-    
-    static {
-        mensagens.add(Map.of(
-            "id", "1",
-            "remetenteId", "1",
-            "remetenteTipo", "paciente",
-            "remetenteNome", "João da Silva",
-            "destinatarioId", "medico_1",
-            "destinatarioTipo", "medico",
-            "destinatarioNome", "Dr. Carlos Silva",
-            "texto", "Olá, doutor! Gostaria de agendar uma consulta.",
-            "data", "2024-08-04T10:00:00",
-            "lida", false
-        ));
-    }
+    private final MensagemServiceImpl mensagemService = new MensagemServiceImpl();
 
     @GetMapping
-    public List<Map<String, Object>> getMensagens() {
-        return mensagens;
+    public List<Mensagem> getMensagens() {
+        return mensagemService.listarTodas();
+    }
+
+    // Buscar conversas de um usuário específico
+    @GetMapping(params = {"remetenteId", "remetenteTipo"})
+    public List<Mensagem> getConversas(
+            @RequestParam String remetenteId,
+            @RequestParam String remetenteTipo) {
+        return mensagemService.listarTodas().stream()
+                .filter(m -> m.getRemetenteId().equals(remetenteId) && m.getRemetenteTipo().equals(remetenteTipo))
+                .toList();
     }
 
     @PostMapping
-    public Map<String, Object> enviarMensagem(@RequestBody Map<String, Object> mensagem) {
-        mensagem.put("id", String.valueOf(System.currentTimeMillis()));
-        mensagem.put("data", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        mensagem.put("lida", false);
-        mensagens.add(mensagem);
+    public Mensagem enviarMensagem(@RequestBody Mensagem mensagem) {
+        mensagemService.enviarMensagem(mensagem);
         return mensagem;
+    }
+
+    // Marcar mensagem como lida
+    @PatchMapping("/{id}")
+    public Mensagem marcarComoLida(@PathVariable String id) {
+        return mensagemService.marcarComoLida(id);
     }
 }

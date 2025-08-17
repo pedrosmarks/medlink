@@ -1,0 +1,36 @@
+<div class="diagnosticos-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../']">
+      ← Voltar ao Prontuário
+    </button>
+    <h2>Meus Diagnósticos</h2>
+    <p>{{ pacienteNome }}</p>
+  </div>
+
+  <div class="content">
+    <div *ngIf="carregando" class="loading">
+      <p>Carregando diagnósticos...</p>
+    </div>
+
+    <div *ngIf="!carregando && diagnosticos.length === 0" class="empty-state">
+      <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="80" alt="Sem diagnósticos" />
+      <h4>Nenhum diagnóstico encontrado</h4>
+      <p>Você ainda não possui diagnósticos registrados no sistema.</p>
+    </div>
+
+    <div *ngIf="!carregando && diagnosticos.length > 0" class="diagnosticos-list">
+      <div class="diagnostico-card" *ngFor="let diagnostico of diagnosticos; let i = index">
+        <div class="diagnostico-header">
+          <h4>{{ diagnostico.nome || 'Diagnóstico' }}</h4>
+          <span class="data">{{ diagnostico.data | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="diagnostico-body">
+          <p><strong>CID:</strong> {{ diagnostico.cid || 'Não informado' }}</p>
+          <p *ngIf="diagnostico.medico"><strong>Médico:</strong> {{ diagnostico.medico }}</p>
+          <p *ngIf="diagnostico.descricao"><strong>Descrição:</strong> {{ diagnostico.descricao }}</p>
+          <p *ngIf="diagnostico.tratamento"><strong>Tratamento:</strong> {{ diagnostico.tratamento }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

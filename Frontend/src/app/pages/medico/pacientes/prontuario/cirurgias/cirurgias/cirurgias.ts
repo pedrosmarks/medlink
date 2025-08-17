@@ -45,23 +45,32 @@ export class Cirurgias implements OnInit {
       data: this.novaCirurgiaData,
       descricao: this.novaCirurgiaDescricao.trim()
     };
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      cirurgias: [...this.cirurgias, nova]
-    }).subscribe(() => {
-      this.cirurgias.push(nova);
-      this.novaCirurgiaNome = '';
-      this.novaCirurgiaData = '';
-      this.novaCirurgiaDescricao = '';
+
+    // Buscar paciente completo antes de atualizar
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const cirurgiasAtualizadas = [...(paciente.cirurgias || []), nova];
+      const pacienteAtualizado = { ...paciente, cirurgias: cirurgiasAtualizadas };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.cirurgias = cirurgiasAtualizadas;
+          this.novaCirurgiaNome = '';
+          this.novaCirurgiaData = '';
+          this.novaCirurgiaDescricao = '';
+        });
     });
   }
 
   removerCirurgia(index: number) {
-    const novasCirurgias = this.cirurgias.slice();
-    novasCirurgias.splice(index, 1);
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      cirurgias: novasCirurgias
-    }).subscribe(() => {
-      this.cirurgias = novasCirurgias;
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const novasCirurgias = paciente.cirurgias.slice();
+      novasCirurgias.splice(index, 1);
+      const pacienteAtualizado = { ...paciente, cirurgias: novasCirurgias };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.cirurgias = novasCirurgias;
+        });
     });
   }
 }

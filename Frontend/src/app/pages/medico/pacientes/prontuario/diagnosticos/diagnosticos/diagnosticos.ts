@@ -43,22 +43,31 @@ export class Diagnosticos implements OnInit {
       nome: this.novoDiagnosticoNome.trim(),
       data: this.novoDiagnosticoData
     };
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      diagnosticos: [...this.diagnosticos, novo]
-    }).subscribe(() => {
-      this.diagnosticos.push(novo);
-      this.novoDiagnosticoNome = '';
-      this.novoDiagnosticoData = '';
+
+    // Buscar paciente completo antes de atualizar
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const diagnosticosAtualizados = [...(paciente.diagnosticos || []), novo];
+      const pacienteAtualizado = { ...paciente, diagnosticos: diagnosticosAtualizados };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.diagnosticos = diagnosticosAtualizados;
+          this.novoDiagnosticoNome = '';
+          this.novoDiagnosticoData = '';
+        });
     });
   }
 
   removerDiagnostico(index: number) {
-    const novosDiagnosticos = this.diagnosticos.slice();
-    novosDiagnosticos.splice(index, 1);
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.pacienteId}`, {
-      diagnosticos: novosDiagnosticos
-    }).subscribe(() => {
-      this.diagnosticos = novosDiagnosticos;
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
+      const novosDiagnosticos = paciente.diagnosticos.slice();
+      novosDiagnosticos.splice(index, 1);
+      const pacienteAtualizado = { ...paciente, diagnosticos: novosDiagnosticos };
+
+      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+        .subscribe(() => {
+          this.diagnosticos = novosDiagnosticos;
+        });
     });
   }
 }

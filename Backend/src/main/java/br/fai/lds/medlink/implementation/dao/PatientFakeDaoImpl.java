@@ -116,11 +116,10 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .medicId(2)
                 .active(true)
                 .especialistasAutorizados(List.of(
-                        new EspecialistaAutorizado(2L),
-                        new EspecialistaAutorizado(1L)
+                        new EspecialistaAutorizado(2L)
                 ))
                 .requisicoesAcesso(List.of(
-                        new RequisicaoAcesso(1, "aprovado")
+                        new RequisicaoAcesso()
                 ))
                 .consultas(List.of(
                         new Consulta("2024-05-20", "Avaliação de rotina")
@@ -231,6 +230,8 @@ public class PatientFakeDaoImpl implements PatientDao {
     public void updateInformation(int id, Patient entity) {
         for (int i = 0; i < patientList.size(); i++) {
             if (patientList.get(i).getId() == id) {
+                // Manter o ID original
+                entity.setId(id);
                 patientList.set(i, entity);
                 return;
             }
@@ -258,4 +259,7 @@ public class PatientFakeDaoImpl implements PatientDao {
     public List<Patient> findAll() {
         return patientList;
     }
+
+
+
 }

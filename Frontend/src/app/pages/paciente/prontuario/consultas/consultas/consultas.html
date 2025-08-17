@@ -1,0 +1,36 @@
+<div class="consultas-container">
+  <div class="header">
+    <button class="btn btn-secondary mb-3" [routerLink]="['../']">
+      ← Voltar ao Prontuário
+    </button>
+    <h2>Minhas Consultas</h2>
+    <p>{{ pacienteNome }}</p>
+  </div>
+
+  <div class="content">
+    <div *ngIf="carregando" class="loading">
+      <p>Carregando consultas...</p>
+    </div>
+
+    <div *ngIf="!carregando && consultas.length === 0" class="empty-state">
+      <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="80" alt="Sem consultas" />
+      <h4>Nenhuma consulta encontrada</h4>
+      <p>Você ainda não possui consultas registradas no sistema.</p>
+    </div>
+
+    <div *ngIf="!carregando && consultas.length > 0" class="consultas-list">
+      <div class="consulta-card" *ngFor="let consulta of consultas; let i = index">
+        <div class="consulta-header">
+          <h4>{{ consulta.titulo || 'Consulta Médica' }}</h4>
+          <span class="data">{{ consulta.data | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="consulta-body">
+          <p><strong>Médico:</strong> {{ consulta.medico || 'Não informado' }}</p>
+          <p *ngIf="consulta.especialidade"><strong>Especialidade:</strong> {{ consulta.especialidade }}</p>
+          <p><strong>Observações:</strong> {{ consulta.observacoes || 'Nenhuma observação' }}</p>
+          <p *ngIf="consulta.prescricoes"><strong>Prescrições:</strong> {{ consulta.prescricoes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

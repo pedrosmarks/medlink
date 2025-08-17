@@ -15,6 +15,10 @@ export class PacientesReadService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  getPacienteById(id: string): Observable<any> {
+  return this.http.get<any>(`http://localhost:8080/api/pacientes/${id}`);
+  }
+
   updatePaciente(id: number, changes: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}`, changes);
   }

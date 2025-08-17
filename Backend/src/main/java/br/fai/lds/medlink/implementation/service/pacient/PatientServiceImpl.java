@@ -66,8 +66,11 @@ public class PatientServiceImpl implements PatientService {
         return patientDao.findByMedicId(medicId);
     }
 
+    // Implementação do método update
     @Override
     public Patient update(int id, Patient entity) {
-        return null;
+        entity.setId(id); // Garantir que o ID seja mantido
+        patientDao.updateInformation(id, entity);
+        return patientDao.readById(id);
     }
 }

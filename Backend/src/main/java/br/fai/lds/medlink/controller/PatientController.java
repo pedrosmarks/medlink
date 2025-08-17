@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-
 public class PatientController {
 
     @Autowired
@@ -39,6 +38,23 @@ public class PatientController {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(PacienteResponseDto.fromEntity(patient));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Novo método UPDATE
+    @PutMapping("/api/pacientes/{id}")
+    public ResponseEntity<PacienteResponseDto> updatePaciente(@PathVariable int id, @RequestBody Patient patient) {
+        try {
+            Patient existingPatient = patientService.findById(id);
+            if (existingPatient == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Patient updatedPatient = patientService.update(id, patient);
+            return ResponseEntity.ok(PacienteResponseDto.fromEntity(updatedPatient));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
