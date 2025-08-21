@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBell, faCircleUser, faDesktop, faFileInvoice, faHospitalUser, faMessage, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-paciente-inicial',
@@ -29,27 +30,19 @@ export class InicialComponent implements OnInit {
   userName: string = '';
   userEmail: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadUserData();
   }
 
   private loadUserData(): void {
-    // Carrega dados do usuário do localStorage ou serviço
-    const userData = localStorage.getItem('userData');
-    if (userData) {
-      const user = JSON.parse(userData);
-      this.userName = user.name || 'Paciente';
-      this.userEmail = user.email || 'paciente@medlink.com';
-    } else {
-      this.userName = 'Paciente';
-      this.userEmail = 'paciente@medlink.com';
-    }
+    const currentUser = this.authService.getCurrentUser();
+    this.userName = currentUser?.name || 'Paciente';
+    this.userEmail = currentUser?.email || 'paciente@medlink.com';
   }
 
   onLogout(): void {
-    localStorage.clear();
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

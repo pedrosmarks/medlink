@@ -9,6 +9,7 @@ import { faMessage } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-inicial',
@@ -33,15 +34,15 @@ export class InicialComponent implements OnInit {
   faBell = faBell;
   faSignOutAlt = faSignOutAlt;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.medicoNome = localStorage.getItem('userName') || 'Médico';
-    this.medicoEmail = localStorage.getItem('userEmail') || 'medico@exemplo.com';
+    const currentUser = this.authService.getCurrentUser();
+    this.medicoNome = currentUser?.name || 'Médico';
+    this.medicoEmail = currentUser?.email || 'medico@exemplo.com';
   }
 
   logout(): void {
-    localStorage.clear();
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

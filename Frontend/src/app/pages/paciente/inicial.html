@@ -1,107 +1,80 @@
-<div class="sidebar-container">
-  <aside class="modern-sidebar">
-    <!-- Header da Sidebar -->
+<div class="paciente-layout">
+  <nav class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
         <h3>MedLink</h3>
         <span class="subtitle">Área do Paciente</span>
       </div>
     </div>
-
-    <!-- Navegação Principal -->
-    <nav class="sidebar-nav">
+    
+    <div class="sidebar-menu">
       <ul class="nav-list">
         <li class="nav-item">
-          <a [routerLink]="['/paciente/dashboard']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faDesktop"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/dashboard']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faDesktop" class="nav-icon"></fa-icon>
             <span class="nav-text">Dashboard</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/perfil']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faCircleUser"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/perfil']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faCircleUser" class="nav-icon"></fa-icon>
             <span class="nav-text">Perfil</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/medico']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faHospitalUser"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/medico']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faHospitalUser" class="nav-icon"></fa-icon>
             <span class="nav-text">Médicos</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/prontuario']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faFileInvoice"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/prontuario']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faFileInvoice" class="nav-icon"></fa-icon>
             <span class="nav-text">Prontuário</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/mensagem']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faMessage"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/mensagem']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faMessage" class="nav-icon"></fa-icon>
             <span class="nav-text">Mensagens</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/requisicoes']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faBell"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/requisicoes']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faBell" class="nav-icon"></fa-icon>
             <span class="nav-text">Requisições</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/paciente/notificacoes']" routerLinkActive="active" class="nav-link">
-            <div class="nav-icon">
-              <fa-icon [icon]="faBell"></fa-icon>
-            </div>
+          <a [routerLink]="['/paciente/notificacoes']" class="nav-link" routerLinkActive="active">
+            <fa-icon [icon]="faBell" class="nav-icon"></fa-icon>
             <span class="nav-text">Notificações</span>
-            <div class="nav-indicator"></div>
           </a>
         </li>
       </ul>
-    </nav>
-
-    <!-- Seção do Usuário -->
-    <div class="user-section">
+    </div>
+    
+    <div class="sidebar-footer">
       <div class="user-info">
         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
              alt="Paciente" class="user-avatar">
         <div class="user-details">
-          <h3 class="user-name">{{ userName }}</h3>
-          <p class="user-email">{{ userEmail }}</p>
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-email">{{ userEmail }}</span>
         </div>
       </div>
-      
-      <button class="logout-button" (click)="onLogout()" title="Sair do sistema">
-        <fa-icon [icon]="faSignOutAlt" class="logout-icon"></fa-icon>
-        <span class="logout-text">Sair</span>
+      <button class="logout-btn" (click)="onLogout()" title="Sair">
+        <fa-icon [icon]="faSignOutAlt"></fa-icon>
       </button>
     </div>
-  </aside>
-
-  <!-- Conteúdo Principal -->
+  </nav>
+  
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>

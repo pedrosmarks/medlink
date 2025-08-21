@@ -15,6 +15,7 @@ import { Prontuario as PacienteProntuarioComponent } from './pages/paciente/pron
 import { Mensagem as PacienteMensagemComponent } from './pages/paciente/mensagem/mensagem';
 import { Requisicoes as PacienteRequisicoesComponent } from './pages/paciente/requisicoes/requisicoes';
 import { Medico as PacienteMedicoComponent } from './pages/paciente/medico/medico';
+import { AuthGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
   {
     path: 'medico',
     component: MedicoInicialComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'perfil', component: PerfilComponent },
@@ -82,6 +84,7 @@ export const routes: Routes = [
   {
     path: 'paciente',
     component: PacienteInicialComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: PacienteDashboardComponent },
       { path: 'perfil', component: PacientePerfilComponent },
@@ -134,5 +137,18 @@ export const routes: Routes = [
       { path: 'requisicoes', component: PacienteRequisicoesComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
+  },
+
+  // Rota padrão - redireciona baseado no login
+  { 
+    path: '', 
+    redirectTo: '/login', 
+    pathMatch: 'full' 
+  },
+  
+  // Rota coringa - redireciona para login
+  { 
+    path: '**', 
+    redirectTo: '/login' 
   }
 ];

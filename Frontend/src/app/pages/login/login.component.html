@@ -1,19 +1,53 @@
-<div class="container mt-5">
-  <div class="login">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="aba === 'paciente'" (click)="aba = 'paciente'">Paciente</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="aba === 'medico'" (click)="aba = 'medico'">Médico(a)</a>
-      </li>
-    </ul>
-    <div class="tab-content mt-3">
-      <div *ngIf="aba === 'paciente'">
-        <app-login-base [perfil]="'paciente'"></app-login-base>
+<div class="login-layout">
+  <div class="login-background">
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </div>
+  
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo">
+          <h1>MedLink</h1>
+          <p class="subtitle">Sistema Médico Integrado</p>
+        </div>
       </div>
-      <div *ngIf="aba === 'medico'">
-        <app-login-base [perfil]="'medico'"></app-login-base>
+      
+      <div class="login-tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="aba === 'paciente'" 
+          (click)="aba = 'paciente'">
+          <div class="tab-icon">
+            <fa-icon [icon]="faUser"></fa-icon>
+          </div>
+          <span>Paciente</span>
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="aba === 'medico'" 
+          (click)="aba = 'medico'">
+          <div class="tab-icon">
+            <fa-icon [icon]="faUserDoctor"></fa-icon>
+          </div>
+          <span>Médico(a)</span>
+        </button>
+      </div>
+      
+      <div class="login-content">
+        <div *ngIf="aba === 'paciente'" class="tab-panel">
+          <app-login-base [perfil]="'paciente'"></app-login-base>
+        </div>
+        <div *ngIf="aba === 'medico'" class="tab-panel">
+          <app-login-base [perfil]="'medico'"></app-login-base>
+        </div>
+      </div>
+      
+      <div class="login-footer">
+        <p>&copy; 2025 MedLink - Todos os direitos reservados</p>
       </div>
     </div>
   </div>

@@ -1,14 +1,51 @@
-<div class="login-container">
-  <form (ngSubmit)="login()">
-    <div class="mb-3">
-      <label>Usuário</label>
-      <input class="form-control" [(ngModel)]="usuario" name="usuario" required>
+<div class="login-form">
+  <form (ngSubmit)="login()" class="modern-form">
+    <div class="form-group">
+      <label class="form-label">
+        <fa-icon [icon]="faUser" class="label-icon"></fa-icon>
+        Usuário
+      </label>
+      <div class="input-wrapper">
+        <input 
+          class="form-input" 
+          [(ngModel)]="usuario" 
+          name="usuario" 
+          required
+          placeholder="Digite seu usuário"
+          autocomplete="username">
+        <div></div>
+      </div>
     </div>
-    <div class="mb-3">
-      <label>Senha</label>
-      <input type="password" class="form-control" [(ngModel)]="senha" name="senha" required>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <fa-icon [icon]="faLock" class="label-icon"></fa-icon>
+        Senha
+      </label>
+      <div class="input-wrapper">
+        <input 
+          type="password" 
+          class="form-input" 
+          [(ngModel)]="senha" 
+          name="senha" 
+          required
+          placeholder="Digite sua senha"
+          autocomplete="current-password">
+        <div ></div>
+      </div>
     </div>
-    <button class="btn btn-primary" type="submit">Entrar</button>
-    <div *ngIf="erro" class="alert alert-danger mt-2">{{ erro }}</div>
+    
+    <button class="login-button" type="submit" [disabled]="!usuario || !senha">
+      <span class="button-content">
+        <fa-icon [icon]="faSignInAlt" class="button-icon"></fa-icon>
+        Entrar
+      </span>
+      <div class="button-ripple"></div>
+    </button>
+    
+    <div *ngIf="erro" class="error-message">
+      <fa-icon [icon]="faExclamationTriangle" class="error-icon"></fa-icon>
+      {{ erro }}
+    </div>
   </form>
 </div>
