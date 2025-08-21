@@ -58,6 +58,22 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.logo h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo .subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 /* NAVEGAÇÃO */
 .sidebar-nav {
   flex: 1;
