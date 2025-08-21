@@ -1,6 +1,6 @@
 
-<div class="medico-layout">
-  <nav class="sidebar">
+<div class="sidebar-container">
+  <aside class="modern-sidebar">
     <div class="sidebar-header">
       <div class="logo">
         <h3>MedLink</h3>
@@ -8,60 +8,78 @@
       </div>
     </div>
     
-    <div class="sidebar-menu">
+    <nav class="sidebar-nav">
       <ul class="nav-list">
         <li class="nav-item">
-          <a [routerLink]="['/medico/dashboard']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faDesktop" class="nav-icon"></fa-icon>
+          <a [routerLink]="['/medico/dashboard']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faDesktop"></fa-icon>
+            </div>
             <span class="nav-text">Dashboard</span>
+            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/medico/perfil']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faCircleUser" class="nav-icon"></fa-icon>
+          <a [routerLink]="['/medico/perfil']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faCircleUser"></fa-icon>
+            </div>
             <span class="nav-text">Perfil</span>
+            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/medico/pacientes']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faHospitalUser" class="nav-icon"></fa-icon>
+          <a [routerLink]="['/medico/pacientes']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faHospitalUser"></fa-icon>
+            </div>
             <span class="nav-text">Pacientes</span>
+            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/medico/mensagem']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faMessage" class="nav-icon"></fa-icon>
+          <a [routerLink]="['/medico/mensagem']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faMessage"></fa-icon>
+            </div>
             <span class="nav-text">Mensagens</span>
+            <div class="nav-indicator"></div>
           </a>
         </li>
         
         <li class="nav-item">
-          <a [routerLink]="['/medico/notificacoes']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faBell" class="nav-icon"></fa-icon>
+          <a [routerLink]="['/medico/notificacoes']" routerLinkActive="active" class="nav-link">
+            <div class="nav-icon">
+              <fa-icon [icon]="faBell"></fa-icon>
+            </div>
             <span class="nav-text">Notificações</span>
+            <div class="nav-indicator"></div>
           </a>
         </li>
       </ul>
-    </div>
+    </nav>
     
-    <div class="sidebar-footer">
+    <div class="user-section">
       <div class="user-info">
         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
              alt="Médico" class="user-avatar">
         <div class="user-details">
-          <span class="user-name">{{ medicoNome }}</span>
-          <span class="user-email">{{ medicoEmail }}</span>
+          <h3 class="user-name">{{ medicoNome }}</h3>
+          <p class="user-email">{{ medicoEmail }}</p>
         </div>
       </div>
-      <button class="logout-btn" (click)="logout()" title="Sair">
-        <fa-icon [icon]="faSignOutAlt"></fa-icon>
+      
+      <button class="logout-button" (click)="logout()" title="Sair do sistema">
+        <fa-icon [icon]="faSignOutAlt" class="logout-icon"></fa-icon>
+        <span class="logout-text">Sair</span>
       </button>
     </div>
-  </nav>
-  
+  </aside>
+
+  <!-- Conteúdo Principal -->
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>
