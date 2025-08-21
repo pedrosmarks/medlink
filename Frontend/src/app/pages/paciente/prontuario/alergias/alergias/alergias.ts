@@ -27,15 +27,24 @@ carregando: any;
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.parent?.snapshot.paramMap.get('id');
-    this.pacienteId = id ?? '';
-    this.pacientesReadService.getPacientes().subscribe(pacientes => {
-      const paciente = pacientes.find((p: any) => String(p.id) === String(id));
-      if (paciente) {
-        this.alergias = paciente.alergias || [];
-        this.pacienteNome = paciente.nome;
-      }
-    });
+    this.pacienteId = localStorage.getItem('userId') || '';
+    this.pacienteNome = localStorage.getItem('userName') || 'Paciente';
+    this.carregarAlergias();
+  }
+
+  carregarAlergias(): void {
+    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/alergias`)
+      .subscribe({
+        next: (response) => {
+          this.alergias = response.data || [];
+          this.carregando = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar alergias:', error);
+          this.alergias = [];
+          this.carregando = false;
+        }
+      });
   }
 
   adicionarAlergia() {
