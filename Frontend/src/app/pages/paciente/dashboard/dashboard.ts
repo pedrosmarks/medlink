@@ -4,7 +4,7 @@ import { DashboardReadService } from '../../../services/dashboard/dashboard-read
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-paciente-dashboard',
   standalone: true,
   imports: [CommonModule, HttpClientModule],
   templateUrl: './dashboard.html',
