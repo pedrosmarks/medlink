@@ -14,4 +14,8 @@ export class PerfilReadService {
   getPerfilById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  getPerfilPacienteById(id: string): Observable<any> {
+    return this.http.get<any>(`http://localhost:8080/api/pacientes/${id}`);
+  }
 }
