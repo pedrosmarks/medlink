@@ -1,35 +1,67 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { PerfilReadService } from '../../../services/perfil/perfil-read.service';
+import { PerfilUpdateService } from '../../../services/perfil/perfil-update';
 
 @Component({
-  selector: 'app-perfil',
+  selector: 'app-paciente-perfil',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css']
 })
 export class Perfil implements OnInit {
-  paciente: any = {};
+  perfil: any = null;
   editando = false;
-  mensagem = '';
+  perfilBackup: any = {};
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private perfilReadService: PerfilReadService,
+    private perfilUpdateService: PerfilUpdateService
+  ) {}
 
   ngOnInit(): void {
-    // Simulação: buscar paciente com id 1 (ajuste para pegar o id do usuário logado)
-    this.http.get<any>('http://localhost:3000/pacientes/1').subscribe(paciente => {
-      this.paciente = paciente;
-    });
+    const pacienteId = localStorage.getItem('userId');
+    const userProfile = localStorage.getItem('userProfile');
+    
+    console.log('ID do usuário:', pacienteId);
+    console.log('Perfil do usuário:', userProfile);
+    
+    if (pacienteId && userProfile === 'PATIENT') {
+      console.log('Fazendo chamada para:', `http://localhost:8080/api/pacientes/${pacienteId}`);
+      this.perfilReadService.getPerfilPacienteById(pacienteId).subscribe({
+        next: (data) => {
+          console.log('Perfil do paciente recebido:', data);
+          console.log('Estrutura dos dados:', JSON.stringify(data, null, 2));
+          this.perfil = data;
+        },
+        error: (error) => {
+          console.error('Erro ao buscar perfil do paciente:', error);
+        }
+      });
+    }
+  }
+
+  editar() {
+    this.editando = true;
+    this.perfilBackup = { ...this.perfil };
   }
 
   salvar() {
-    this.http.patch<any>(`http://localhost:3000/pacientes/${this.paciente.id}`, this.paciente)
-      .subscribe(() => {
+    this.perfilUpdateService.updatePerfilPaciente(this.perfil).subscribe({
+      next: () => {
         this.editando = false;
-        this.mensagem = 'Perfil atualizado com sucesso!';
-        setTimeout(() => this.mensagem = '', 2000);
-      });
+        console.log('Perfil atualizado com sucesso');
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar perfil:', error);
+      }
+    });
+  }
+
+  cancelar() {
+    this.perfil = { ...this.perfilBackup };
+    this.editando = false;
   }
 }

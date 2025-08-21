@@ -1,48 +1,65 @@
-<div class="container mt-4" *ngIf="paciente">
-  <h2>Perfil do Paciente</h2>
-  <div *ngIf="mensagem" class="alert alert-success">{{ mensagem }}</div>
-  <form *ngIf="editando; else visualizar" (ngSubmit)="salvar()">
-    <div class="mb-3">
-      <label class="form-label">Nome</label>
-      <input class="form-control" [(ngModel)]="paciente.nome" name="nome" required>
+<div class="perfil-container" *ngIf="perfil">
+  <div class="perfil-campos">
+    <div class="perfil-linha">
+      <label>Nome:</label>
+      <span *ngIf="!editando">{{ perfil.nome }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.nome" name="nome" required />
     </div>
-    <div class="mb-3">
-      <label class="form-label">E-mail</label>
-      <input class="form-control" [(ngModel)]="paciente.email" name="email" required>
+    <div class="perfil-linha">
+      <label>CPF:</label>
+      <span *ngIf="!editando">{{ perfil.cpf }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.cpf" name="cpf" />
     </div>
-    <div class="mb-3">
-      <label class="form-label">Telefone</label>
-      <input class="form-control" [(ngModel)]="paciente.telefone" name="telefone">
+    <div class="perfil-linha">
+      <label>Idade:</label>
+      <span *ngIf="!editando">{{ perfil.idade }}</span>
+      <input *ngIf="editando" type="number" [(ngModel)]="perfil.idade" name="idade" />
     </div>
-    <div class="mb-3">
-      <label class="form-label">CPF</label>
-      <input class="form-control" [(ngModel)]="paciente.cpf" name="cpf" disabled>
+    <div class="perfil-linha">
+      <label>Telefone:</label>
+      <span *ngIf="!editando">{{ perfil.telefone }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.telefone" name="telefone" />
     </div>
-    <div class="mb-3">
-      <label class="form-label">Idade</label>
-      <input type="number" class="form-control" [(ngModel)]="paciente.idade" name="idade">
+    <div class="perfil-linha">
+      <label>Email:</label>
+      <span *ngIf="!editando">{{ perfil.email }}</span>
+      <input *ngIf="editando" type="email" [(ngModel)]="perfil.email" name="email" />
     </div>
-    <div class="mb-3">
-      <label class="form-label">Tipo Sanguíneo</label>
-      <input class="form-control" [(ngModel)]="paciente.tipoSanguineo" name="tipoSanguineo">
+    <div class="perfil-linha">
+      <label>Tipo Sanguíneo:</label>
+      <span *ngIf="!editando">{{ perfil.tipoSanguineo }}</span>
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.tipoSanguineo" name="tipoSanguineo" />
     </div>
-    <div class="mb-3">
-      <label class="form-label">Observações</label>
-      <textarea class="form-control" [(ngModel)]="paciente.observacoes" name="observacoes"></textarea>
+    <div class="perfil-linha">
+      <label>Observações:</label>
+      <span *ngIf="!editando">{{ perfil.observacoes }}</span>
+      <textarea *ngIf="editando" [(ngModel)]="perfil.observacoes" name="observacoes"></textarea>
     </div>
-    <button class="btn btn-success" type="submit">Salvar</button>
-    <button class="btn btn-secondary ms-2" type="button" (click)="editando = false">Cancelar</button>
-  </form>
-  <ng-template #visualizar>
-    <div class="card p-3">
-      <div><strong>Nome:</strong> {{ paciente.nome }}</div>
-      <div><strong>E-mail:</strong> {{ paciente.email }}</div>
-      <div><strong>Telefone:</strong> {{ paciente.telefone }}</div>
-      <div><strong>CPF:</strong> {{ paciente.cpf }}</div>
-      <div><strong>Idade:</strong> {{ paciente.idade }}</div>
-      <div><strong>Tipo Sanguíneo:</strong> {{ paciente.tipoSanguineo }}</div>
-      <div><strong>Observações:</strong> {{ paciente.observacoes }}</div>
-      <button class="btn btn-primary mt-3" (click)="editando = true">Editar Perfil</button>
+    <div class="perfil-linha">
+      <label>Endereço:</label>
+      <span *ngIf="!editando">
+        {{ perfil.address?.street }}, {{ perfil.address?.number }} {{ perfil.address?.complement }}<br>
+        {{ perfil.address?.neighborhood }}, {{ perfil.address?.city }} - {{ perfil.address?.state }}<br>
+        CEP: {{ perfil.address?.zipCode }}
+      </span>
+      <div *ngIf="editando">
+        <input type="text" [(ngModel)]="perfil.address.street" name="street" placeholder="Rua" />
+        <input type="text" [(ngModel)]="perfil.address.number" name="number" placeholder="Número" />
+        <input type="text" [(ngModel)]="perfil.address.complement" name="complement" placeholder="Complemento" />
+        <input type="text" [(ngModel)]="perfil.address.neighborhood" name="neighborhood" placeholder="Bairro" />
+        <input type="text" [(ngModel)]="perfil.address.city" name="city" placeholder="Cidade" />
+        <input type="text" [(ngModel)]="perfil.address.state" name="state" placeholder="Estado" />
+        <input type="text" [(ngModel)]="perfil.address.zipCode" name="zipCode" placeholder="CEP" />
+      </div>
     </div>
-  </ng-template>
+  </div>
+
+  <div class="perfil-botoes">
+    <button *ngIf="!editando" (click)="editar()">Editar</button>
+    <button *ngIf="editando" (click)="salvar()" class="salvar">Salvar</button>
+    <button *ngIf="editando" (click)="cancelar()" class="cancelar">Cancelar</button>
+  </div>
+</div>
+<div *ngIf="!perfil">
+  Carregando perfil...
 </div>
