@@ -25,10 +25,10 @@ export class Cirurgias implements OnInit {
   }
 
   carregarCirurgias(): void {
-    this.http.get<any[]>(`http://localhost:8080/cirurgias?pacienteId=${this.pacienteId}`)
+    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/cirurgias`)
       .subscribe({
-        next: (cirurgias) => {
-          this.cirurgias = cirurgias || [];
+        next: (response) => {
+          this.cirurgias = response.data || [];
           this.carregando = false;
         },
         error: (error) => {
