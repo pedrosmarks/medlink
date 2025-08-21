@@ -25,10 +25,10 @@ export class Medicamentos implements OnInit {
   }
 
   carregarMedicamentos(): void {
-    this.http.get<any[]>(`http://localhost:8080/medicamentos?pacienteId=${this.pacienteId}`)
+    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/medicamentos`)
       .subscribe({
-        next: (medicamentos) => {
-          this.medicamentos = medicamentos || [];
+        next: (response) => {
+          this.medicamentos = response.data || [];
           this.carregando = false;
         },
         error: (error) => {
