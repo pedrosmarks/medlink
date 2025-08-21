@@ -28,9 +28,11 @@ export class LoginBaseComponent {
     this.loginService.login(this.usuario, this.senha)
   .subscribe({
     next: (response) => {
-      // O backend retorna { data: { id, name, profile } }
+      // O backend retorna { data: { id, name, email, profile } }
       if (response?.data?.id && response?.data?.profile) {
         localStorage.setItem('userId', response.data.id);
+        localStorage.setItem('userName', response.data.name || 'Usuário');
+        localStorage.setItem('userEmail', response.data.email || this.usuario);
         localStorage.setItem('userProfile', response.data.profile);
 
         if (response.data.profile === 'MEDIC') {
