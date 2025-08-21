@@ -11,4 +11,8 @@ export class PerfilUpdateService {
   updatePerfil(perfil: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${perfil.id}`, perfil);
   }
+
+  updatePerfilPaciente(perfil: any): Observable<any> {
+    return this.http.put(`http://localhost:8080/api/pacientes/${perfil.id}`, perfil);
+  }
 }
