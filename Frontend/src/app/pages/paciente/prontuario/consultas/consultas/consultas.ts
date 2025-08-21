@@ -19,21 +19,38 @@ export class Consultas implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    console.log('=== INICIANDO COMPONENTE CONSULTAS ===');
     this.pacienteId = localStorage.getItem('userId') || '';
     this.pacienteNome = localStorage.getItem('userName') || 'Paciente';
+    console.log('Dados do localStorage:');
+    console.log('- userId:', this.pacienteId);
+    console.log('- userName:', this.pacienteNome);
+    console.log('- userProfile:', localStorage.getItem('userProfile'));
+    
+    if (!this.pacienteId) {
+      console.error('ERRO: ID do paciente não encontrado no localStorage!');
+      return;
+    }
+    
     this.carregarConsultas();
   }
 
   carregarConsultas(): void {
-    // Chama a API para buscar consultas do paciente logado
-    this.http.get<any[]>(`http://localhost:8080/consultas?pacienteId=${this.pacienteId}`)
+    console.log('Carregando consultas para paciente ID:', this.pacienteId);
+    console.log('URL da chamada:', `http://localhost:8080/api/pacientes/${this.pacienteId}/consultas`);
+    
+    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/consultas`)
       .subscribe({
-        next: (consultas) => {
-          this.consultas = consultas || [];
+        next: (response) => {
+          console.log('Response completo:', response);
+          console.log('Dados das consultas:', response.data);
+          this.consultas = response.data || [];
           this.carregando = false;
         },
         error: (error) => {
           console.error('Erro ao carregar consultas:', error);
+          console.error('Status do erro:', error.status);
+          console.error('Mensagem do erro:', error.message);
           this.consultas = [];
           this.carregando = false;
         }
