@@ -27,9 +27,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient authenticatePatient(String email, String password) {
+        System.out.println("Tentando autenticar paciente com email: " + email);
         Patient patient = patientDao.findByEmail(email);
-        if (patient != null && patient.getPassword().equals(password)) {
-            return patient;
+        if (patient != null) {
+            System.out.println("Paciente encontrado: " + patient.getName() + ", senha no BD: " + patient.getPassword());
+            if (patient.getPassword().equals(password)) {
+                System.out.println("Senha correta!");
+                return patient;
+            } else {
+                System.out.println("Senha incorreta!");
+            }
+        } else {
+            System.out.println("Paciente não encontrado com email: " + email);
         }
         return null;
     }
