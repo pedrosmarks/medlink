@@ -88,10 +88,17 @@ export const routes: Routes = [
       { path: 'medico', component: PacienteMedicoComponent},
       { path: 'mensagem', component: PacienteMensagemComponent },
       { path: 'notificacoes', component: NotificacoesComponent },
-      { 
-        path: 'prontuario', 
-        component: PacienteProntuarioComponent,
+      {
+        path: 'prontuario',
+        loadComponent: () =>
+          import('./pages/paciente/prontuario/prontuario').then(m => m.Prontuario),
         children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () =>
+              import('./pages/paciente/prontuario/prontuario-cards/prontuario-cards').then(m => m.ProntuarioCards)
+          },
           {
             path: 'consultas',
             loadComponent: () =>
