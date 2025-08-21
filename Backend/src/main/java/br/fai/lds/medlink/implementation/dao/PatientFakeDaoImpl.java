@@ -259,7 +259,4 @@ public class PatientFakeDaoImpl implements PatientDao {
     public List<Patient> findAll() {
         return patientList;
     }
-
-
-
 }
