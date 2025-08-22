@@ -63,27 +63,6 @@ public class PatientController {
         }
     }
 
-    // Endpoint para autenticação de paciente (compatibilidade com frontend)
-    @GetMapping("/auth")
-    public ResponseEntity<ApiResponse<PacienteResponseDto>> authenticatePatient(
-            @RequestParam String email,
-            @RequestParam String password) {
-
-        // Busca paciente por email
-        Patient patient = patientService.findByEmail(email);
-        
-        if (patient != null && password.equals(patient.getPassword())) {
-            ApiResponse<PacienteResponseDto> response = new ApiResponse<>(
-                    "Login realizado com sucesso.",
-                    PacienteResponseDto.fromEntity(patient)
-            );
-            return ResponseEntity.ok(response);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>("Credenciais inválidas."));
-    }
-
     // Endpoints para buscar dados médicos específicos do paciente
     
     @GetMapping("/{id}/consultations")
