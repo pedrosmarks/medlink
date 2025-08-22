@@ -30,7 +30,7 @@ public class MedicFakeDaoImpl implements MedicDao {
                 .id(getNextId())
                 .name("Dr. Pedro Almeida")
                 .cpf("111.111.111-11")
-                .password("123")
+                .password("123456")
                 .gender(Gender.MASCULINO)
                 .birthDate(LocalDate.parse("15.03.1980", formatter))
                 .phoneNumber("11 99999-8888")
