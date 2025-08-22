@@ -73,117 +73,44 @@ public class PatientController {
     
     @GetMapping("/{id}/consultations")
     public ResponseEntity<ApiResponse<List<Consulta>>> getConsultationsByPatient(@PathVariable int id) {
-        try {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            ApiResponse<List<Consulta>> response = new ApiResponse<>(
-                    "Consultas recuperadas com sucesso.",
-                    patient.getConsultas()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return getPatientMedicalData(id, Patient::getConsultas, "Consultas recuperadas com sucesso.");
     }
 
     @GetMapping("/{id}/vaccines")
     public ResponseEntity<ApiResponse<List<Vacina>>> getVaccinesByPatient(@PathVariable int id) {
-        try {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            ApiResponse<List<Vacina>> response = new ApiResponse<>(
-                    "Vacinas recuperadas com sucesso.",
-                    patient.getVacinas()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return getPatientMedicalData(id, Patient::getVacinas, "Vacinas recuperadas com sucesso.");
     }
 
     @GetMapping("/{id}/medications")
     public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicationsByPatient(@PathVariable int id) {
-        try {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            ApiResponse<List<Medicamento>> response = new ApiResponse<>(
-                    "Medicamentos recuperados com sucesso.",
-                    patient.getMedicamentos()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return getPatientMedicalData(id, Patient::getMedicamentos, "Medicamentos recuperados com sucesso.");
     }
 
     @GetMapping("/{id}/surgeries")
     public ResponseEntity<ApiResponse<List<Cirurgia>>> getSurgeriesByPatient(@PathVariable int id) {
-        try {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            ApiResponse<List<Cirurgia>> response = new ApiResponse<>(
-                    "Cirurgias recuperadas com sucesso.",
-                    patient.getCirurgias()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return getPatientMedicalData(id, Patient::getCirurgias, "Cirurgias recuperadas com sucesso.");
     }
 
     @GetMapping("/{id}/diagnoses")
     public ResponseEntity<ApiResponse<List<Diagnostico>>> getDiagnosesByPatient(@PathVariable int id) {
-        try {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            ApiResponse<List<Diagnostico>> response = new ApiResponse<>(
-                    "Diagnósticos recuperados com sucesso.",
-                    patient.getDiagnosticos()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return getPatientMedicalData(id, Patient::getDiagnosticos, "Diagnósticos recuperados com sucesso.");
     }
 
     @GetMapping("/{id}/allergies")
     public ResponseEntity<ApiResponse<List<Alergia>>> getAllergiesByPatient(@PathVariable int id) {
+        return getPatientMedicalData(id, Patient::getAlergias, "Alergias recuperadas com sucesso.");
+    }
+
+    // Método auxiliar para reduzir duplicação de código
+    private <T> ResponseEntity<ApiResponse<List<T>>> getPatientMedicalData(int id, java.util.function.Function<Patient, List<T>> dataExtractor, String successMessage) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ApiResponse<>("Paciente não encontrado."));
             }
-            ApiResponse<List<Alergia>> response = new ApiResponse<>(
-                    "Alergias recuperadas com sucesso.",
-                    patient.getAlergias()
-            );
-            return ResponseEntity.ok(response);
+            List<T> data = dataExtractor.apply(patient);
+            return ResponseEntity.ok(new ApiResponse<>(successMessage, data));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
