@@ -2,7 +2,7 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
-import br.fai.lds.medlink.implementation.service.message.MessageServiceImpl;
+import br.fai.lds.medlink.port.service.message.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +14,9 @@ import java.util.List;
 @CrossOrigin
 public class MessageController {
 
-    private final MessageServiceImpl messageService;
+    private final MessageService messageService;
 
-    public MessageController(MessageServiceImpl messageService) {
+    public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
 
