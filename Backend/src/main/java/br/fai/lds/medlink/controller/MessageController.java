@@ -2,7 +2,7 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
-import br.fai.lds.medlink.implementation.service.message.MensagemServiceImpl;
+import br.fai.lds.medlink.implementation.service.message.MessageServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,42 +14,42 @@ import java.util.List;
 @CrossOrigin
 public class MessageController {
 
-    private final MensagemServiceImpl mensagemService;
+    private final MessageServiceImpl messageService;
 
-    public MessageController(MensagemServiceImpl mensagemService) {
-        this.mensagemService = mensagemService;
+    public MessageController(MessageServiceImpl messageService) {
+        this.messageService = messageService;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Mensagem>>> getAllMessages() {
-        List<Mensagem> mensagens = mensagemService.listarTodas();
-        return ResponseEntity.ok(new ApiResponse<>("Mensagens listadas com sucesso.", mensagens));
+        List<Mensagem> messages = messageService.findAll();
+        return ResponseEntity.ok(new ApiResponse<>("Mensagens listadas com sucesso.", messages));
     }
 
-    // Buscar conversas de um usuário específico
+    // Get conversations by user
     @GetMapping(params = {"senderId", "senderType"})
     public ResponseEntity<ApiResponse<List<Mensagem>>> getConversations(
             @RequestParam String senderId,
             @RequestParam String senderType) {
-        List<Mensagem> conversas = mensagemService.buscarConversasPorUsuario(senderId, senderType);
-        return ResponseEntity.ok(new ApiResponse<>("Conversas listadas com sucesso.", conversas));
+        List<Mensagem> conversations = messageService.findConversationsByUser(senderId, senderType);
+        return ResponseEntity.ok(new ApiResponse<>("Conversas listadas com sucesso.", conversations));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem mensagem) {
-        mensagemService.enviarMensagem(mensagem);
+    public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem message) {
+        messageService.sendMessage(message);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Mensagem enviada com sucesso.", mensagem));
+                .body(new ApiResponse<>("Mensagem enviada com sucesso.", message));
     }
 
-    // Marcar mensagem como lida
+    // Mark message as read
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Mensagem>> markAsRead(@PathVariable String id) {
-        Mensagem mensagem = mensagemService.marcarComoLida(id);
-        if (mensagem == null) {
+        Mensagem message = messageService.markAsRead(id);
+        if (message == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("Mensagem não encontrada."));
         }
-        return ResponseEntity.ok(new ApiResponse<>("Mensagem marcada como lida.", mensagem));
+        return ResponseEntity.ok(new ApiResponse<>("Mensagem marcada como lida.", message));
     }
 }
