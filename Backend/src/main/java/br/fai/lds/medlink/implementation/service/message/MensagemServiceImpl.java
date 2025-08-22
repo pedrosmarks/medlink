@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.implementation.service.mensagem;
+package br.fai.lds.medlink.implementation.service.message;
 
 import br.fai.lds.medlink.domain.Mensagem;
 import br.fai.lds.medlink.implementation.dao.MensagesFakeDao;
