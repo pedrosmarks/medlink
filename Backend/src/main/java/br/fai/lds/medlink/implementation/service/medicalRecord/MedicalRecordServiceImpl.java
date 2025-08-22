@@ -22,6 +22,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         this.medicalRecordDao = medicalRecordDao;
     }
 
+
+
     @Override
     public MedicalRecord readById(int id) {
         return medicalRecordDao.readById(id);
@@ -35,7 +37,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     public boolean delete(int id) {
-        // Implementar se necessário
+        MedicalRecord record = medicalRecordDao.readById(id);
+        if (record != null) {
+            record.setMedicalRecordActive(false);
+            medicalRecordDao.updateInformation(id, record);
+            return true;
+        }
         return false;
     }
 
@@ -169,6 +176,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = medicalRecordDao.readById(medicalRecordId);
         if (record != null) {
             record.getConsultations().add(consultation);
+            medicalRecordDao.updateInformation(medicalRecordId, record);
         }
     }
 
@@ -178,6 +186,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
             record.getMedications().add(medication);
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
@@ -186,6 +195,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
             record.getAllergies().add(allergy);
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
@@ -194,27 +204,28 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
             record.getSurgeries().add(surgery);
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
-    @Override
-    public void addFamilyHistory(int medicalRecordId, Diagnosis diagnosis) {
 
-    }
 
     @Override
     public void addVaccine(int id, Vaccine vaccine) {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
             record.getVaccines().add(vaccine);
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
     @Override
-    public void addDiagnosis(int id, String diagnosis) {
+    public void addDiagnosis(int id, Diagnosis diagnosis) {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
-            record.setDiagnosis(diagnosis);
+            // Como MedicalRecord tem diagnosis como String, vamos usar a descrição do diagnóstico
+            record.setDiagnosis(diagnosis.getDescription());
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
@@ -223,11 +234,17 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         MedicalRecord record = medicalRecordDao.readById(id);
         if (record != null) {
             record.setFamilyHistory(familyHistory);
+            medicalRecordDao.updateInformation(id, record);
         }
     }
 
     @Override
     public MedicalRecord update(int id, MedicalRecord entity) {
-        return null;
+        MedicalRecord existing = medicalRecordDao.readById(id);
+        if (existing == null) {
+            return null;
+        }
+        medicalRecordDao.updateInformation(id, entity);
+        return entity;
     }
 }
