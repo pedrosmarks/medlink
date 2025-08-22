@@ -61,8 +61,29 @@ export class LoginBaseComponent {
         this.erro = 'Usuário ou senha inválidos!';
       }
     },
-    error: () => {
-      this.erro = 'Usuário ou senha inválidos!';
+    error: (error) => {
+      console.log('Erro no login:', error);
+      
+      if (error.status === 400 && error.error) {
+        // Erros de validação HTTP 400
+        const validationErrors = error.error;
+        
+        if (validationErrors.email) {
+          this.erro = validationErrors.email;
+        } else if (validationErrors.password) {
+          this.erro = validationErrors.password;
+        } else if (typeof validationErrors === 'string') {
+          this.erro = validationErrors;
+        } else {
+          this.erro = 'Dados inválidos. Verifique os campos!';
+        }
+      } else if (error.status === 401) {
+        this.erro = 'Usuário ou senha inválidos!';
+      } else if (error.status === 0) {
+        this.erro = 'Erro de conexão. Verifique sua internet!';
+      } else {
+        this.erro = 'Erro no servidor. Tente novamente!';
+      }
     }
   });
   }
