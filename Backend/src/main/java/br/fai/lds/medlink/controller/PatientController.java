@@ -19,47 +19,52 @@ public class PatientController {
     private PatientService patientService;
 
     @GetMapping
-    public ResponseEntity<List<PacienteResponseDto>> getAllPatients() {
+    public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> getAllPatients() {
         try {
             List<Patient> patients = patientService.findAll();
             List<PacienteResponseDto> response = patients.stream()
                     .map(PacienteResponseDto::fromEntity)
                     .collect(Collectors.toList());
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new ApiResponse<>("Pacientes listados com sucesso.", response));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PacienteResponseDto> getPatientById(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<PacienteResponseDto>> getPatientById(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
             }
-            return ResponseEntity.ok(PacienteResponseDto.fromEntity(patient));
+            return ResponseEntity.ok(new ApiResponse<>("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient)));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
         }
     }
 
     // Novo método UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<PacienteResponseDto> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
+    public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
         try {
             Patient existingPatient = patientService.findById(id);
             if (existingPatient == null) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
             }
 
             Patient updatedPatient = patientService.update(id, patient);
-            return ResponseEntity.ok(PacienteResponseDto.fromEntity(updatedPatient));
+            return ResponseEntity.ok(new ApiResponse<>("Paciente atualizado com sucesso.", PacienteResponseDto.fromEntity(updatedPatient)));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
         }
     }
 
