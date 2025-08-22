@@ -2,10 +2,13 @@ package br.fai.lds.medlink.implementation.service.message;
 
 import br.fai.lds.medlink.domain.Mensagem;
 import br.fai.lds.medlink.implementation.dao.MensagesFakeDao;
+import br.fai.lds.medlink.port.service.message.MessageService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class MessageServiceImpl {
+@Service
+public class MessageServiceImpl implements MessageService {
 
     private final MensagesFakeDao fakeDao = new MensagesFakeDao();
 
