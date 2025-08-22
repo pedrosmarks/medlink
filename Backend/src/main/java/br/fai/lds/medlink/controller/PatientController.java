@@ -3,6 +3,7 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
 import br.fai.lds.medlink.port.service.patient.PatientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class PatientController {
 
     // Novo método UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
+    public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         try {
             Patient existingPatient = patientService.findById(id);
             if (existingPatient == null) {
