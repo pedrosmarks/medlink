@@ -27,8 +27,6 @@ public interface MedicalRecordService extends CrudService<MedicalRecord> {
 
         void addDiagnosis(int medicalRecordId, Diagnosis diagnosis);
 
-        void addDiagnosis(int id, String diagnosis);
-
         void addFamilyHistory(int id, String familyHistory);
 }
 
