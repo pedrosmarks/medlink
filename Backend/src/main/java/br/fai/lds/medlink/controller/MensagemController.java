@@ -3,6 +3,7 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
 import br.fai.lds.medlink.implementation.service.mensagem.MensagemServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class MensagemController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Mensagem>> enviarMensagem(@RequestBody Mensagem mensagem) {
+    public ResponseEntity<ApiResponse<Mensagem>> enviarMensagem(@Valid @RequestBody Mensagem mensagem) {
         mensagemService.enviarMensagem(mensagem);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Mensagem enviada com sucesso.", mensagem));
@@ -46,6 +47,10 @@ public class MensagemController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Mensagem>> marcarComoLida(@PathVariable String id) {
         Mensagem mensagem = mensagemService.marcarComoLida(id);
+        if (mensagem == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Mensagem não encontrada."));
+        }
         return ResponseEntity.ok(new ApiResponse<>("Mensagem marcada como lida.", mensagem));
     }
 }
