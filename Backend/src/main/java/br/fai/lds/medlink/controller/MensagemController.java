@@ -28,12 +28,11 @@ public class MensagemController {
 
     // Buscar conversas de um usuário específico
     @GetMapping(params = {"remetenteId", "remetenteTipo"})
-    public List<Mensagem> getConversas(
+    public ResponseEntity<ApiResponse<List<Mensagem>>> getConversas(
             @RequestParam String remetenteId,
             @RequestParam String remetenteTipo) {
-        return mensagemService.listarTodas().stream()
-                .filter(m -> m.getRemetenteId().equals(remetenteId) && m.getRemetenteTipo().equals(remetenteTipo))
-                .toList();
+        List<Mensagem> conversas = mensagemService.buscarConversasPorUsuario(remetenteId, remetenteTipo);
+        return ResponseEntity.ok(new ApiResponse<>("Conversas listadas com sucesso.", conversas));
     }
 
     @PostMapping
