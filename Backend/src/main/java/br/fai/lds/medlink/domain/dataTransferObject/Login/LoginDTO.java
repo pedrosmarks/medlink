@@ -16,6 +16,6 @@ public class LoginDTO {
     private String email;
 
     @NotBlank(message = "Senha é obrigatória")
-    @Size(min = 6, max = 20, message = "Senha deve ter entre 6 e 20 caracteres")
+    @Size(min = 1, max = 20, message = "Senha deve ter entre 1 e 20 caracteres")
     private String password;
 }
