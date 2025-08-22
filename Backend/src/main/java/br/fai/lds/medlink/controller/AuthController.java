@@ -5,7 +5,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.LoginResponseDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
-import br.fai.lds.medlink.domain.dataTransferObject.Login.FrontendLoginDTO;
+
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +25,9 @@ public class AuthController {
 
     //Realiza o login do usuário (médico ou paciente).
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody FrontendLoginDTO frontendLoginDTO) {
-        String email = frontendLoginDTO.getUsuario();
-        String password = frontendLoginDTO.getSenha();
+    public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
 
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
