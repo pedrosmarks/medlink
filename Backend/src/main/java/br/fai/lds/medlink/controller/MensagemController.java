@@ -11,7 +11,11 @@ import java.util.Map;
 @CrossOrigin
 public class MensagemController {
 
-    private final MensagemServiceImpl mensagemService = new MensagemServiceImpl();
+    private final MensagemServiceImpl mensagemService;
+
+    public MensagemController(MensagemServiceImpl mensagemService) {
+        this.mensagemService = mensagemService;
+    }
 
     @GetMapping
     public List<Mensagem> getMensagens() {
