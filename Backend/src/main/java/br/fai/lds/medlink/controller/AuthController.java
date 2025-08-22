@@ -50,7 +50,7 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>("Credenciais inválidas."));
+                .body(new ApiResponse<>("Email ou senha incorretos."));
     }
 
 
