@@ -165,10 +165,10 @@ public class MedicalRecordController {
     }
 
     //Diagnostico
-    @PostMapping("/{id}/Diagnosis")
+    @PostMapping("/{id}/diagnosis")
     public ResponseEntity<ApiResponse<Void>> addDiagnosis(@PathVariable int id,
                                                           @Valid @RequestBody DiagnosisCreateDto dto) {
-        medicalRecordService.addFamilyHistory(id, dto.toEntity());
+        medicalRecordService.addDiagnosis(id, dto.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Diagnostico adicionado ao prontuário com sucesso."));
     }
