@@ -26,4 +26,10 @@ public class MensagemServiceImpl {
         }
         return null;
     }
+
+    public List<Mensagem> buscarConversasPorUsuario(String remetenteId, String remetenteTipo) {
+        return fakeDao.listarTodas().stream()
+                .filter(m -> m.getRemetenteId().equals(remetenteId) && m.getRemetenteTipo().equals(remetenteTipo))
+                .toList();
+    }
 }
