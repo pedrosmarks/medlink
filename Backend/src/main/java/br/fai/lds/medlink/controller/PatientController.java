@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/patients")
 public class PatientController {
 
     @Autowired
     private PatientService patientService;
 
-    @GetMapping("/api/patients")
+    @GetMapping
     public ResponseEntity<List<PacienteResponseDto>> getAllPatients() {
         try {
             List<Patient> patients = patientService.findAll();
@@ -31,7 +32,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PacienteResponseDto> getPatientById(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -46,7 +47,7 @@ public class PatientController {
     }
 
     // Novo método UPDATE
-    @PutMapping("/api/patients/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PacienteResponseDto> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
         try {
             Patient existingPatient = patientService.findById(id);
@@ -63,7 +64,7 @@ public class PatientController {
     }
 
     // Endpoint para autenticação de paciente (compatibilidade com frontend)
-    @GetMapping("/api/patients/auth")
+    @GetMapping("/auth")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> authenticatePatient(
             @RequestParam String email,
             @RequestParam String password) {
@@ -85,7 +86,7 @@ public class PatientController {
 
     // Endpoints para buscar dados médicos específicos do paciente
     
-    @GetMapping("/api/patients/{id}/consultations")
+    @GetMapping("/{id}/consultations")
     public ResponseEntity<ApiResponse<List<Consulta>>> getConsultationsByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -105,7 +106,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}/vaccines")
+    @GetMapping("/{id}/vaccines")
     public ResponseEntity<ApiResponse<List<Vacina>>> getVaccinesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -125,7 +126,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}/medications")
+    @GetMapping("/{id}/medications")
     public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicationsByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -145,7 +146,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}/surgeries")
+    @GetMapping("/{id}/surgeries")
     public ResponseEntity<ApiResponse<List<Cirurgia>>> getSurgeriesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -165,7 +166,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}/diagnoses")
+    @GetMapping("/{id}/diagnoses")
     public ResponseEntity<ApiResponse<List<Diagnostico>>> getDiagnosesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
@@ -185,7 +186,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/patients/{id}/allergies")
+    @GetMapping("/{id}/allergies")
     public ResponseEntity<ApiResponse<List<Alergia>>> getAllergiesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
