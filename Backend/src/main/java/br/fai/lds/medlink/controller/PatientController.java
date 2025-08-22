@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/patients")
+@Slf4j
 public class PatientController {
 
     @Autowired
@@ -28,7 +30,7 @@ public class PatientController {
                     .collect(Collectors.toList());
             return ResponseEntity.ok(new ApiResponse<>("Pacientes listados com sucesso.", response));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao buscar todos os pacientes: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
         }
@@ -44,13 +46,13 @@ public class PatientController {
             }
             return ResponseEntity.ok(new ApiResponse<>("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient)));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao buscar paciente por ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
         }
     }
 
-    // Novo método UPDATE
+    // Novo metodo UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         try {
@@ -63,7 +65,7 @@ public class PatientController {
             Patient updatedPatient = patientService.update(id, patient);
             return ResponseEntity.ok(new ApiResponse<>("Paciente atualizado com sucesso.", PacienteResponseDto.fromEntity(updatedPatient)));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao atualizar paciente ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
         }
@@ -101,7 +103,7 @@ public class PatientController {
         return getPatientMedicalData(id, Patient::getAlergias, "Alergias recuperadas com sucesso.");
     }
 
-    // Método auxiliar para reduzir duplicação de código
+    // Metodo auxiliar para reduzir duplicação de código
     private <T> ResponseEntity<ApiResponse<List<T>>> getPatientMedicalData(int id, java.util.function.Function<Patient, List<T>> dataExtractor, String successMessage) {
         try {
             Patient patient = patientService.findById(id);
@@ -112,7 +114,7 @@ public class PatientController {
             List<T> data = dataExtractor.apply(patient);
             return ResponseEntity.ok(new ApiResponse<>(successMessage, data));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao buscar dados médicos do paciente ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
         }
