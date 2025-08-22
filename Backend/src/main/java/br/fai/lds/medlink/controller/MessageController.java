@@ -8,36 +8,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/mensagens")
+@RequestMapping("/messages")
 @CrossOrigin
-public class MensagemController {
+public class MessageController {
 
     private final MensagemServiceImpl mensagemService;
 
-    public MensagemController(MensagemServiceImpl mensagemService) {
+    public MessageController(MensagemServiceImpl mensagemService) {
         this.mensagemService = mensagemService;
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Mensagem>>> getMensagens() {
+    public ResponseEntity<ApiResponse<List<Mensagem>>> getAllMessages() {
         List<Mensagem> mensagens = mensagemService.listarTodas();
         return ResponseEntity.ok(new ApiResponse<>("Mensagens listadas com sucesso.", mensagens));
     }
 
     // Buscar conversas de um usuário específico
-    @GetMapping(params = {"remetenteId", "remetenteTipo"})
-    public ResponseEntity<ApiResponse<List<Mensagem>>> getConversas(
-            @RequestParam String remetenteId,
-            @RequestParam String remetenteTipo) {
-        List<Mensagem> conversas = mensagemService.buscarConversasPorUsuario(remetenteId, remetenteTipo);
+    @GetMapping(params = {"senderId", "senderType"})
+    public ResponseEntity<ApiResponse<List<Mensagem>>> getConversations(
+            @RequestParam String senderId,
+            @RequestParam String senderType) {
+        List<Mensagem> conversas = mensagemService.buscarConversasPorUsuario(senderId, senderType);
         return ResponseEntity.ok(new ApiResponse<>("Conversas listadas com sucesso.", conversas));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Mensagem>> enviarMensagem(@Valid @RequestBody Mensagem mensagem) {
+    public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem mensagem) {
         mensagemService.enviarMensagem(mensagem);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Mensagem enviada com sucesso.", mensagem));
@@ -45,7 +44,7 @@ public class MensagemController {
 
     // Marcar mensagem como lida
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<Mensagem>> marcarComoLida(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Mensagem>> markAsRead(@PathVariable String id) {
         Mensagem mensagem = mensagemService.marcarComoLida(id);
         if (mensagem == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
