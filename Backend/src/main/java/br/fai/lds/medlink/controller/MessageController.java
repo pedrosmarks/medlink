@@ -2,7 +2,7 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
-import br.fai.lds.medlink.implementation.service.mensagem.MensagemServiceImpl;
+import br.fai.lds.medlink.implementation.service.message.MensagemServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
