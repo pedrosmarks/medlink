@@ -1,7 +1,10 @@
 package br.fai.lds.medlink.controller;
 
+import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
 import br.fai.lds.medlink.implementation.service.mensagem.MensagemServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +21,9 @@ public class MensagemController {
     }
 
     @GetMapping
-    public List<Mensagem> getMensagens() {
-        return mensagemService.listarTodas();
+    public ResponseEntity<ApiResponse<List<Mensagem>>> getMensagens() {
+        List<Mensagem> mensagens = mensagemService.listarTodas();
+        return ResponseEntity.ok(new ApiResponse<>("Mensagens listadas com sucesso.", mensagens));
     }
 
     // Buscar conversas de um usuário específico
@@ -33,14 +37,16 @@ public class MensagemController {
     }
 
     @PostMapping
-    public Mensagem enviarMensagem(@RequestBody Mensagem mensagem) {
+    public ResponseEntity<ApiResponse<Mensagem>> enviarMensagem(@RequestBody Mensagem mensagem) {
         mensagemService.enviarMensagem(mensagem);
-        return mensagem;
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Mensagem enviada com sucesso.", mensagem));
     }
 
     // Marcar mensagem como lida
     @PatchMapping("/{id}")
-    public Mensagem marcarComoLida(@PathVariable String id) {
-        return mensagemService.marcarComoLida(id);
+    public ResponseEntity<ApiResponse<Mensagem>> marcarComoLida(@PathVariable String id) {
+        Mensagem mensagem = mensagemService.marcarComoLida(id);
+        return ResponseEntity.ok(new ApiResponse<>("Mensagem marcada como lida.", mensagem));
     }
 }
