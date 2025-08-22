@@ -17,8 +17,8 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
-    @GetMapping("/api/pacientes")
-    public ResponseEntity<List<PacienteResponseDto>> getAllPacientes() {
+    @GetMapping("/api/patients")
+    public ResponseEntity<List<PacienteResponseDto>> getAllPatients() {
         try {
             List<Patient> patients = patientService.findAll();
             List<PacienteResponseDto> response = patients.stream()
@@ -31,8 +31,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}")
-    public ResponseEntity<PacienteResponseDto> getPacienteById(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}")
+    public ResponseEntity<PacienteResponseDto> getPatientById(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -46,8 +46,8 @@ public class PatientController {
     }
 
     // Novo método UPDATE
-    @PutMapping("/api/pacientes/{id}")
-    public ResponseEntity<PacienteResponseDto> updatePaciente(@PathVariable int id, @RequestBody Patient patient) {
+    @PutMapping("/api/patients/{id}")
+    public ResponseEntity<PacienteResponseDto> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
         try {
             Patient existingPatient = patientService.findById(id);
             if (existingPatient == null) {
@@ -63,15 +63,15 @@ public class PatientController {
     }
 
     // Endpoint para autenticação de paciente (compatibilidade com frontend)
-    @GetMapping("/api/pacientes/auth")
+    @GetMapping("/api/patients/auth")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> authenticatePatient(
-            @RequestParam String usuario,
-            @RequestParam String senha) {
+            @RequestParam String email,
+            @RequestParam String password) {
 
         // Busca paciente por email
-        Patient patient = patientService.findByEmail(usuario);
+        Patient patient = patientService.findByEmail(email);
         
-        if (patient != null && senha.equals(patient.getPassword())) {
+        if (patient != null && password.equals(patient.getPassword())) {
             ApiResponse<PacienteResponseDto> response = new ApiResponse<>(
                     "Login realizado com sucesso.",
                     PacienteResponseDto.fromEntity(patient)
@@ -85,8 +85,8 @@ public class PatientController {
 
     // Endpoints para buscar dados médicos específicos do paciente
     
-    @GetMapping("/api/pacientes/{id}/consultas")
-    public ResponseEntity<ApiResponse<List<Consulta>>> getConsultasByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/consultations")
+    public ResponseEntity<ApiResponse<List<Consulta>>> getConsultationsByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -105,8 +105,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}/vacinas")
-    public ResponseEntity<ApiResponse<List<Vacina>>> getVacinasByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/vaccines")
+    public ResponseEntity<ApiResponse<List<Vacina>>> getVaccinesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -125,8 +125,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}/medicamentos")
-    public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicamentosByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/medications")
+    public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicationsByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -145,8 +145,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}/cirurgias")
-    public ResponseEntity<ApiResponse<List<Cirurgia>>> getCirurgiasByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/surgeries")
+    public ResponseEntity<ApiResponse<List<Cirurgia>>> getSurgeriesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -165,8 +165,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}/diagnosticos")
-    public ResponseEntity<ApiResponse<List<Diagnostico>>> getDiagnosticosByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/diagnoses")
+    public ResponseEntity<ApiResponse<List<Diagnostico>>> getDiagnosesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
@@ -185,8 +185,8 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/api/pacientes/{id}/alergias")
-    public ResponseEntity<ApiResponse<List<Alergia>>> getAlergiasByPatient(@PathVariable int id) {
+    @GetMapping("/api/patients/{id}/allergies")
+    public ResponseEntity<ApiResponse<List<Alergia>>> getAllergiesByPatient(@PathVariable int id) {
         try {
             Patient patient = patientService.findById(id);
             if (patient == null) {
