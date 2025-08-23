@@ -17,6 +17,7 @@ public class PacienteResponseDto {
     private String tipoSanguineo;
     private String telefone;
     private String email;
+    private Address address;
     private String observacoes;
     private List<Long> especialistasAutorizados;
     private List<RequisicaoAcesso> requisicoesAcesso;
@@ -44,6 +45,7 @@ public class PacienteResponseDto {
         dto.setTipoSanguineo(entity.getBloodType());
         dto.setTelefone(entity.getPhoneNumber());
         dto.setEmail(entity.getEmail());
+        dto.setAddress(entity.getAddress());
         dto.setObservacoes(entity.getObservations());
 
         // Mapear diretamente das entidades
