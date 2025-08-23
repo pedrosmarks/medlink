@@ -29,12 +29,21 @@ export class Perfil implements OnInit {
     console.log('Perfil do usuário:', userProfile);
     
     if (pacienteId && userProfile === 'PATIENT') {
-      console.log('Fazendo chamada para:', `http://localhost:8080/api/pacientes/${pacienteId}`);
+      console.log('Fazendo chamada para:', `http://localhost:8080/api/patients/${pacienteId}`);
       this.perfilReadService.getPerfilPacienteById(pacienteId).subscribe({
-        next: (data) => {
-          console.log('Perfil do paciente recebido:', data);
-          console.log('Estrutura dos dados:', JSON.stringify(data, null, 2));
-          this.perfil = data;
+        next: (response) => {
+          console.log('Response completo:', response);
+          console.log('response.data:', response.data);
+          console.log('Estrutura dos dados:', JSON.stringify(response, null, 2));
+          
+          // Verifica se tem endereço
+          console.log('Tem endereço?', response.data?.address);
+          console.log('Endereço completo:', JSON.stringify(response.data?.address, null, 2));
+          
+          // Processa response.data (formato ApiResponse)
+          this.perfil = response.data || response;
+          console.log('Perfil final:', this.perfil);
+          console.log('Endereço no perfil final:', this.perfil?.address);
         },
         error: (error) => {
           console.error('Erro ao buscar perfil do paciente:', error);
