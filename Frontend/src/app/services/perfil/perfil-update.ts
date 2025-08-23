@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PerfilUpdateService {
-  private apiUrl = 'http://localhost:8080/perfil'; // ajuste se necessário
+  private apiUrl = 'http://localhost:8080/medic';
 
   constructor(private http: HttpClient) {}
 
@@ -13,6 +13,6 @@ export class PerfilUpdateService {
   }
 
   updatePerfilPaciente(perfil: any): Observable<any> {
-    return this.http.put(`http://localhost:8080/api/pacientes/${perfil.id}`, perfil);
+    return this.http.put(`http://localhost:8080/api/patients/${perfil.id}`, perfil);
   }
 }
