@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 public class MedlinkApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MedlinkApplication.class, args);
+		SpringApplication.run(MedlinkApplication.class,  args);
 	}
 }
 
