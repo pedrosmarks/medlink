@@ -427,5 +427,49 @@
       "icone": "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
       "mensagem": "Consulta agendada para amanhã às 10h."
     }
+  ],
+  "medicos": [
+    {
+      "id": "1",
+      "nome": "Dr. Pedro Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Cardiologia",
+      "crm": "123456-SP",
+      "descricao": "Médico cardiologista com mais de 15 anos de experiência em hospitais de referência.",
+      "cpf": "123.456.789-00",
+      "idade": 40,
+      "tipoSanguineo": "O+",
+      "telefone": "(11) 99999-8888",
+      "email": "pedro.almeida@medlink.com",
+      "observacoes": "Atende convênios e particular."
+    },
+    {
+      "id": "2",
+      "nome": "Dr. José Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Neurologia",
+      "crm": "234567-SP",
+      "descricao": "Neurologista especializado em doenças neurodegenerativas e epilepsia.",
+      "cpf": "234.567.890-11",
+      "idade": 45,
+      "tipoSanguineo": "A+",
+      "telefone": "(11) 98888-7777",
+      "email": "jose.almeida@medlink.com",
+      "observacoes": "Disponível para teleconsultas."
+    },
+    {
+      "id": "3",
+      "nome": "Dr. Manoel Almeida",
+      "avatar": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      "especialidade": "Ortopedia",
+      "crm": "345678-SP",
+      "descricao": "Ortopedista especializado em cirurgias de joelho e quadril.",
+      "cpf": "345.678.901-22",
+      "idade": 38,
+      "tipoSanguineo": "B+",
+      "telefone": "(11) 97777-6666",
+      "email": "manoel.almeida@medlink.com",
+      "observacoes": "Atendimento especializado em lesões esportivas."
+    }
   ]
 }

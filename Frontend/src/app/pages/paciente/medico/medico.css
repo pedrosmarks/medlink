@@ -1,0 +1,344 @@
+.medicos-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.header h2 {
+  color: #2c5aa0;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.header .subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.header-actions {
+  margin-top: 15px;
+}
+
+.btn-reload {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-reload:hover:not(:disabled) {
+  background: #138496;
+  transform: translateY(-2px);
+}
+
+.btn-reload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2c5aa0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  text-align: center;
+  padding: 50px;
+  color: #e74c3c;
+}
+
+.error i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #999;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.medicos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.medico-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.medico-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  position: relative;
+  background: linear-gradient(135deg, #2c5aa0, #1e3d72);
+  padding: 30px 20px 20px;
+  text-align: center;
+}
+
+.avatar {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: #fff;
+  object-fit: cover;
+}
+
+.status-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.status-indicator .online {
+  color: #27ae60;
+  font-size: 12px;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.medico-nome {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.especialidade {
+  color: #3498db;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.crm {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.contact-info {
+  border-top: 1px solid #ecf0f1;
+  padding-top: 15px;
+  margin-bottom: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #34495e;
+  font-size: 0.9rem;
+}
+
+.contact-item i {
+  color: #3498db;
+  width: 16px;
+  text-align: center;
+}
+
+.additional-info {
+  margin-bottom: 15px;
+}
+
+.description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.observacoes {
+  background: #f8f9fa;
+  border-left: 4px solid #3498db;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 0 5px 5px 0;
+}
+
+.observacoes p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.card-actions {
+  padding: 20px;
+  background: #f8f9fa;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #ecf0f1;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background: #138496;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .medicos-container {
+    padding: 15px;
+  }
+
+  .medicos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h2 {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .contact-item {
+    font-size: 0.8rem;
+  }
+
+  .medico-nome {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+}

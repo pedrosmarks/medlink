@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBell, faCircleUser, faDesktop, faFileInvoice, faHospitalUser, faMessage, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCircleUser, faDesktop, faFileInvoice, faHospitalUser, faMessage, faSignOutAlt, faUser, faClipboardCheck, faUserInjured } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
@@ -23,7 +23,9 @@ export class InicialComponent implements OnInit {
   faFileInvoice = faFileInvoice;
   faMessage = faMessage;
   faBell = faBell;
+  faClipboardCheck = faClipboardCheck;
   faUser = faUser;
+  faUserInjured = faUserInjured;
   faSignOutAlt = faSignOutAlt;
 
   // User data

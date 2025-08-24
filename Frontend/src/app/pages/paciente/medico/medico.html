@@ -1,1 +1,91 @@
-<p>medico works!</p>
+<div class="medicos-container">
+  <div class="header">
+    <h2>
+      <i class="fas fa-user-md"></i>
+      Meus Médicos Autorizados
+    </h2>
+    <p class="subtitle">Médicos que têm permissão para acessar seus dados de saúde</p>
+    
+    <div class="header-actions">
+      <button class="btn btn-reload" (click)="recarregarDados()" [disabled]="loading">
+        <i class="fas fa-sync-alt" [class.spinning]="loading"></i>
+        Recarregar
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Carregando médicos...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && medicosAutorizados.length === 0" class="empty-state">
+    <i class="fas fa-user-friends"></i>
+    <h3>Nenhum médico autorizado</h3>
+    <p>Você ainda não possui médicos autorizados para acessar seus dados de saúde.</p>
+  </div>
+
+  <div class="medicos-grid" *ngIf="!loading && !error && medicosAutorizados.length > 0">
+    <div class="medico-card" *ngFor="let medico of medicosAutorizados">
+      <div class="card-header">
+        <div class="avatar">
+          <img [src]="medico.avatar" [alt]="medico.nome" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        </div>
+        <div class="status-indicator">
+          <i class="fas fa-circle online"></i>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h3 class="medico-nome">{{ medico.nome }}</h3>
+        <p class="especialidade">
+          <i class="fas fa-stethoscope"></i>
+          {{ medico.especialidade }}
+        </p>
+        <p class="crm">
+          <i class="fas fa-id-card"></i>
+          CRM: {{ medico.crm }}
+        </p>
+
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span>{{ formatarTelefone(medico.telefone) }}</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>{{ medico.email }}</span>
+          </div>
+        </div>
+
+        <div class="additional-info" *ngIf="medico.descricao">
+          <p class="description">{{ medico.descricao }}</p>
+        </div>
+
+        <div class="observacoes" *ngIf="medico.observacoes">
+          <p><strong>Observações:</strong> {{ medico.observacoes }}</p>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn-primary" (click)="iniciarConversa(medico.id)">
+          <i class="fas fa-comments"></i>
+          Enviar Mensagem
+        </button>
+        <button class="btn btn-secondary" (click)="agendarConsulta(medico.id)">
+          <i class="fas fa-calendar-alt"></i>
+          Agendar Consulta
+        </button>
+        <button class="btn btn-info" (click)="verDetalhes(medico.id)">
+          <i class="fas fa-info-circle"></i>
+          Detalhes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

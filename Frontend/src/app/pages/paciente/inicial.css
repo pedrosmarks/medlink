@@ -36,6 +36,14 @@
   opacity: 0.8;
   display: block;
   margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo .subtitle .area-icon {
+  font-size: 1rem;
+  opacity: 0.9;
 }
 
 .sidebar-menu {

@@ -3,7 +3,10 @@
     <div class="sidebar-header">
       <div class="logo">
         <h3>MedLink</h3>
-        <span class="subtitle">Área do Paciente</span>
+        <span class="subtitle">
+          <fa-icon [icon]="faUserInjured" class="area-icon"></fa-icon>
+          Área do Paciente
+        </span>
       </div>
     </div>
     
@@ -46,7 +49,7 @@
         
         <li class="nav-item">
           <a [routerLink]="['/paciente/requisicoes']" class="nav-link" routerLinkActive="active">
-            <fa-icon [icon]="faBell" class="nav-icon"></fa-icon>
+            <fa-icon [icon]="faClipboardCheck" class="nav-icon"></fa-icon>
             <span class="nav-text">Requisições</span>
           </a>
         </li>
