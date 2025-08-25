@@ -22,13 +22,17 @@
         <div class="d-flex align-items-center">
           <img [src]="paciente.avatar" alt="Avatar" width="80" height="80" class="rounded-circle me-4 border">
           <div>
-            <h4>{{ paciente.nome }}</h4>
-            <p class="mb-1"><strong>CPF:</strong> {{ paciente.cpf }}</p>
-            <p class="mb-1"><strong>Idade:</strong> {{ paciente.idade }} anos</p>
-            <p class="mb-1"><strong>Tipo Sanguíneo:</strong> {{ paciente.tipoSanguineo }}</p>
-            <p class="mb-1"><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+            <h4>{{ paciente.name }}</h4>
+            <p class="mb-1"><strong>Gênero:</strong> {{ paciente.gender }}</p>
+            <p class="mb-1"><strong>Data Nascimento:</strong> {{ paciente.birthdate }}</p>
+            <p class="mb-1"><strong>Telefone:</strong> {{ paciente.phoneNumber }}</p>
             <p class="mb-1"><strong>E-mail:</strong> {{ paciente.email }}</p>
-            <p class="mb-1"><strong>Observações:</strong> {{ paciente.observacoes }}</p>
+            <p class="mb-1"><strong>Plano:</strong> {{ paciente.plan }}</p>
+            <p class="mb-1"><strong>Cartão SUS:</strong> {{ paciente.susCard }}</p>
+            <p class="mb-1" *ngIf="paciente.address"><strong>Endereço:</strong> 
+              {{ paciente.address.street }}, {{ paciente.address.number }} - 
+              {{ paciente.address.city }}, {{ paciente.address.state }}
+            </p>
             <button
               class="btn btn-outline-primary mt-2"
               [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"

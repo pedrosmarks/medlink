@@ -7,19 +7,29 @@ import { Observable } from 'rxjs';
 })
 export class PacientesReadService {
 
-  private apiUrl = 'http://localhost:8080/api/pacientes';
+  private baseUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) { }
 
   getPacientes(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    // Busca ID do médico logado
+    const medicoId = localStorage.getItem('userId');
+    
+    if (!medicoId) {
+      throw new Error('ID do médico não encontrado');
+    }
+    
+    const url = `${this.baseUrl}/medic/${medicoId}/patients`;
+    console.log('Buscando pacientes em:', url);
+    
+    return this.http.get<any[]>(url);
   }
 
   getPacienteById(id: string): Observable<any> {
-  return this.http.get<any>(`http://localhost:8080/api/pacientes/${id}`);
+    return this.http.get<any>(`http://localhost:8080/api/patients/${id}`);
   }
 
   updatePaciente(id: number, changes: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}`, changes);
+    return this.http.patch(`http://localhost:8080/api/patients/${id}`, changes);
   }
 }

@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 export class PacientesComponent implements OnInit {
   pacientes: any[] = [];
   todosPacientes: any[] = [];
-  medicoId = 1; // Defina aqui o ID do médico logado
+  medicoId: number = 1;
 
   // Modal e busca
   modalAberto = false;
@@ -25,11 +25,34 @@ export class PacientesComponent implements OnInit {
   constructor(private pacientesReadService: PacientesReadService, private pacientesUpdateService: PacientesUpdateService) {}
 
   ngOnInit(): void {
-    this.pacientesReadService.getPacientes().subscribe((pacientes: any[]) => {
-      this.todosPacientes = pacientes;
-      this.pacientes = pacientes.filter(paciente =>
-        paciente.especialistasAutorizados.includes(this.medicoId)
-      );
+    this.medicoId = parseInt(localStorage.getItem('userId') || '1');
+    console.log('🚀 CARREGANDO PACIENTES REAIS - Médico ID:', this.medicoId);
+    
+    this.pacientesReadService.getPacientes().subscribe({
+      next: (response: any) => {
+        console.log('✅ Response do backend:', response);
+        console.log('✅ Dados recebidos:', response.data);
+        
+        // LOG DETALHADO DOS CAMPOS
+        response.data.forEach((paciente: any, index: number) => {
+          console.log(`📋 PACIENTE ${index + 1}:`);
+          console.log('Todos os campos:', Object.keys(paciente));
+          console.log('Dados completos:', paciente);
+        });
+        
+        // Processa dados e adiciona avatar padrão se não existir
+        this.pacientes = response.data.map((paciente: any) => ({
+          ...paciente,
+          avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
+        }));
+        this.todosPacientes = this.pacientes;
+        
+        console.log('🎯 PACIENTES FINAIS:', this.pacientes);
+        console.log('🎯 QUANTIDADE FINAL:', this.pacientes.length);
+      },
+      error: (error) => {
+        console.error('❌ Erro ao carregar:', error);
+      }
     });
   }
 
