@@ -20,23 +20,42 @@ export class ProntuarioCards implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pacienteId = this.route.parent?.snapshot.paramMap.get('id') || '';
     this.medicoNome = localStorage.getItem('userName') || 'Médico';
-    this.carregarPaciente();
+    
+    // Tenta capturar ID de várias formas
+    this.route.paramMap.subscribe(params => {
+      let id = params.get('id');
+      console.log('🔍 ID da rota atual:', id);
+      
+      if (!id && this.route.parent) {
+        id = this.route.parent.snapshot.paramMap.get('id');
+        console.log('🔍 ID da rota pai:', id);
+      }
+      
+      if (id && id !== 'undefined') {
+        this.pacienteId = id;
+        console.log('✅ ID válido encontrado:', this.pacienteId);
+        this.carregarPaciente();
+      } else {
+        console.error('❌ Nenhum ID válido encontrado');
+      }
+    });
   }
 
   carregarPaciente(): void {
-    if (this.pacienteId) {
-      this.http.get<any>(`http://localhost:8080/pacientes/${this.pacienteId}`)
-        .subscribe({
-          next: (paciente) => {
-            this.pacienteNome = paciente?.nome || 'Paciente';
-          },
-          error: (error) => {
-            console.error('Erro ao carregar paciente:', error);
-            this.pacienteNome = 'Paciente';
-          }
-        });
-    }
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}`;
+    console.log('Carregando paciente de:', url);
+    
+    this.http.get<any>(url).subscribe({
+      next: (response) => {
+        console.log('Paciente carregado:', response);
+        const paciente = response.data || response;
+        this.pacienteNome = paciente?.name || paciente?.nome || 'Paciente';
+      },
+      error: (error) => {
+        console.error('Erro ao carregar paciente:', error);
+        this.pacienteNome = 'Paciente';
+      }
+    });
   }
 }
