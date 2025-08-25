@@ -1,1 +1,66 @@
-<p>notificacoes works!</p>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h5>Notificações - Requisições de Acesso</h5>
+    </div>
+    <div class="card-body">
+      <div *ngIf="loading" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && pendingRequests.length === 0" class="text-center text-muted">
+        <i class="fas fa-bell-slash fa-3x mb-3"></i>
+        <p>Nenhuma requisição de acesso pendente</p>
+      </div>
+
+      <div *ngIf="!loading && pendingRequests.length > 0">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i>
+          Você tem {{ pendingRequests.length }} requisição(s) de acesso pendente(s)
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3" *ngFor="let request of pendingRequests">
+            <div class="card border-warning">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title">
+                      <i class="fas fa-user-md text-primary"></i>
+                      {{ getMedicoInfo(request) }}
+                    </h6>
+                    <p class="card-text text-muted mb-0" *ngIf="request.dataSolicitacao">
+                      <small>Solicitado em: {{ request.dataSolicitacao | date:'dd/MM/yyyy HH:mm' }}</small>
+                    </p>
+                  </div>
+                  <span class="badge bg-warning text-dark">{{ request.status }}</span>
+                </div>
+                
+                <p class="card-text">
+                  {{ getMedicoMessage(request) }}
+                </p>
+                
+                <div class="d-flex gap-2">
+                  <button 
+                    class="btn btn-success btn-sm" 
+                    (click)="approveRequest(request)"
+                  >
+                    <i class="fas fa-check"></i> Aprovar
+                  </button>
+                  <button 
+                    class="btn btn-danger btn-sm" 
+                    (click)="rejectRequest(request)"
+                  >
+                    <i class="fas fa-times"></i> Rejeitar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
