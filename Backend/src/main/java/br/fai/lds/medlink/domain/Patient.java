@@ -27,7 +27,7 @@ public class Patient {
     private List<EspecialistaAutorizado> especialistasAutorizados;
     private List<RequisicaoAcesso> requisicoesAcesso;
     private List<Consulta> consultas;
-    private List<Vacina> vacinas;
+    private List<Vaccine> vacinas;
     private List<Medicamento> medicamentos;
     private List<Cirurgia> cirurgias;
     private List<Diagnostico> diagnosticos;
@@ -41,7 +41,7 @@ public class Patient {
                    String susCard, int medicId, boolean active,
                    List<EspecialistaAutorizado> especialistasAutorizados,
                    List<RequisicaoAcesso> requisicoesAcesso, List<Consulta> consultas,
-                   List<Vacina> vacinas, List<Medicamento> medicamentos,
+                   List<Vaccine> vacinas, List<Medicamento> medicamentos,
                    List<Cirurgia> cirurgias, List<Diagnostico> diagnosticos,
                    List<Allergy> alergias) {
         this.id = id;
