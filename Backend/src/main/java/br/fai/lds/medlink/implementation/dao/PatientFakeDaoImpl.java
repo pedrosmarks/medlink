@@ -82,7 +82,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Surgery(1, "Apendicectomia", "2015-08-20", "Hospital São Paulo", "Cirurgia sem complicações")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnostico("Hipertensão", "2022-03-01")
+                        new Diagnosis(1, "Hipertensão arterial sistêmica", "2022-03-01")
                 )))
                 .alergias(new ArrayList<>(List.of(
                         new Allergy(1, "Dipirona", "Dipirona", "Erupção cutânea", "Moderada")
@@ -130,7 +130,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 )))
                 .cirurgias(new ArrayList<>())
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnostico("Diabetes Tipo 2", "2020-09-15")
+                        new Diagnosis(2, "Diabetes mellitus tipo 2", "2020-09-15")
                 )))
                 .alergias(new ArrayList<>(List.of(
                         new Allergy(2, "Penicilina", "Penicilina", "Anafilaxia", "Grave")
@@ -180,7 +180,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Surgery(2, "Revascularização do miocárdio", "2023-12-01", "Hospital do Coração", "Procedimento realizado com sucesso")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnostico("Cardiopatia isquêmica", "2023-10-20")
+                        new Diagnosis(3, "Cardiopatia isquêmica crônica", "2023-10-20")
                 )))
                 .alergias(new ArrayList<>())
                 .build());
