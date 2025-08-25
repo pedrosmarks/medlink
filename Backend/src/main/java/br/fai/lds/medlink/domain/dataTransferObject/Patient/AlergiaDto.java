@@ -8,5 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlergiaDto {
-    private String descricao;
+    private String name;
+    private String substance;
+    private String reaction;
+    private String severity;
 }
