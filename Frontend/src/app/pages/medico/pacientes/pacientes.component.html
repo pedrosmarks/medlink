@@ -1,7 +1,24 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-around mb-3">
-    <button class="btn btn-primary">Buscar paciente</button>
+    <button class="btn btn-primary" (click)="toggleBusca()">Buscar paciente</button>
     <button class="btn btn-success" (click)="abrirModalAdicionar()">Adicionar paciente</button>
+  </div>
+
+  <!-- Campo de busca -->
+  <div class="mb-3" *ngIf="buscaAberta">
+    <div class="input-group">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Digite o nome do paciente..." 
+        [(ngModel)]="termoBusca"
+        (input)="buscarPaciente()"
+        #inputBusca
+      >
+      <button class="btn btn-outline-secondary" (click)="limparBusca()">
+        <i class="fas fa-times"></i> Limpar
+      </button>
+    </div>
   </div>
 
   <!-- Modal simples -->
@@ -20,7 +37,7 @@
   </div>
 
   <div class="row">
-    <div class="col-12 mb-4" *ngFor="let paciente of pacientes">
+    <div class="col-12 mb-4" *ngFor="let paciente of (buscaAberta ? pacientesFiltrados : pacientes)">
       <div class="card p-4">
         <div class="d-flex align-items-center">
           <img [src]="paciente.avatar" alt="Avatar" width="80" height="80" class="rounded-circle me-4 border">
@@ -37,10 +54,18 @@
               {{ paciente.address.city }}, {{ paciente.address.state }}
             </p>
             <button
+              *ngIf="!buscaAberta"
               class="btn btn-outline-primary mt-2"
               [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
             >
               Acessar prontuário
+            </button>
+            <button
+              *ngIf="buscaAberta"
+              class="btn btn-success mt-2"
+              (click)="adicionarPacienteAoMedico(paciente)"
+            >
+              Adicionar paciente
             </button>
           </div>
         </div>

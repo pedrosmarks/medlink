@@ -104,6 +104,27 @@ public class PatientController {
         return getPatientMedicalData(id, Patient::getAlergias, "Alergias recuperadas com sucesso.");
     }
 
+    // Endpoint para buscar pacientes por nome
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> searchPatients(@RequestParam String name) {
+        try {
+            List<Patient> allPatients = patientService.findAll();
+            List<Patient> filteredPatients = allPatients.stream()
+                    .filter(patient -> patient.getName().toLowerCase().contains(name.toLowerCase()))
+                    .collect(Collectors.toList());
+            
+            List<PacienteResponseDto> response = filteredPatients.stream()
+                    .map(PacienteResponseDto::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(new ApiResponse<>("Pacientes encontrados.", response));
+        } catch (Exception e) {
+            log.error("Erro ao buscar pacientes por nome '{}': {}", name, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
     // Metodo auxiliar para reduzir duplicação de código
     private <T> ResponseEntity<ApiResponse<List<T>>> getPatientMedicalData(int id, java.util.function.Function<Patient, List<T>> dataExtractor, String successMessage) {
         try {
