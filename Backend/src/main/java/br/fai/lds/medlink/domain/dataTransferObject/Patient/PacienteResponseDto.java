@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Data
 public class PacienteResponseDto {
     private Long id;
-    private String nome;
+    private String name;
     private String avatar;
     private String cpf;
     private Integer idade;
@@ -32,7 +32,7 @@ public class PacienteResponseDto {
         PacienteResponseDto dto = new PacienteResponseDto();
 
         dto.setId((long) entity.getId());
-        dto.setNome(entity.getName());
+        dto.setName(entity.getName());
         dto.setAvatar(entity.getAvatar());
         dto.setCpf(entity.getCpf());
 
