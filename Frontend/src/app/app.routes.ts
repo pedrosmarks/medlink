@@ -15,6 +15,7 @@ import { Prontuario as PacienteProntuarioComponent } from './pages/paciente/pron
 import { Mensagem as PacienteMensagemComponent } from './pages/paciente/mensagem/mensagem';
 import { Requisicoes as PacienteRequisicoesComponent } from './pages/paciente/requisicoes/requisicoes';
 import { Medico as PacienteMedicoComponent } from './pages/paciente/medico/medico';
+import { Notificacoes as PacienteNotificacoesComponent } from './pages/paciente/notificacoes/notificacoes';
 import { AuthGuard } from './guards/auth.guard';
 
 
@@ -90,7 +91,7 @@ export const routes: Routes = [
       { path: 'perfil', component: PacientePerfilComponent },
       { path: 'medico', component: PacienteMedicoComponent},
       { path: 'mensagem', component: PacienteMensagemComponent },
-      { path: 'notificacoes', component: NotificacoesComponent },
+      { path: 'notificacoes', component: PacienteNotificacoesComponent },
       {
         path: 'prontuario',
         loadComponent: () =>
