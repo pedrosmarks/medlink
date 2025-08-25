@@ -5,6 +5,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestRespons
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AuthorizedDoctorDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.RequisicaoAcessoDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.SurgeryCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.VaccineCreateDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
@@ -132,8 +133,71 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/surgeries")
-    public ResponseEntity<ApiResponse<List<Cirurgia>>> getSurgeriesByPatient(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<List<Surgery>>> getSurgeriesByPatient(@PathVariable int id) {
         return getPatientMedicalData(id, Patient::getCirurgias, "Cirurgias recuperadas com sucesso.");
+    }
+
+    // Add surgery to patient
+    @PostMapping("/{patientId}/surgeries")
+    public ResponseEntity<ApiResponse<String>> addSurgery(
+            @PathVariable int patientId,
+            @RequestBody SurgeryCreateDto surgeryDto) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            
+            // Generate new ID for surgery
+            int newSurgeryId = patient.getCirurgias().size() + 1;
+            for (Surgery s : patient.getCirurgias()) {
+                if (s.getId() >= newSurgeryId) {
+                    newSurgeryId = s.getId() + 1;
+                }
+            }
+            
+            Surgery newSurgery = new Surgery(newSurgeryId, surgeryDto.getName(), 
+                surgeryDto.getDate(), surgeryDto.getLocation(), surgeryDto.getNotes());
+            patient.getCirurgias().add(newSurgery);
+            
+            patientService.update(patientId, patient);
+            
+            return ResponseEntity.ok(new ApiResponse<>("Cirurgia adicionada com sucesso."));
+        } catch (Exception e) {
+            log.error("Erro ao adicionar cirurgia para paciente ID {}: {}", patientId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
+    // Delete surgery from patient
+    @DeleteMapping("/{patientId}/surgeries/{surgeryId}")
+    public ResponseEntity<ApiResponse<String>> deleteSurgery(
+            @PathVariable int patientId,
+            @PathVariable int surgeryId) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            
+            boolean removed = patient.getCirurgias().removeIf(surgery -> surgery.getId() == surgeryId);
+            
+            if (!removed) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Cirurgia não encontrada."));
+            }
+            
+            patientService.update(patientId, patient);
+            
+            return ResponseEntity.ok(new ApiResponse<>("Cirurgia removida com sucesso."));
+        } catch (Exception e) {
+            log.error("Erro ao remover cirurgia ID {} do paciente ID {}: {}", surgeryId, patientId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
     }
 
     @GetMapping("/{id}/diagnoses")
