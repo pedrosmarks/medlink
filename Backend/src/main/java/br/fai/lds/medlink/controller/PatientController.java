@@ -5,6 +5,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestRespons
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AuthorizedDoctorDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.RequisicaoAcessoDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.VaccineCreateDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
@@ -88,8 +89,41 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/vaccines")
-    public ResponseEntity<ApiResponse<List<Vacina>>> getVaccinesByPatient(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<List<Vaccine>>> getVaccinesByPatient(@PathVariable int id) {
         return getPatientMedicalData(id, Patient::getVacinas, "Vacinas recuperadas com sucesso.");
+    }
+
+    // Add vaccine to patient
+    @PostMapping("/{patientId}/vaccines")
+    public ResponseEntity<ApiResponse<String>> addVaccine(
+            @PathVariable int patientId,
+            @RequestBody VaccineCreateDto vaccineDto) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            
+            // Generate new ID for vaccine
+            int newVaccineId = patient.getVacinas().size() + 1;
+            for (Vaccine v : patient.getVacinas()) {
+                if (v.getId() >= newVaccineId) {
+                    newVaccineId = v.getId() + 1;
+                }
+            }
+            
+            Vaccine newVaccine = new Vaccine(newVaccineId, vaccineDto.getName(), vaccineDto.getDate());
+            patient.getVacinas().add(newVaccine);
+            
+            patientService.update(patientId, patient);
+            
+            return ResponseEntity.ok(new ApiResponse<>("Vacina adicionada com sucesso."));
+        } catch (Exception e) {
+            log.error("Erro ao adicionar vacina para paciente ID {}: {}", patientId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
     }
 
     @GetMapping("/{id}/medications")
