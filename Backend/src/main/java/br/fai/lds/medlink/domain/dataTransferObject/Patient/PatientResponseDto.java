@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class PatientResponseDto {
+    private int id;
     private String name;
     private Gender gender;
     private LocalDate birthdate;
@@ -19,6 +20,7 @@ public class PatientResponseDto {
 
     public static PatientResponseDto fromEntity(Patient entity) {
         PatientResponseDto dto = new PatientResponseDto();
+        dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setGender(entity.getGender());
         dto.setBirthdate(entity.getBirthDate());
