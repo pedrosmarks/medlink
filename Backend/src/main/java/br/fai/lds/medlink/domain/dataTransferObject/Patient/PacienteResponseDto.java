@@ -25,7 +25,7 @@ public class PacienteResponseDto {
     private List<Vaccine> vacinas;
     private List<Medicamento> medicamentos;
     private List<Surgery> cirurgias;
-    private List<Diagnostico> diagnosticos;
+    private List<Diagnosis> diagnosticos;
     private List<Allergy> alergias;
 
     public static PacienteResponseDto fromEntity(Patient entity) {
