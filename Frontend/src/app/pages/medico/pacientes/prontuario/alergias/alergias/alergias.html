@@ -19,7 +19,10 @@
     >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
     <div>
-      <strong>Descrição:</strong> {{ alergia.descricao }}
+      <strong>{{ alergia.name }}</strong>
+      <div><strong>Substância:</strong> {{ alergia.substance }}</div>
+      <div><strong>Reação:</strong> {{ alergia.reaction }}</div>
+      <div><strong>Severidade:</strong> {{ alergia.severity }}</div>
     </div>
   </div>
   <div *ngIf="alergias.length === 0" class="text-muted">
