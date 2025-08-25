@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VacinaDto {
-    private String nome;
-    private String data;
+    private int id;
+    private String name;
+    private String date;
 }
