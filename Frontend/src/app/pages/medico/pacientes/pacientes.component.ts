@@ -113,4 +113,13 @@ export class PacientesComponent implements OnInit {
     this.buscaNome = '';
     this.resultadosBusca = [];
   }
+
+  debugPaciente(paciente: any) {
+    console.log('🔍 DEBUG PACIENTE:');
+    console.log('Paciente completo:', paciente);
+    console.log('ID do paciente:', paciente.id);
+    console.log('Tipo do ID:', typeof paciente.id);
+    console.log('ID é undefined?', paciente.id === undefined);
+    console.log('ID é null?', paciente.id === null);
+  }
 }

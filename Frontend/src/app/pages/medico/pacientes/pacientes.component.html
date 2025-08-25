@@ -71,12 +71,17 @@
                     {{ paciente.address.city }}, {{ paciente.address.state }}
                   </p>
                 </div>
-                <button
-                  class="btn btn-outline-primary"
-                  [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
-                >
-                  Acessar prontuário
-                </button>
+                <div class="d-flex flex-column">
+                  <small class="text-muted mb-1">ID: {{ paciente.id || 'UNDEFINED' }}</small>
+                  <button
+                    class="btn btn-outline-primary"
+                    [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
+                    (click)="debugPaciente(paciente)"
+                    [disabled]="!paciente.id"
+                  >
+                    Acessar prontuário
+                  </button>
+                </div>
               </div>
             </div>
           </div>
