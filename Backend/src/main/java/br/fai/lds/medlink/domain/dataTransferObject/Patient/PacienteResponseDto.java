@@ -24,7 +24,7 @@ public class PacienteResponseDto {
     private List<Consulta> consultas;
     private List<Vaccine> vacinas;
     private List<Medicamento> medicamentos;
-    private List<Cirurgia> cirurgias;
+    private List<Surgery> cirurgias;
     private List<Diagnostico> diagnosticos;
     private List<Allergy> alergias;
 
