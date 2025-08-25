@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 public class Allergy {
 
+    private int id;
     private String name;
     private String substance;
     private String reaction;
