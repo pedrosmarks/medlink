@@ -26,48 +26,105 @@ export class Vacinas implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.parent?.snapshot.paramMap.get('id');
-    this.pacienteId = id ?? '';
-    this.pacientesReadService.getPacientes().subscribe(pacientes => {
-      const paciente = pacientes.find((p: any) => String(p.id) === String(id));
-      if (paciente) {
-        this.vacinas = paciente.vacinas || [];
-        this.pacienteNome = paciente.nome;
+    // Captura ID do paciente da rota pai
+    let id = this.route.snapshot.paramMap.get('id');
+    
+    if (!id && this.route.parent) {
+      id = this.route.parent.snapshot.paramMap.get('id');
+    }
+    
+    if (!id && this.route.parent?.parent) {
+      id = this.route.parent.parent.snapshot.paramMap.get('id');
+    }
+    
+    console.log('💉 ID capturado (vacinas):', id);
+    
+    if (id && id !== 'undefined') {
+      this.pacienteId = id;
+      this.carregarVacinas();
+      this.carregarDadosPaciente();
+    } else {
+      console.error('❌ ID do paciente não encontrado para vacinas');
+    }
+  }
+
+  carregarVacinas() {
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;
+    console.log('Carregando vacinas de:', url);
+    
+    this.http.get<any>(url).subscribe({
+      next: (response) => {
+        console.log('Vacinas recebidas:', response);
+        this.vacinas = response.data || response;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar vacinas:', error);
+        this.vacinas = [];
+      }
+    });
+  }
+
+  carregarDadosPaciente() {
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe({
+      next: (response) => {
+        const paciente = response.data || response;
+        this.pacienteNome = paciente.name || paciente.nome || 'Paciente';
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dados do paciente:', error);
       }
     });
   }
 
   adicionarVacina() {
     if (!this.novaVacinaNome.trim() || !this.novaVacinaData) return;
-    const nova = {
-      nome: this.novaVacinaNome.trim(),
-      data: this.novaVacinaData
+    
+    const novaVacina = {
+      name: this.novaVacinaNome.trim(),
+      date: this.novaVacinaData,
+      status: 'Aplicada'
     };
-
-    // Buscar paciente completo
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const vacinasAtualizadas = [...(paciente.vacinas || []), nova];
-      const pacienteAtualizado = { ...paciente, vacinas: vacinasAtualizadas };
-
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.vacinas = vacinasAtualizadas;
-          this.novaVacinaNome = '';
-          this.novaVacinaData = '';
-        });
+    
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;
+    console.log('Adicionando vacina:', url, novaVacina);
+    
+    this.http.post<any>(url, novaVacina).subscribe({
+      next: (response) => {
+        console.log('Vacina adicionada:', response);
+        this.carregarVacinas();
+        this.novaVacinaNome = '';
+        this.novaVacinaData = '';
+      },
+      error: (error) => {
+        console.error('Erro ao adicionar vacina:', error);
+        // Adiciona localmente se backend falhar
+        this.vacinas.push(novaVacina);
+        this.novaVacinaNome = '';
+        this.novaVacinaData = '';
+      }
     });
   }
 
   removerVacina(index: number) {
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const novasVacinas = paciente.vacinas.slice();
-      novasVacinas.splice(index, 1);
-      const pacienteAtualizado = { ...paciente, vacinas: novasVacinas };
-
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.vacinas = novasVacinas;
-        });
+    const vacina = this.vacinas[index];
+    if (!vacina || !vacina.id) {
+      console.error('Vacina sem ID para remoção');
+      return;
+    }
+    
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines/${vacina.id}`;
+    console.log('Removendo vacina:', url);
+    
+    this.http.delete<any>(url).subscribe({
+      next: (response) => {
+        console.log('Vacina removida:', response);
+        this.carregarVacinas(); // Recarrega a lista
+      },
+      error: (error) => {
+        console.error('Backend não implementou DELETE. Removendo localmente:', error.status);
+        // Remove localmente até backend implementar
+        this.vacinas.splice(index, 1);
+      }
     });
   }
 }

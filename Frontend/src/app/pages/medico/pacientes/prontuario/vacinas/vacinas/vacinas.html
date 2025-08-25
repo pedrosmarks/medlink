@@ -20,8 +20,8 @@
     >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
     <div>
-      <strong>Nome:</strong> {{ vacina.nome }}<br>
-      <strong>Data:</strong> {{ vacina.data | date:'dd/MM/yyyy' }}
+      <strong>{{ vacina.name }}</strong><br>
+      <strong>Data:</strong> {{ vacina.date | date:'dd/MM/yyyy' }}
     </div>
   </div>
   <div *ngIf="vacinas.length === 0" class="text-muted">
