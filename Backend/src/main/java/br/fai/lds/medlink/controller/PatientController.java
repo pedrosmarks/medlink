@@ -108,7 +108,7 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/allergies")
-    public ResponseEntity<ApiResponse<List<Alergia>>> getAllergiesByPatient(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<List<Allergy>>> getAllergiesByPatient(@PathVariable int id) {
         return getPatientMedicalData(id, Patient::getAlergias, "Alergias recuperadas com sucesso.");
     }
 
