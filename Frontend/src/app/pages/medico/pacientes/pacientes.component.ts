@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PacientesReadService } from '../../../services/pacientes/pacientes-read.service';
 import { PacientesUpdateService } from '../../../services/pacientes/pacientes-update';
+import { AccessRequestsService } from '../../../services/access-requests/access-requests.service';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Patient } from '../../../models/access-request.interface';
 
 @Component({
   selector: 'app-pacientes',
@@ -18,16 +20,16 @@ export class PacientesComponent implements OnInit {
   pacientesFiltrados: any[] = [];
   medicoId: number = 1;
 
-  // Modal e busca
-  modalAberto = false;
+  // Busca de pacientes
   buscaNome = '';
-  resultadosBusca: any[] = [];
-  
-  // Nova busca
-  buscaAberta = false;
-  termoBusca = '';
+  resultadosBusca: Patient[] = [];
+  buscandoPacientes = false;
 
-  constructor(private pacientesReadService: PacientesReadService, private pacientesUpdateService: PacientesUpdateService) {}
+  constructor(
+    private pacientesReadService: PacientesReadService,
+    private pacientesUpdateService: PacientesUpdateService,
+    private accessRequestsService: AccessRequestsService
+  ) {}
 
   ngOnInit(): void {
     this.medicoId = parseInt(localStorage.getItem('userId') || '1');
@@ -62,100 +64,53 @@ export class PacientesComponent implements OnInit {
     });
   }
 
-  abrirModalAdicionar() {
-    this.modalAberto = true;
-    this.buscaNome = '';
-    this.resultadosBusca = [];
-  }
-
-  fecharModalAdicionar() {
-    this.modalAberto = false;
-  }
-
   pesquisarPacientes() {
-  const termo = this.buscaNome.trim().toLowerCase();
-  if (termo.length === 0) {
-    this.resultadosBusca = [];
-    return;
-  }
-  this.resultadosBusca = this.todosPacientes.filter(p =>
-  p.nome && p.nome.toLowerCase().includes(termo) &&
-  !p.especialistasAutorizados.includes(this.medicoId) &&
-  !(p.requisicoesAcesso || []).some((req: any) => req.medicoId === this.medicoId && req.status === 'pendente')
-);
-}
-
-  adicionarEspecialista(paciente: any) {
-  if (!paciente.requisicoesAcesso) paciente.requisicoesAcesso = [];
-  const jaSolicitado = paciente.requisicoesAcesso.some((req: any) => req.medicoId === this.medicoId && req.status === 'pendente');
-  if (!jaSolicitado) {
-    paciente.requisicoesAcesso.push({ medicoId: this.medicoId, status: 'pendente' });
-
-    // Persiste no backend
-    this.pacientesUpdateService.updatePaciente(paciente.id, {
-      requisicoesAcesso: paciente.requisicoesAcesso
-    }).subscribe();
-  }
-  this.resultadosBusca = this.resultadosBusca.filter(p => p.id !== paciente.id);
-}
-
-  // Métodos para busca
-  toggleBusca() {
-    this.buscaAberta = !this.buscaAberta;
-    if (!this.buscaAberta) {
-      this.limparBusca();
+    const termo = this.buscaNome.trim();
+    if (termo.length < 2) {
+      this.resultadosBusca = [];
+      return;
     }
-  }
 
-  buscarPaciente() {
-    const termo = this.termoBusca.trim().toLowerCase();
-    if (termo === '') {
-      this.pacientesFiltrados = [];
-    } else {
-      // Busca todos os pacientes do sistema (incluindo os não cadastrados ao médico)
-      this.buscarTodosPacientes(termo);
-    }
-  }
-
-  buscarTodosPacientes(termo: string) {
-    // Chama endpoint para buscar TODOS os pacientes do sistema
-    this.pacientesReadService.buscarTodosPacientes(termo).subscribe({
-      next: (response: any) => {
-        const todosPacientes = response.data || response;
-        
-        // Filtra pacientes que NÃO estão cadastrados ao médico atual
-        this.pacientesFiltrados = todosPacientes.filter((paciente: any) => {
-          const jaEhPacienteDoMedico = this.pacientes.some(p => p.id === paciente.id);
-          return !jaEhPacienteDoMedico && paciente.name.toLowerCase().includes(termo);
-        }).map((paciente: any) => ({
-          ...paciente,
-          avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
-        }));
-        
-        console.log('Pacientes encontrados para adicionar:', this.pacientesFiltrados);
+    this.buscandoPacientes = true;
+    this.accessRequestsService.searchPatients(termo).subscribe({
+      next: (response) => {
+        this.resultadosBusca = response.data || [];
+        this.buscandoPacientes = false;
       },
       error: (error) => {
-        console.error('Erro ao buscar todos os pacientes:', error);
+        console.error('Erro ao buscar pacientes:', error);
+        this.buscandoPacientes = false;
+      }
+    });
+  }
+
+  solicitarAcesso(paciente: Patient) {
+    console.log('🚀 Solicitando acesso:', {
+      pacienteId: paciente.id,
+      medicoId: this.medicoId,
+      endpoint: `POST /api/patients/${paciente.id}/access-request`
+    });
+    
+    this.accessRequestsService.sendAccessRequest(paciente.id, this.medicoId).subscribe({
+      next: (response) => {
+        console.log('✅ Requisição enviada com sucesso:', response);
+        alert(response.message);
+        this.resultadosBusca = this.resultadosBusca.filter(p => p.id !== paciente.id);
+      },
+      error: (error) => {
+        console.error('❌ Erro ao solicitar acesso:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          url: error.url
+        });
+        alert(`Erro ao solicitar acesso: ${error.status} - ${error.statusText}`);
       }
     });
   }
 
   limparBusca() {
-    this.termoBusca = '';
-    this.pacientesFiltrados = [];
-  }
-
-  adicionarPacienteAoMedico(paciente: any) {
-    // Adiciona paciente à lista do médico
-    this.pacientes.push(paciente);
-    this.todosPacientes.push(paciente);
-    
-    // Remove da lista de busca
-    this.pacientesFiltrados = this.pacientesFiltrados.filter(p => p.id !== paciente.id);
-    
-    console.log(`Paciente ${paciente.name} adicionado ao Dr. ${this.medicoId}`);
-    
-    // Aqui você pode adicionar chamada para o backend para persistir a relação
-    // this.pacientesUpdateService.adicionarPacienteAoMedico(this.medicoId, paciente.id).subscribe();
+    this.buscaNome = '';
+    this.resultadosBusca = [];
   }
 }

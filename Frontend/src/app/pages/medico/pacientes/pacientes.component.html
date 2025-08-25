@@ -1,72 +1,84 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-around mb-3">
-    <button class="btn btn-primary" (click)="toggleBusca()">Buscar paciente</button>
-    <button class="btn btn-success" (click)="abrirModalAdicionar()">Adicionar paciente</button>
-  </div>
-
-  <!-- Campo de busca -->
-  <div class="mb-3" *ngIf="buscaAberta">
-    <div class="input-group">
-      <input 
-        type="text" 
-        class="form-control" 
-        placeholder="Digite o nome do paciente..." 
-        [(ngModel)]="termoBusca"
-        (input)="buscarPaciente()"
-        #inputBusca
-      >
-      <button class="btn btn-outline-secondary" (click)="limparBusca()">
-        <i class="fas fa-times"></i> Limpar
-      </button>
+  <!-- Busca de pacientes -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Buscar Pacientes</h5>
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Digite o nome do paciente para solicitar acesso..." 
+          [(ngModel)]="buscaNome"
+          (input)="pesquisarPacientes()"
+        >
+        <button class="btn btn-outline-secondary" (click)="limparBusca()" *ngIf="buscaNome">
+          Limpar
+        </button>
+      </div>
+      
+      <div *ngIf="buscandoPacientes" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Buscando...</span>
+        </div>
+      </div>
+      
+      <div class="row" *ngIf="resultadosBusca.length > 0">
+        <div class="col-md-6 mb-3" *ngFor="let paciente of resultadosBusca">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <img [src]="paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'" 
+                     alt="Avatar" width="50" height="50" class="rounded-circle me-3">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ paciente.name }}</h6>
+                  <small class="text-muted">{{ paciente.email }}</small>
+                </div>
+                <button class="btn btn-primary btn-sm" (click)="solicitarAcesso(paciente)">
+                  Solicitar Acesso
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Modal simples -->
-  <div class="modal-backdrop" *ngIf="modalAberto">
-    <div class="modal-content">
-      <h5>Adicionar paciente</h5>
-      <input type="text" class="form-control mb-2" placeholder="Pesquisar por nome" [(ngModel)]="buscaNome" (input)="pesquisarPacientes()" />
-      <ul class="list-group mb-2" *ngIf="resultadosBusca.length > 0">
-        <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let paciente of resultadosBusca">
-          <span>{{ paciente.nome }}</span>
-          <button class="btn btn-primary btn-sm" (click)="adicionarEspecialista(paciente)">Pedir acesso</button>
-        </li>
-      </ul>
-      <button class="btn btn-secondary" (click)="fecharModalAdicionar()">Fechar</button>
+  <!-- Meus Pacientes -->
+  <div class="card">
+    <div class="card-header">
+      <h5>Meus Pacientes</h5>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12 mb-4" *ngFor="let paciente of (buscaAberta ? pacientesFiltrados : pacientes)">
-      <div class="card p-4">
-        <div class="d-flex align-items-center">
-          <img [src]="paciente.avatar" alt="Avatar" width="80" height="80" class="rounded-circle me-4 border">
-          <div>
-            <h4>{{ paciente.name }}</h4>
-            <p class="mb-1"><strong>Gênero:</strong> {{ paciente.gender }}</p>
-            <p class="mb-1"><strong>Data Nascimento:</strong> {{ paciente.birthdate }}</p>
-            <p class="mb-1"><strong>Telefone:</strong> {{ paciente.phoneNumber }}</p>
-            <p class="mb-1"><strong>E-mail:</strong> {{ paciente.email }}</p>
-            <p class="mb-1"><strong>Plano:</strong> {{ paciente.plan }}</p>
-            <p class="mb-1"><strong>Cartão SUS:</strong> {{ paciente.susCard }}</p>
-            <p class="mb-1" *ngIf="paciente.address"><strong>Endereço:</strong> 
-              {{ paciente.address.street }}, {{ paciente.address.number }} - 
-              {{ paciente.address.city }}, {{ paciente.address.state }}
-            </p>
-            <button
-              *ngIf="!buscaAberta"
-              class="btn btn-outline-primary mt-2"
-              [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
-            >
-              Acessar prontuário
-            </button>
-            <button
-              *ngIf="buscaAberta"
-              class="btn btn-success mt-2"
-              (click)="adicionarPacienteAoMedico(paciente)"
-            >
-              Adicionar paciente
-            </button>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12 mb-4" *ngFor="let paciente of pacientes">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <img [src]="paciente.avatar" alt="Avatar" width="80" height="80" class="rounded-circle me-4 border">
+                <div class="flex-grow-1">
+                  <h4>{{ paciente.name }}</h4>
+                  <p class="mb-1"><strong>Gênero:</strong> {{ paciente.gender }}</p>
+                  <p class="mb-1"><strong>Data Nascimento:</strong> {{ paciente.birthdate }}</p>
+                  <p class="mb-1"><strong>Telefone:</strong> {{ paciente.phoneNumber }}</p>
+                  <p class="mb-1"><strong>E-mail:</strong> {{ paciente.email }}</p>
+                  <p class="mb-1"><strong>Plano:</strong> {{ paciente.plan }}</p>
+                  <p class="mb-1"><strong>Cartão SUS:</strong> {{ paciente.susCard }}</p>
+                  <p class="mb-1" *ngIf="paciente.address"><strong>Endereço:</strong> 
+                    {{ paciente.address.street }}, {{ paciente.address.number }} - 
+                    {{ paciente.address.city }}, {{ paciente.address.state }}
+                  </p>
+                </div>
+                <button
+                  class="btn btn-outline-primary"
+                  [routerLink]="['/medico/pacientes', paciente.id, 'prontuario']"
+                >
+                  Acessar prontuário
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
