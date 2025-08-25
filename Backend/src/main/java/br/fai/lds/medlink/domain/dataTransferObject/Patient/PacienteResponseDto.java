@@ -26,7 +26,7 @@ public class PacienteResponseDto {
     private List<Medicamento> medicamentos;
     private List<Cirurgia> cirurgias;
     private List<Diagnostico> diagnosticos;
-    private List<Alergia> alergias;
+    private List<Allergy> alergias;
 
     public static PacienteResponseDto fromEntity(Patient entity) {
         PacienteResponseDto dto = new PacienteResponseDto();
