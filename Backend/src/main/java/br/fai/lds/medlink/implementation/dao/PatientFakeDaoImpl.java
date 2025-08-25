@@ -85,7 +85,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Diagnostico("Hipertensão", "2022-03-01")
                 )))
                 .alergias(new ArrayList<>(List.of(
-                        new Alergia("top")
+                        new Allergy(1, "Dipirona", "Dipirona", "Erupção cutânea", "Moderada")
                 )))
                 .build());
 
@@ -133,7 +133,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Diagnostico("Diabetes Tipo 2", "2020-09-15")
                 )))
                 .alergias(new ArrayList<>(List.of(
-                        new Alergia("Penicilina")
+                        new Allergy(2, "Penicilina", "Penicilina", "Anafilaxia", "Grave")
                 )))
                 .build());
 
