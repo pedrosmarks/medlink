@@ -24,23 +24,33 @@ export class Medico implements OnInit {
 
   ngOnInit() {
     this.carregarMedicosAutorizados();
+    
+    // Escutar evento de médico aprovado
+    window.addEventListener('medico-aprovado', () => {
+      console.log('🔄 Recarregando lista de médicos após aprovação...');
+      this.carregarMedicosAutorizados();
+    });
   }
 
   carregarMedicosAutorizados() {
-    const pacienteId = localStorage.getItem('pacienteId');
+    const pacienteId = localStorage.getItem('userId');
     
     if (!pacienteId) {
       this.error = 'ID do paciente não encontrado';
       this.loading = false;
       return;
     }
+    
+    console.log('🔍 Carregando médicos autorizados para paciente:', pacienteId);
 
     this.medicosService.getMedicosAutorizados(pacienteId).subscribe({
-      next: (medicos) => {
-        this.medicosAutorizados = medicos;
+      next: (response: any) => {
+        console.log('✅ Response médicos autorizados:', response);
+        this.medicosAutorizados = response.data || response || [];
         this.loading = false;
         
-        if (medicos.length === 0) {
+        console.log('📊 Total de médicos autorizados:', this.medicosAutorizados.length);
+        if (this.medicosAutorizados.length === 0) {
           console.log('Nenhum médico autorizado encontrado para o paciente:', pacienteId);
         }
       },
