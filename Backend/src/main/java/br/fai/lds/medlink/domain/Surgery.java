@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Surgery {
+    private int id;
     private String name;
     private String date;
     private String location;
