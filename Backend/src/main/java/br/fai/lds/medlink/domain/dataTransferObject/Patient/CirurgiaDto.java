@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CirurgiaDto {
-    private String nome;
-    private String data;
+    private int id;
+    private String name;
+    private String date;
+    private String location;
+    private String notes;
 }
