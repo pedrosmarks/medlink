@@ -22,7 +22,7 @@ public class PacienteResponseDto {
     private List<Long> especialistasAutorizados;
     private List<RequisicaoAcesso> requisicoesAcesso;
     private List<Consulta> consultas;
-    private List<Vacina> vacinas;
+    private List<Vaccine> vacinas;
     private List<Medicamento> medicamentos;
     private List<Cirurgia> cirurgias;
     private List<Diagnostico> diagnosticos;
