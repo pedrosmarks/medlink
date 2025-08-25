@@ -20,9 +20,10 @@
     >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
     <div>
-      <strong>Nome:</strong> {{ cirurgia.nome }}<br>
-      <strong>Data:</strong> {{ cirurgia.data | date:'dd/MM/yyyy' }}<br>
-      <strong>Descrição:</strong> {{ cirurgia.descricao }}
+      <strong>{{ cirurgia.name }}</strong><br>
+      <strong>Data:</strong> {{ cirurgia.date | date:'dd/MM/yyyy' }}<br>
+      <strong>Local:</strong> {{ cirurgia.location }}<br>
+      <strong>Observações:</strong> {{ cirurgia.notes }}
     </div>
   </div>
   <div *ngIf="cirurgias.length === 0" class="text-muted">
