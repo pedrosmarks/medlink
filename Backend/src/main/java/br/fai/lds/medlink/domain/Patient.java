@@ -29,7 +29,7 @@ public class Patient {
     private List<Consulta> consultas;
     private List<Vaccine> vacinas;
     private List<Medicamento> medicamentos;
-    private List<Cirurgia> cirurgias;
+    private List<Surgery> cirurgias;
     private List<Diagnostico> diagnosticos;
     private List<Allergy> alergias;
 
@@ -42,7 +42,7 @@ public class Patient {
                    List<EspecialistaAutorizado> especialistasAutorizados,
                    List<RequisicaoAcesso> requisicoesAcesso, List<Consulta> consultas,
                    List<Vaccine> vacinas, List<Medicamento> medicamentos,
-                   List<Cirurgia> cirurgias, List<Diagnostico> diagnosticos,
+                   List<Surgery> cirurgias, List<Diagnostico> diagnosticos,
                    List<Allergy> alergias) {
         this.id = id;
         this.name = name;
