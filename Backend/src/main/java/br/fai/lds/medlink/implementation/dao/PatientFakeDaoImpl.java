@@ -71,8 +71,8 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Consulta("2024-06-10", "Consulta de rotina")
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vacina("COVID-19", "2023-01-15"),
-                        new Vacina("Febre amarela", "2025-08-06")
+                        new Vaccine(1, "COVID-19", "2023-01-15"),
+                        new Vaccine(2, "Febre amarela", "2025-08-06")
                 )))
                 .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("Losartana", "50mg", null),
@@ -123,7 +123,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Consulta("2024-05-20", "Avaliação de rotina")
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vacina("Influenza", "2023-03-10")
+                        new Vaccine(3, "Influenza", "2023-03-10")
                 )))
                 .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("Metformina", "850mg", null)
@@ -171,7 +171,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Consulta("2024-04-15", "Pós-operatório")
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vacina("Hepatite B", "2022-11-05")
+                        new Vaccine(4, "Hepatite B", "2022-11-05")
                 )))
                 .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("AAS", "100mg", null)
