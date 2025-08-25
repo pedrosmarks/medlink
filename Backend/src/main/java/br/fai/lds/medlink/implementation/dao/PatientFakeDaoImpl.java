@@ -79,7 +79,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Medicamento("Tylenol", "2 por dia", "2025-08-07")
                 )))
                 .cirurgias(new ArrayList<>(List.of(
-                        new Cirurgia("Apendicectomia", "2015-08-20")
+                        new Surgery(1, "Apendicectomia", "2015-08-20", "Hospital São Paulo", "Cirurgia sem complicações")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
                         new Diagnostico("Hipertensão", "2022-03-01")
@@ -177,7 +177,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Medicamento("AAS", "100mg", null)
                 )))
                 .cirurgias(new ArrayList<>(List.of(
-                        new Cirurgia("Revascularização do miocárdio", "2023-12-01")
+                        new Surgery(2, "Revascularização do miocárdio", "2023-12-01", "Hospital do Coração", "Procedimento realizado com sucesso")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
                         new Diagnostico("Cardiopatia isquêmica", "2023-10-20")
