@@ -21,9 +21,25 @@ export class Prontuario implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.pacientesReadService.getPacientes().subscribe(pacientes => {
-      this.paciente = pacientes.find((p: any) => String(p.id) === String(id));
+    // Busca ID do paciente da rota
+    this.route.paramMap.subscribe(params => {
+      let id = params.get('id');
+      console.log('🎯 ID capturado no prontuário:', id);
+      
+      if (id && id !== 'undefined') {
+        // Busca paciente diretamente por ID ao invés de listar todos
+        this.pacientesReadService.getPacienteById(id).subscribe({
+          next: (response) => {
+            console.log('✅ Paciente carregado:', response);
+            this.paciente = response.data || response;
+          },
+          error: (error) => {
+            console.error('❌ Erro ao carregar paciente:', error);
+          }
+        });
+      } else {
+        console.error('❌ ID inválido para prontuário:', id);
+      }
     });
   }
 }
