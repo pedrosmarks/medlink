@@ -60,33 +60,33 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .susCard("123456")
                 .medicId(1)
                 .active(true)
-                .especialistasAutorizados(List.of(
+                .especialistasAutorizados(new ArrayList<>(List.of(
                         new EspecialistaAutorizado(1L),
                         new EspecialistaAutorizado(2L)
-                ))
-                .requisicoesAcesso(List.of(
+                )))
+                .requisicoesAcesso(new ArrayList<>(List.of(
                         new RequisicaoAcesso(3, "aprovado")
-                ))
-                .consultas(List.of(
+                )))
+                .consultas(new ArrayList<>(List.of(
                         new Consulta("2024-06-10", "Consulta de rotina")
-                ))
-                .vacinas(List.of(
+                )))
+                .vacinas(new ArrayList<>(List.of(
                         new Vacina("COVID-19", "2023-01-15"),
                         new Vacina("Febre amarela", "2025-08-06")
-                ))
-                .medicamentos(List.of(
+                )))
+                .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("Losartana", "50mg", null),
                         new Medicamento("Tylenol", "2 por dia", "2025-08-07")
-                ))
-                .cirurgias(List.of(
+                )))
+                .cirurgias(new ArrayList<>(List.of(
                         new Cirurgia("Apendicectomia", "2015-08-20")
-                ))
-                .diagnosticos(List.of(
+                )))
+                .diagnosticos(new ArrayList<>(List.of(
                         new Diagnostico("Hipertensão", "2022-03-01")
-                ))
-                .alergias(List.of(
+                )))
+                .alergias(new ArrayList<>(List.of(
                         new Alergia("top")
-                ))
+                )))
                 .build());
 
         // Paciente 2 - Maria Oliveira
@@ -115,28 +115,26 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .susCard("654321")
                 .medicId(2)
                 .active(true)
-                .especialistasAutorizados(List.of(
+                .especialistasAutorizados(new ArrayList<>(List.of(
                         new EspecialistaAutorizado(2L)
-                ))
-                .requisicoesAcesso(List.of(
-                        new RequisicaoAcesso()
-                ))
-                .consultas(List.of(
+                )))
+                .requisicoesAcesso(new ArrayList<>())
+                .consultas(new ArrayList<>(List.of(
                         new Consulta("2024-05-20", "Avaliação de rotina")
-                ))
-                .vacinas(List.of(
+                )))
+                .vacinas(new ArrayList<>(List.of(
                         new Vacina("Influenza", "2023-03-10")
-                ))
-                .medicamentos(List.of(
+                )))
+                .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("Metformina", "850mg", null)
-                ))
-                .cirurgias(List.of())
-                .diagnosticos(List.of(
+                )))
+                .cirurgias(new ArrayList<>())
+                .diagnosticos(new ArrayList<>(List.of(
                         new Diagnostico("Diabetes Tipo 2", "2020-09-15")
-                ))
-                .alergias(List.of(
+                )))
+                .alergias(new ArrayList<>(List.of(
                         new Alergia("Penicilina")
-                ))
+                )))
                 .build());
 
         // Paciente 3 - Carlos Pereira
@@ -165,26 +163,26 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .susCard("789123")
                 .medicId(1)
                 .active(true)
-                .especialistasAutorizados(List.of(
+                .especialistasAutorizados(new ArrayList<>(List.of(
                         new EspecialistaAutorizado(1L)
-                ))
-                .requisicoesAcesso(List.of())
-                .consultas(List.of(
+                )))
+                .requisicoesAcesso(new ArrayList<>())
+                .consultas(new ArrayList<>(List.of(
                         new Consulta("2024-04-15", "Pós-operatório")
-                ))
-                .vacinas(List.of(
+                )))
+                .vacinas(new ArrayList<>(List.of(
                         new Vacina("Hepatite B", "2022-11-05")
-                ))
-                .medicamentos(List.of(
+                )))
+                .medicamentos(new ArrayList<>(List.of(
                         new Medicamento("AAS", "100mg", null)
-                ))
-                .cirurgias(List.of(
+                )))
+                .cirurgias(new ArrayList<>(List.of(
                         new Cirurgia("Revascularização do miocárdio", "2023-12-01")
-                ))
-                .diagnosticos(List.of(
+                )))
+                .diagnosticos(new ArrayList<>(List.of(
                         new Diagnostico("Cardiopatia isquêmica", "2023-10-20")
-                ))
-                .alergias(List.of())
+                )))
+                .alergias(new ArrayList<>())
                 .build());
     }
 
