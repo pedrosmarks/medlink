@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Diagnosis {
+    private int id;
     private String description;
     private String date;
 
