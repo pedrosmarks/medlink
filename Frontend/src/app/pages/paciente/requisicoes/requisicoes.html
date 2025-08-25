@@ -1,23 +1,76 @@
 <div class="container mt-4">
-  <h2>Requisições de Acesso</h2>
-  <div *ngIf="requisicoes.length === 0" class="alert alert-info mt-3">
-    Nenhuma requisição de acesso no momento.
-  </div>
-  <div *ngFor="let req of requisicoes" class="card mb-3 p-3">
-    <div>
-      <strong>Médico:</strong> {{ getNomeMedico(req.medicoId) }}
+  <div class="card">
+    <div class="card-header">
+      <h5>Requisições de Acesso Médico</h5>
     </div>
-    <div>
-      <strong>Status:</strong>
-      <span [ngClass]="{
-        'text-warning': req.status === 'pendente',
-        'text-success': req.status === 'aprovado',
-        'text-danger': req.status === 'recusado'
-      }">{{ req.status }}</span>
-    </div>
-    <div *ngIf="req.status === 'pendente'" class="mt-2">
-      <button class="btn btn-success btn-sm me-2" (click)="aprovar(req.medicoId)">Aprovar</button>
-      <button class="btn btn-danger btn-sm" (click)="recusar(req.medicoId)">Recusar</button>
+    <div class="card-body">
+      <div *ngIf="loading" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && requisicoes.length === 0" class="text-center text-muted">
+        <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+        <p>Nenhuma requisição de acesso no momento</p>
+      </div>
+
+      <div *ngIf="!loading && requisicoes.length > 0">
+        <div class="row">
+          <div class="col-md-6 mb-3" *ngFor="let req of requisicoes">
+            <div class="card" [ngClass]="{
+              'border-warning': req.status === 'pendente',
+              'border-success': req.status === 'aprovado',
+              'border-danger': req.status === 'rejeitado'
+            }">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title">
+                      <i class="fas fa-user-md text-primary"></i>
+                      {{ getMedicoInfo(req) }}
+                    </h6>
+                    <p class="card-text text-muted mb-0" *ngIf="req.dataSolicitacao">
+                      <small>Solicitado em: {{ req.dataSolicitacao | date:'dd/MM/yyyy HH:mm' }}</small>
+                    </p>
+                  </div>
+                  <span class="badge" [ngClass]="{
+                    'bg-warning text-dark': req.status === 'pendente',
+                    'bg-success': req.status === 'aprovado',
+                    'bg-danger': req.status === 'rejeitado'
+                  }">{{ req.status }}</span>
+                </div>
+                
+                <p class="card-text">
+                  {{ getMedicoMessage(req) }}
+                </p>
+                
+                <div class="d-flex gap-2" *ngIf="req.status === 'pendente'">
+                  <button 
+                    class="btn btn-success btn-sm" 
+                    (click)="aprovar(req)"
+                  >
+                    <i class="fas fa-check"></i> Aprovar
+                  </button>
+                  <button 
+                    class="btn btn-danger btn-sm" 
+                    (click)="recusar(req)"
+                  >
+                    <i class="fas fa-times"></i> Rejeitar
+                  </button>
+                </div>
+                
+                <div *ngIf="req.status !== 'pendente'" class="text-muted">
+                  <small>
+                    <i class="fas fa-info-circle"></i>
+                    Requisição {{ req.status === 'aprovado' ? 'aprovada' : 'rejeitada' }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

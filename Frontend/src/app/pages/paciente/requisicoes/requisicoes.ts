@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { AccessRequestsService } from '../../../services/access-requests/access-requests.service';
+import { AccessRequest } from '../../../models/access-request.interface';
 
 @Component({
   selector: 'app-requisicoes',
@@ -10,57 +11,106 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./requisicoes.css']
 })
 export class Requisicoes implements OnInit {
-  paciente: any = null;
-  requisicoes: any[] = [];
-  medicos: any[] = [];
+  requisicoes: AccessRequest[] = [];
+  pacienteId: number = 0;
+  loading = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private accessRequestsService: AccessRequestsService) {}
 
   ngOnInit(): void {
-    const pacienteId = localStorage.getItem('pacienteId') || '2'; // ajuste para o id real do paciente logado
-    this.http.get<any>(`http://localhost:3000/pacientes/${pacienteId}`).subscribe(paciente => {
-      this.paciente = paciente;
-      this.requisicoes = paciente.requisicoesAcesso || [];
-      this.carregarMedicos();
+    this.pacienteId = parseInt(localStorage.getItem('userId') || '0');
+    this.carregarRequisicoes();
+  }
+
+  carregarRequisicoes(): void {
+    this.loading = true;
+    console.log('🔍 Carregando requisições para paciente:', this.pacienteId);
+    
+    this.accessRequestsService.getPendingRequests(this.pacienteId).subscribe({
+      next: (response) => {
+        console.log('✅ Requisições carregadas:', response);
+        this.requisicoes = response.data || [];
+        console.log('📊 Total de requisições:', this.requisicoes.length);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.warn('❌ Erro ao carregar requisições:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url
+        });
+        this.requisicoes = [];
+        this.loading = false;
+      }
     });
   }
 
-  carregarMedicos() {
-  this.http.get<any[]>(`http://localhost:3000/perfil`).subscribe(medicos => {
-    this.medicos = medicos;
-  });
-}
-
-  getNomeMedico(medicoId: number | string): string {
-    const medico = this.medicos.find(m => String(m.id) === String(medicoId));
-    return medico ? medico.nome : 'Médico desconhecido';
+  getMedicoInfo(request: AccessRequest): string {
+    if (request.medicoName && request.medicoSpecialty) {
+      return `${request.medicoName} - ${request.medicoSpecialty}`;
+    }
+    return `Médico ID: ${request.medicoId}`;
   }
 
-  aprovar(medicoId: number) {
-    this.atualizarStatus(medicoId, 'aprovado');
+  getMedicoMessage(request: AccessRequest): string {
+    if (request.medicoName && request.medicoSpecialty) {
+      return `${request.medicoName} - ${request.medicoSpecialty} está solicitando acesso ao seu prontuário médico.`;
+    }
+    return 'Este médico está solicitando acesso ao seu prontuário médico.';
   }
 
-  recusar(medicoId: number) {
-    this.atualizarStatus(medicoId, 'recusado');
+  aprovar(request: AccessRequest): void {
+    console.log('✅ Aprovando requisição:', {
+      pacienteId: this.pacienteId,
+      medicoId: request.medicoId,
+      endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=approve`
+    });
+    
+    this.accessRequestsService.approveRequest(this.pacienteId, request.medicoId).subscribe({
+      next: (response) => {
+        console.log('✅ Requisição aprovada:', response);
+        alert(response.message + '\n\nO médico agora aparece na sua lista de médicos!');
+        this.carregarRequisicoes();
+        
+        // Forçar atualização da lista de médicos
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('medico-aprovado'));
+        }, 500);
+      },
+      error: (error) => {
+        console.error('❌ Erro ao aprovar:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          url: error.url
+        });
+        alert(`Erro ao aprovar: ${error.status} - ${error.statusText}`);
+      }
+    });
   }
 
- atualizarStatus(medicoId: number, status: string) {
-  const novasRequisicoes = this.requisicoes.map(req =>
-    req.medicoId === medicoId ? { ...req, status } : req
-  );
-
-  // Se aprovado, adiciona o médico aos especialistasAutorizados (se ainda não estiver)
-  let novosEspecialistas = this.paciente.especialistasAutorizados || [];
-  if (status === 'aprovado' && !novosEspecialistas.includes(medicoId)) {
-    novosEspecialistas = [...novosEspecialistas, medicoId];
+  recusar(request: AccessRequest): void {
+    console.log('❌ Rejeitando requisição:', {
+      pacienteId: this.pacienteId,
+      medicoId: request.medicoId,
+      endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=reject`
+    });
+    
+    this.accessRequestsService.rejectRequest(this.pacienteId, request.medicoId).subscribe({
+      next: (response) => {
+        console.log('❌ Requisição rejeitada:', response);
+        alert(response.message);
+        this.carregarRequisicoes();
+      },
+      error: (error) => {
+        console.error('❌ Erro ao rejeitar:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          url: error.url
+        });
+        alert(`Erro ao rejeitar: ${error.status} - ${error.statusText}`);
+      }
+    });
   }
-
-  this.http.patch<any>(`http://localhost:3000/pacientes/${this.paciente.id}`, {
-    requisicoesAcesso: novasRequisicoes,
-    especialistasAutorizados: novosEspecialistas
-  }).subscribe(() => {
-    this.requisicoes = novasRequisicoes;
-    this.paciente.especialistasAutorizados = novosEspecialistas;
-  });
-}
 }
