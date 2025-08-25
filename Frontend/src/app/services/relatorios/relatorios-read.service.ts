@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class RelatoriosReadService {
 
-  private apiUrl = 'http://localhost:8080/relatorios';
+  private apiUrl = 'http://localhost:8080/report/relatorios';
 
   constructor(private http: HttpClient) { }
 
