@@ -3,6 +3,7 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AuthorizedDoctorDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.DiagnosisCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.RequisicaoAcessoDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.SurgeryCreateDto;
@@ -201,8 +202,70 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/diagnoses")
-    public ResponseEntity<ApiResponse<List<Diagnostico>>> getDiagnosesByPatient(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<List<Diagnosis>>> getDiagnosesByPatient(@PathVariable int id) {
         return getPatientMedicalData(id, Patient::getDiagnosticos, "Diagnósticos recuperados com sucesso.");
+    }
+
+    // Add diagnosis to patient
+    @PostMapping("/{patientId}/diagnoses")
+    public ResponseEntity<ApiResponse<String>> addDiagnosis(
+            @PathVariable int patientId,
+            @RequestBody DiagnosisCreateDto diagnosisDto) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            
+            // Generate new ID for diagnosis
+            int newDiagnosisId = patient.getDiagnosticos().size() + 1;
+            for (Diagnosis d : patient.getDiagnosticos()) {
+                if (d.getId() >= newDiagnosisId) {
+                    newDiagnosisId = d.getId() + 1;
+                }
+            }
+            
+            Diagnosis newDiagnosis = new Diagnosis(newDiagnosisId, diagnosisDto.getDescription(), diagnosisDto.getDate());
+            patient.getDiagnosticos().add(newDiagnosis);
+            
+            patientService.update(patientId, patient);
+            
+            return ResponseEntity.ok(new ApiResponse<>("Diagnóstico adicionado com sucesso."));
+        } catch (Exception e) {
+            log.error("Erro ao adicionar diagnóstico para paciente ID {}: {}", patientId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
+    // Delete diagnosis from patient
+    @DeleteMapping("/{patientId}/diagnoses/{diagnosisId}")
+    public ResponseEntity<ApiResponse<String>> deleteDiagnosis(
+            @PathVariable int patientId,
+            @PathVariable int diagnosisId) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            
+            boolean removed = patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId);
+            
+            if (!removed) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Diagnóstico não encontrado."));
+            }
+            
+            patientService.update(patientId, patient);
+            
+            return ResponseEntity.ok(new ApiResponse<>("Diagnóstico removido com sucesso."));
+        } catch (Exception e) {
+            log.error("Erro ao remover diagnóstico ID {} do paciente ID {}: {}", diagnosisId, patientId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
     }
 
     @GetMapping("/{id}/allergies")
