@@ -129,8 +129,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/medications")
-    public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicationsByPatient(@PathVariable int id) {
-        return getPatientMedicalData(id, Patient::getMedicamentos, "Medicamentos recuperados com sucesso.");
+    public ResponseEntity<ApiResponse<List<Medication>>> getMedicationsByPatient(@PathVariable int id) {
+        return getPatientMedicalData(id, Patient::getMedications, "Medicamentos recuperados com sucesso.");
     }
 
     @GetMapping("/{id}/surgeries")
