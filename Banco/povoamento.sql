@@ -123,3 +123,10 @@ INSERT INTO especialidade (nome, descricao) VALUES
 ('Pediatria', 'Cuidado de crianças'),
 ('Dermatologia', 'Doenças da pele'),
 ('Ortopedia', 'Ossos e articulações');
+
+INSERT INTO medico (pessoa_id, email) VALUES
+(2, 'medico1@teste.com'),
+(3, 'medico2@teste.com'),
+(4, 'medico3@teste.com'),
+(5, 'medico4@teste.com'),
+(1, 'medico5@teste.com');
