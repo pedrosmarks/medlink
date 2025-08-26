@@ -137,3 +137,10 @@ INSERT INTO crm (medico_id, numero) VALUES
 (3, 'CRM-MG-11111'),
 (4, 'CRM-BA-22222'),
 (5, 'CRM-RS-33333');
+
+INSERT INTO medico_clinica_especialidade (medico_id, clinica_id, especialidade_id) VALUES
+(1, 1, 1),
+(2, 2, 2),
+(3, 3, 3),
+(4, 4, 4),
+(5, 5, 5);
