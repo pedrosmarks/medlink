@@ -32,3 +32,10 @@ INSERT INTO telefone_pessoa (pessoa_id, numero, tipo_telefone) VALUES
 (3, '31977770003', 'Residencial'),
 (4, '71966660004', 'Comercial'),
 (5, '51955550005', 'Celular');
+
+INSERT INTO clinica (cnpj, razao_social, nome_fantasia) VALUES
+('11111111000101', 'Clínica Vida Saúde LTDA', 'Vida Saúde'),
+('22222222000102', 'Clínica Bem Estar LTDA', 'Bem Estar'),
+('33333333000103', 'Hospital São Lucas SA', 'São Lucas'),
+('44444444000104', 'Centro Médico Esperança LTDA', 'Esperança'),
+('55555555000105', 'Clínica Popular LTDA', 'Clínica Popular');
