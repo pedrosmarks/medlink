@@ -25,3 +25,10 @@ INSERT INTO endereco_pessoa (pessoa_id, logradouro, numero, complemento, bairro,
 (3, 'Rua C', '300', 'Casa', 'Bairro C', 3, '20000000'),
 (4, 'Av D', '400', NULL, 'Bairro D', 4, '30000000'),
 (5, 'Rua E', '500', 'Bloco 5', 'Bairro E', 5, '40000000');
+
+INSERT INTO telefone_pessoa (pessoa_id, numero, tipo_telefone) VALUES
+(1, '11999990001', 'Celular'),
+(2, '21988880002', 'Celular'),
+(3, '31977770003', 'Residencial'),
+(4, '71966660004', 'Comercial'),
+(5, '51955550005', 'Celular');
