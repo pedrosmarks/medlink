@@ -95,3 +95,10 @@ INSERT INTO historico_cirurgico (prontuario_id, descricao_cirurgica) VALUES
 (3, 'Cesárea'),
 (4, 'Cirurgia cardíaca'),
 (5, 'Retirada de vesícula');
+
+INSERT INTO medicamento_diario (prontuario_id, descricao_medicamento) VALUES
+(1, 'Losartana 50mg'),
+(2, 'Metformina 850mg'),
+(3, 'Budesonida Inalatória'),
+(4, 'Atorvastatina 20mg'),
+(5, 'Sumatriptano 50mg');
