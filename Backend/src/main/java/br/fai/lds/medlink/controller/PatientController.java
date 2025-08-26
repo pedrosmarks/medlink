@@ -86,8 +86,8 @@ public class PatientController {
     // Endpoints para buscar dados médicos específicos do paciente
     
     @GetMapping("/{id}/consultations")
-    public ResponseEntity<ApiResponse<List<Consulta>>> getConsultationsByPatient(@PathVariable int id) {
-        return getPatientMedicalData(id, Patient::getConsultas, "Consultas recuperadas com sucesso.");
+    public ResponseEntity<ApiResponse<List<Consultation>>> getConsultationsByPatient(@PathVariable int id) {
+        return getPatientMedicalData(id, Patient::getConsultations, "Consultas recuperadas com sucesso.");
     }
 
     @GetMapping("/{id}/vaccines")
@@ -129,8 +129,8 @@ public class PatientController {
     }
 
     @GetMapping("/{id}/medications")
-    public ResponseEntity<ApiResponse<List<Medicamento>>> getMedicationsByPatient(@PathVariable int id) {
-        return getPatientMedicalData(id, Patient::getMedicamentos, "Medicamentos recuperados com sucesso.");
+    public ResponseEntity<ApiResponse<List<Medication>>> getMedicationsByPatient(@PathVariable int id) {
+        return getPatientMedicalData(id, Patient::getMedications, "Medicamentos recuperados com sucesso.");
     }
 
     @GetMapping("/{id}/surgeries")

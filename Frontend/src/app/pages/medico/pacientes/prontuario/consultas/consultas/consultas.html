@@ -4,10 +4,21 @@
 
 <h2>Consultas de {{ pacienteNome }}</h2>
 
-<div class="mb-3 d-flex gap-2">
-  <input type="date" class="form-control" [(ngModel)]="novaConsultaData" placeholder="Data">
-  <input type="text" class="form-control" [(ngModel)]="novaConsultaDescricao" placeholder="Descrição">
-  <button class="btn btn-success" (click)="adicionarConsulta()">Adicionar</button>
+<div class="mb-3">
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <input type="date" class="form-control" [(ngModel)]="novaConsultaDate" placeholder="Data">
+    </div>
+    <div class="col-md-8">
+      <input type="text" class="form-control" [(ngModel)]="novaConsultaReason" placeholder="Motivo da consulta">
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <textarea class="form-control" [(ngModel)]="novaConsultaNotes" placeholder="Observações (opcional)" rows="2"></textarea>
+    </div>
+  </div>
+  <button class="btn btn-success" (click)="adicionarConsulta()">Adicionar Consulta</button>
 </div>
 
 <div class="consultas-grid">
@@ -20,8 +31,9 @@
     >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
     <div>
-      <strong>Data:</strong> {{ consulta.data | date:'dd/MM/yyyy' }}<br>
-      <strong>Descrição:</strong> {{ consulta.descricao }}
+      <strong>Data:</strong> {{ consulta.date | date:'dd/MM/yyyy' }}<br>
+      <strong>Motivo:</strong> {{ consulta.reason }}<br>
+      <strong>Observações:</strong> {{ consulta.notes || 'Nenhuma observação' }}
     </div>
   </div>
   <div *ngIf="consultas.length === 0" class="text-muted">

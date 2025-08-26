@@ -12,8 +12,9 @@
   <div class="medicamento-card" *ngFor="let medicamento of medicamentos; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="36" alt="Medicamento" />
     <div>
-      <strong>Nome:</strong> {{ medicamento.nome }}<br>
-      <strong>Dosagem:</strong> {{ medicamento.dosagem }}
+      <strong>Nome:</strong> {{ medicamento.name }}<br>
+      <strong>Dosagem:</strong> {{ medicamento.dosage }}<br>
+      <strong>Frequência:</strong> {{ medicamento.frequency }}
     </div>
   </div>
   <div *ngIf="!carregando && medicamentos.length === 0" class="text-muted">

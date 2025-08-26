@@ -67,16 +67,28 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .requisicoesAcesso(new ArrayList<>(List.of(
                         new RequisicaoAcesso(3, "aprovado")
                 )))
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-06-10", "Consulta de rotina")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-06-10")
+                                .reason("Consulta de rotina")
+                                .notes("Paciente apresentou bom estado geral")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(1, "COVID-19", "2023-01-15"),
                         new Vaccine(2, "Febre amarela", "2025-08-06")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("Losartana", "50mg", null),
-                        new Medicamento("Tylenol", "2 por dia", "2025-08-07")
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("Losartana")
+                                .dosage("50mg")
+                                .frequency("1x ao dia")
+                                .build(),
+                        Medication.builder()
+                                .name("Tylenol")
+                                .dosage("500mg")
+                                .frequency("2x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
                         new Surgery(1, "Apendicectomia", "2015-08-20", "Hospital São Paulo", "Cirurgia sem complicações")
@@ -119,14 +131,22 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new EspecialistaAutorizado(2L)
                 )))
                 .requisicoesAcesso(new ArrayList<>())
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-05-20", "Avaliação de rotina")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-05-20")
+                                .reason("Avaliação de rotina")
+                                .notes("Controle glicêmico adequado")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(3, "Influenza", "2023-03-10")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("Metformina", "850mg", null)
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("Metformina")
+                                .dosage("850mg")
+                                .frequency("2x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>())
                 .diagnosticos(new ArrayList<>(List.of(
@@ -167,14 +187,22 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new EspecialistaAutorizado(1L)
                 )))
                 .requisicoesAcesso(new ArrayList<>())
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-04-15", "Pós-operatório")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-04-15")
+                                .reason("Pós-operatório")
+                                .notes("Recuperação dentro do esperado")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(4, "Hepatite B", "2022-11-05")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("AAS", "100mg", null)
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("AAS")
+                                .dosage("100mg")
+                                .frequency("1x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
                         new Surgery(2, "Revascularização do miocárdio", "2023-12-01", "Hospital do Coração", "Procedimento realizado com sucesso")

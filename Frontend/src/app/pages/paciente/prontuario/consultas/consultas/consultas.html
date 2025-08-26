@@ -12,8 +12,9 @@
   <div class="consulta-card" *ngFor="let consulta of consultas; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
     <div>
-      <strong>Data:</strong> {{ consulta.data | date:'dd/MM/yyyy' }}<br>
-      <strong>Descrição:</strong> {{ consulta.descricao }}
+      <strong>Data:</strong> {{ consulta.date | date:'dd/MM/yyyy' }}<br>
+      <strong>Motivo:</strong> {{ consulta.reason }}<br>
+      <strong>Observações:</strong> {{ consulta.notes || 'Nenhuma observação' }}
     </div>
   </div>
   <div *ngIf="!carregando && consultas.length === 0" class="text-muted">

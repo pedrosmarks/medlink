@@ -12,7 +12,7 @@ export class MedicosService {
 
   // Buscar médicos autorizados para um paciente específico
   getMedicosAutorizados(pacienteId: string): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8080/patient/${pacienteId}/authorized-doctors`);
+    return this.http.get<any[]>(`${this.apiUrl}/patients/${pacienteId}/authorized-doctors`);
   }
 
   // Buscar todos os médicos

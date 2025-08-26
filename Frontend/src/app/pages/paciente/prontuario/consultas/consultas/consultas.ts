@@ -39,7 +39,7 @@ export class Consultas implements OnInit {
     console.log('Carregando consultas para paciente ID:', this.pacienteId);
     console.log('URL da chamada:', `http://localhost:8080/api/pacientes/${this.pacienteId}/consultas`);
     
-    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/consultas`)
+    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/consultations`)
       .subscribe({
         next: (response) => {
           console.log('Response completo:', response);
