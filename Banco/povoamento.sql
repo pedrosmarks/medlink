@@ -88,3 +88,10 @@ INSERT INTO procedimento (prontuario_id, descricao_procedimento) VALUES
 (3, 'Raio-x torácico'),
 (4, 'Eletrocardiograma'),
 (5, 'Ultrassonografia');
+
+INSERT INTO historico_cirurgico (prontuario_id, descricao_cirurgica) VALUES
+(1, 'Apendicectomia'),
+(2, 'Cirurgia de joelho'),
+(3, 'Cesárea'),
+(4, 'Cirurgia cardíaca'),
+(5, 'Retirada de vesícula');
