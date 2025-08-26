@@ -39,3 +39,10 @@ INSERT INTO clinica (cnpj, razao_social, nome_fantasia) VALUES
 ('33333333000103', 'Hospital São Lucas SA', 'São Lucas'),
 ('44444444000104', 'Centro Médico Esperança LTDA', 'Esperança'),
 ('55555555000105', 'Clínica Popular LTDA', 'Clínica Popular');
+
+INSERT INTO endereco_clinica (clinica_id, logradouro, numero, complemento, bairro, cidade_id, cep) VALUES
+(1, 'Rua Saúde', '10', NULL, 'Centro', 1, '01002000'),
+(2, 'Av Paz', '20', 'Sala 5', 'Jardins', 2, '13001000'),
+(3, 'Rua Esperança', '30', NULL, 'Copacabana', 3, '20001000'),
+(4, 'Av Cura', '40', NULL, 'Savassi', 4, '30001000'),
+(5, 'Rua Popular', '50', 'Loja 2', 'Barra', 5, '40001000');
