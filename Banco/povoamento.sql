@@ -144,3 +144,10 @@ INSERT INTO medico_clinica_especialidade (medico_id, clinica_id, especialidade_i
 (3, 3, 3),
 (4, 4, 4),
 (5, 5, 5);
+
+INSERT INTO solicitacao_acesso_prontuario (medico_id, paciente_id, status) VALUES
+(1, 1, 'ACEITA'),
+(2, 2, 'PENDENTE'),
+(3, 3, 'RECUSADA'),
+(4, 4, 'REVOGADA'),
+(5, 5, 'ACEITA');
