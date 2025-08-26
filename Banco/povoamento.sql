@@ -60,3 +60,10 @@ INSERT INTO paciente (pessoa_id, email, convenio_medico, cartao_sus) VALUES
 (3, 'maria@teste.com', NULL, '323456789012345'),
 (4, 'carlos@teste.com', 'Sulamérica', '423456789012345'),
 (5, 'bia@teste.com', 'Bradesco Saúde', '523456789012345');
+
+INSERT INTO prontuario (paciente_id, tipo_sanguineo, doador_orgao, diagnostico, historico_familiar) VALUES
+(1, 'A+', TRUE, 'Hipertensão', 'Pai hipertenso'),
+(2, 'O-', FALSE, 'Diabetes tipo 2', 'Avó diabética'),
+(3, 'B+', TRUE, 'Asma leve', 'Mãe asmática'),
+(4, 'AB-', TRUE, 'Colesterol alto', 'Histórico cardíaco'),
+(5, 'O+', FALSE, 'Enxaqueca', 'Sem histórico relevante');
