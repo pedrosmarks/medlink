@@ -116,3 +116,10 @@ INSERT INTO resultado_consulta (prontuario_id, exame_solicitado, nome_exame, rec
 (3, FALSE, NULL, 'Inalador 2x/dia'),
 (4, TRUE, 'Colesterol Total', 'Atorvastatina 20mg'),
 (5, FALSE, NULL, 'Dipirona conforme dor');
+
+INSERT INTO especialidade (nome, descricao) VALUES
+('Cardiologia', 'Especialidade do coração'),
+('Endocrinologia', 'Doenças hormonais e metabólicas'),
+('Pediatria', 'Cuidado de crianças'),
+('Dermatologia', 'Doenças da pele'),
+('Ortopedia', 'Ossos e articulações');
