@@ -74,3 +74,10 @@ INSERT INTO alergia (prontuario_id, descricao_alergia) VALUES
 (3, 'Alergia a poeira'),
 (4, 'Alergia a frutos do mar'),
 (5, 'Alergia a pólen');
+
+INSERT INTO vacina (prontuario_id, descricao_vacina) VALUES
+(1, 'Covid-19'),
+(2, 'Influenza'),
+(3, 'Hepatite B'),
+(4, 'Febre Amarela'),
+(5, 'Tétano');
