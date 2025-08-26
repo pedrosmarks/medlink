@@ -81,3 +81,10 @@ INSERT INTO vacina (prontuario_id, descricao_vacina) VALUES
 (3, 'Hepatite B'),
 (4, 'Febre Amarela'),
 (5, 'Tétano');
+
+INSERT INTO procedimento (prontuario_id, descricao_procedimento) VALUES
+(1, 'Exame de sangue anual'),
+(2, 'Ressonância magnética'),
+(3, 'Raio-x torácico'),
+(4, 'Eletrocardiograma'),
+(5, 'Ultrassonografia');
