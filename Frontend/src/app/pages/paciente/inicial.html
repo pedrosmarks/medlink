@@ -49,10 +49,7 @@
         
         <li class="nav-item">
           <a [routerLink]="['/paciente/requisicoes']" class="nav-link" routerLinkActive="active">
-            <div class="nav-icon-container">
-              <fa-icon [icon]="faClipboardCheck" class="nav-icon"></fa-icon>
-              <span class="notification-badge" *ngIf="hasRequests">{{ requestCount }}</span>
-            </div>
+            <fa-icon [icon]="faClipboardCheck" class="nav-icon"></fa-icon>
             <span class="nav-text">Requisições</span>
           </a>
         </li>
