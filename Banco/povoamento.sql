@@ -109,3 +109,10 @@ INSERT INTO consulta (prontuario_id, data_hora, observacao) VALUES
 (3, '2025-08-03 09:30:00', 'Controle de asma'),
 (4, '2025-08-04 11:00:00', 'Exame solicitado'),
 (5, '2025-08-05 15:00:00', 'Receitou analgésico');
+
+INSERT INTO resultado_consulta (prontuario_id, exame_solicitado, nome_exame, receita) VALUES
+(1, TRUE, 'Hemograma', 'Dipirona 1g - 8/8h'),
+(2, TRUE, 'Glicemia em jejum', 'Metformina 850mg'),
+(3, FALSE, NULL, 'Inalador 2x/dia'),
+(4, TRUE, 'Colesterol Total', 'Atorvastatina 20mg'),
+(5, FALSE, NULL, 'Dipirona conforme dor');
