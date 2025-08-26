@@ -172,3 +172,10 @@ INSERT INTO usuario (pessoa_id, email, senha, perfil) VALUES
 (3, 'maria.user@teste.com', '123456', 'MEDICO'),
 (4, 'carlos.user@teste.com', '123456', 'MEDICO'),
 (5, 'bia.user@teste.com', '123456', 'PACIENTE');
+
+INSERT INTO mensagem (paciente_id, medico_id, conteudo, respondida) VALUES
+(1, 1, 'Olá doutor, estou com dor de cabeça.', TRUE),
+(2, 2, 'Preciso renovar minha receita.', FALSE),
+(3, 3, 'Tive crise de asma ontem.', TRUE),
+(4, 4, 'Quais exames preciso fazer?', FALSE),
+(5, 5, 'Posso tomar a vacina?', TRUE);
