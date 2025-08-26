@@ -16,9 +16,9 @@ export class Medicamentos implements OnInit {
   medicamentos: any[] = [];
   pacienteNome: string = '';
   pacienteId: string = '';
-  novoMedicamentoNome: string = '';
-  novoMedicamentoDosagem: string = '';
-  novoMedicamentoInicio: string = '';
+  novoMedicamentoName: string = '';
+  novoMedicamentoDosage: string = '';
+  novoMedicamentoFrequency: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -29,48 +29,50 @@ export class Medicamentos implements OnInit {
   ngOnInit(): void {
     const id = this.route.parent?.snapshot.paramMap.get('id');
     this.pacienteId = id ?? '';
-    this.pacientesReadService.getPacientes().subscribe(pacientes => {
-      const paciente = pacientes.find((p: any) => String(p.id) === String(id));
-      if (paciente) {
-        this.medicamentos = paciente.medicamentos || [];
-        this.pacienteNome = paciente.nome;
+    // Buscar dados do paciente
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe({
+      next: (response) => {
+        const paciente = response.data || response;
+        this.pacienteNome = paciente.nome || paciente.name || 'Paciente';
+      },
+      error: (error) => console.error('Erro ao carregar paciente:', error)
+    });
+    
+    // Buscar medicamentos do novo endpoint
+    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/medications`).subscribe({
+      next: (response) => {
+        this.medicamentos = response.data || response || [];
+      },
+      error: (error) => {
+        console.error('Erro ao carregar medicamentos:', error);
+        this.medicamentos = [];
       }
     });
   }
 
   adicionarMedicamento() {
-    if (!this.novoMedicamentoNome.trim() || !this.novoMedicamentoDosagem.trim() || !this.novoMedicamentoInicio) return;
+    if (!this.novoMedicamentoName.trim() || !this.novoMedicamentoDosage.trim() || !this.novoMedicamentoFrequency.trim()) return;
+    
     const novo = {
-      nome: this.novoMedicamentoNome.trim(),
-      dosagem: this.novoMedicamentoDosagem.trim(),
-      inicio: this.novoMedicamentoInicio
+      name: this.novoMedicamentoName.trim(),
+      dosage: this.novoMedicamentoDosage.trim(),
+      frequency: this.novoMedicamentoFrequency.trim()
     };
 
-    // Buscar paciente completo antes de atualizar
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const medicamentosAtualizados = [...(paciente.medicamentos || []), novo];
-      const pacienteAtualizado = { ...paciente, medicamentos: medicamentosAtualizados };
-
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.medicamentos = medicamentosAtualizados;
-          this.novoMedicamentoNome = '';
-          this.novoMedicamentoDosagem = '';
-          this.novoMedicamentoInicio = '';
-        });
-    });
+    // Adicionar localmente
+    this.medicamentos = [...this.medicamentos, novo];
+    this.novoMedicamentoName = '';
+    this.novoMedicamentoDosage = '';
+    this.novoMedicamentoFrequency = '';
+    
+    console.log('Medicamento adicionado localmente. Implementar endpoint POST se necessário.');
   }
 
   removerMedicamento(index: number) {
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const novosMedicamentos = paciente.medicamentos.slice();
-      novosMedicamentos.splice(index, 1);
-      const pacienteAtualizado = { ...paciente, medicamentos: novosMedicamentos };
-
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.medicamentos = novosMedicamentos;
-        });
-    });
+    const novosMedicamentos = this.medicamentos.slice();
+    novosMedicamentos.splice(index, 1);
+    this.medicamentos = novosMedicamentos;
+    
+    console.log('Medicamento removido localmente. Implementar endpoint DELETE se necessário.');
   }
 }

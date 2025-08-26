@@ -3,11 +3,19 @@
 </button>
 <h2>Medicamentos de {{ pacienteNome }}</h2>
 
-<div class="mb-3 d-flex gap-2">
-  <input type="text" class="form-control" [(ngModel)]="novoMedicamentoNome" placeholder="Nome do medicamento">
-  <input type="text" class="form-control" [(ngModel)]="novoMedicamentoDosagem" placeholder="Dosagem">
-  <input type="date" class="form-control" [(ngModel)]="novoMedicamentoInicio" placeholder="Início">
-  <button class="btn btn-success" (click)="adicionarMedicamento()">Adicionar</button>
+<div class="mb-3">
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <input type="text" class="form-control" [(ngModel)]="novoMedicamentoName" placeholder="Nome do medicamento">
+    </div>
+    <div class="col-md-4">
+      <input type="text" class="form-control" [(ngModel)]="novoMedicamentoDosage" placeholder="Dosagem">
+    </div>
+    <div class="col-md-4">
+      <input type="text" class="form-control" [(ngModel)]="novoMedicamentoFrequency" placeholder="Frequência">
+    </div>
+  </div>
+  <button class="btn btn-success" (click)="adicionarMedicamento()">Adicionar Medicamento</button>
 </div>
 
 <div class="medicamentos-grid">
@@ -20,9 +28,9 @@
     >×</button>
     <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="36" alt="Medicamento" />
     <div>
-      <strong>Nome:</strong> {{ medicamento.nome }}<br>
-      <strong>Dosagem:</strong> {{ medicamento.dosagem }}<br>
-      <strong>Início:</strong> {{ medicamento.inicio | date:'dd/MM/yyyy' }}
+      <strong>Nome:</strong> {{ medicamento.name }}<br>
+      <strong>Dosagem:</strong> {{ medicamento.dosage }}<br>
+      <strong>Frequência:</strong> {{ medicamento.frequency }}
     </div>
   </div>
   <div *ngIf="medicamentos.length === 0" class="text-muted">
