@@ -53,3 +53,10 @@ INSERT INTO telefone_clinica (clinica_id, numero, tipo_telefone) VALUES
 (3, '3133330003', 'Fixo'),
 (4, '7133330004', 'Fixo'),
 (5, '5133330005', 'Fixo');
+
+INSERT INTO paciente (pessoa_id, email, convenio_medico, cartao_sus) VALUES
+(1, 'ana@teste.com', 'Unimed', '123456789012345'),
+(2, 'joao@teste.com', 'Amil', '223456789012345'),
+(3, 'maria@teste.com', NULL, '323456789012345'),
+(4, 'carlos@teste.com', 'Sulamérica', '423456789012345'),
+(5, 'bia@teste.com', 'Bradesco Saúde', '523456789012345');
