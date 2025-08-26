@@ -158,3 +158,10 @@ INSERT INTO medico_acesso_prontuario (medico_id, prontuario_id) VALUES
 (3, 3),
 (4, 4),
 (5, 5);
+
+INSERT INTO log_acesso_prontuario (medico_id, prontuario_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
