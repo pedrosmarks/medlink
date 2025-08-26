@@ -151,3 +151,10 @@ INSERT INTO solicitacao_acesso_prontuario (medico_id, paciente_id, status) VALUE
 (3, 3, 'RECUSADA'),
 (4, 4, 'REVOGADA'),
 (5, 5, 'ACEITA');
+
+INSERT INTO medico_acesso_prontuario (medico_id, prontuario_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
