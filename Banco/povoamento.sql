@@ -67,3 +67,10 @@ INSERT INTO prontuario (paciente_id, tipo_sanguineo, doador_orgao, diagnostico, 
 (3, 'B+', TRUE, 'Asma leve', 'Mãe asmática'),
 (4, 'AB-', TRUE, 'Colesterol alto', 'Histórico cardíaco'),
 (5, 'O+', FALSE, 'Enxaqueca', 'Sem histórico relevante');
+
+INSERT INTO alergia (prontuario_id, descricao_alergia) VALUES
+(1, 'Alergia a dipirona'),
+(2, 'Alergia a penicilina'),
+(3, 'Alergia a poeira'),
+(4, 'Alergia a frutos do mar'),
+(5, 'Alergia a pólen');
