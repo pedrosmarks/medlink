@@ -23,7 +23,7 @@ public class PacienteResponseDto {
     private List<RequisicaoAcesso> requisicoesAcesso;
     private List<Consultation> consultations;
     private List<Vaccine> vacinas;
-    private List<Medicamento> medicamentos;
+    private List<Medication> medications;
     private List<Surgery> cirurgias;
     private List<Diagnosis> diagnosticos;
     private List<Allergy> alergias;
@@ -59,7 +59,7 @@ public class PacienteResponseDto {
         dto.setRequisicoesAcesso(entity.getRequisicoesAcesso() != null ? entity.getRequisicoesAcesso() : List.of());
         dto.setConsultations(entity.getConsultations() != null ? entity.getConsultations() : List.of());
         dto.setVacinas(entity.getVacinas() != null ? entity.getVacinas() : List.of());
-        dto.setMedicamentos(entity.getMedicamentos() != null ? entity.getMedicamentos() : List.of());
+        dto.setMedications(entity.getMedications() != null ? entity.getMedications() : List.of());
         dto.setCirurgias(entity.getCirurgias() != null ? entity.getCirurgias() : List.of());
         dto.setDiagnosticos(entity.getDiagnosticos() != null ? entity.getDiagnosticos() : List.of());
         dto.setAlergias(entity.getAlergias() != null ? entity.getAlergias() : List.of());
