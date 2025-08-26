@@ -78,9 +78,17 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new Vaccine(1, "COVID-19", "2023-01-15"),
                         new Vaccine(2, "Febre amarela", "2025-08-06")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("Losartana", "50mg", null),
-                        new Medicamento("Tylenol", "2 por dia", "2025-08-07")
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("Losartana")
+                                .dosage("50mg")
+                                .frequency("1x ao dia")
+                                .build(),
+                        Medication.builder()
+                                .name("Tylenol")
+                                .dosage("500mg")
+                                .frequency("2x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
                         new Surgery(1, "Apendicectomia", "2015-08-20", "Hospital São Paulo", "Cirurgia sem complicações")
@@ -133,8 +141,12 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(3, "Influenza", "2023-03-10")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("Metformina", "850mg", null)
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("Metformina")
+                                .dosage("850mg")
+                                .frequency("2x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>())
                 .diagnosticos(new ArrayList<>(List.of(
@@ -185,8 +197,12 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(4, "Hepatite B", "2022-11-05")
                 )))
-                .medicamentos(new ArrayList<>(List.of(
-                        new Medicamento("AAS", "100mg", null)
+                .medications(new ArrayList<>(List.of(
+                        Medication.builder()
+                                .name("AAS")
+                                .dosage("100mg")
+                                .frequency("1x ao dia")
+                                .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
                         new Surgery(2, "Revascularização do miocárdio", "2023-12-01", "Hospital do Coração", "Procedimento realizado com sucesso")
