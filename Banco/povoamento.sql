@@ -102,3 +102,10 @@ INSERT INTO medicamento_diario (prontuario_id, descricao_medicamento) VALUES
 (3, 'Budesonida Inalatória'),
 (4, 'Atorvastatina 20mg'),
 (5, 'Sumatriptano 50mg');
+
+INSERT INTO consulta (prontuario_id, data_hora, observacao) VALUES
+(1, '2025-08-01 10:00:00', 'Paciente estável'),
+(2, '2025-08-02 14:00:00', 'Necessita acompanhamento'),
+(3, '2025-08-03 09:30:00', 'Controle de asma'),
+(4, '2025-08-04 11:00:00', 'Exame solicitado'),
+(5, '2025-08-05 15:00:00', 'Receitou analgésico');
