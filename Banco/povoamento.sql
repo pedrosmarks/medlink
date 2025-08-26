@@ -165,3 +165,10 @@ INSERT INTO log_acesso_prontuario (medico_id, prontuario_id) VALUES
 (3, 3),
 (4, 4),
 (5, 5);
+
+INSERT INTO usuario (pessoa_id, email, senha, perfil) VALUES
+(1, 'ana.user@teste.com', '123456', 'PACIENTE'),
+(2, 'joao.user@teste.com', '123456', 'PACIENTE'),
+(3, 'maria.user@teste.com', '123456', 'MEDICO'),
+(4, 'carlos.user@teste.com', '123456', 'MEDICO'),
+(5, 'bia.user@teste.com', '123456', 'PACIENTE');
