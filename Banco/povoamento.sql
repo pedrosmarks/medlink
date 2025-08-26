@@ -46,3 +46,10 @@ INSERT INTO endereco_clinica (clinica_id, logradouro, numero, complemento, bairr
 (3, 'Rua Esperança', '30', NULL, 'Copacabana', 3, '20001000'),
 (4, 'Av Cura', '40', NULL, 'Savassi', 4, '30001000'),
 (5, 'Rua Popular', '50', 'Loja 2', 'Barra', 5, '40001000');
+
+INSERT INTO telefone_clinica (clinica_id, numero, tipo_telefone) VALUES
+(1, '1133330001', 'Fixo'),
+(2, '2133330002', 'Fixo'),
+(3, '3133330003', 'Fixo'),
+(4, '7133330004', 'Fixo'),
+(5, '5133330005', 'Fixo');
