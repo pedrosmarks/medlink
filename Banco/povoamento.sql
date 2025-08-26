@@ -130,3 +130,10 @@ INSERT INTO medico (pessoa_id, email) VALUES
 (4, 'medico3@teste.com'),
 (5, 'medico4@teste.com'),
 (1, 'medico5@teste.com');
+
+INSERT INTO crm (medico_id, numero) VALUES
+(1, 'CRM-SP-12345'),
+(2, 'CRM-RJ-54321'),
+(3, 'CRM-MG-11111'),
+(4, 'CRM-BA-22222'),
+(5, 'CRM-RS-33333');
