@@ -67,8 +67,12 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .requisicoesAcesso(new ArrayList<>(List.of(
                         new RequisicaoAcesso(3, "aprovado")
                 )))
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-06-10", "Consulta de rotina")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-06-10")
+                                .reason("Consulta de rotina")
+                                .notes("Paciente apresentou bom estado geral")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(1, "COVID-19", "2023-01-15"),
@@ -119,8 +123,12 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new EspecialistaAutorizado(2L)
                 )))
                 .requisicoesAcesso(new ArrayList<>())
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-05-20", "Avaliação de rotina")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-05-20")
+                                .reason("Avaliação de rotina")
+                                .notes("Controle glicêmico adequado")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(3, "Influenza", "2023-03-10")
@@ -167,8 +175,12 @@ public class PatientFakeDaoImpl implements PatientDao {
                         new EspecialistaAutorizado(1L)
                 )))
                 .requisicoesAcesso(new ArrayList<>())
-                .consultas(new ArrayList<>(List.of(
-                        new Consulta("2024-04-15", "Pós-operatório")
+                .consultations(new ArrayList<>(List.of(
+                        Consultation.builder()
+                                .date("2024-04-15")
+                                .reason("Pós-operatório")
+                                .notes("Recuperação dentro do esperado")
+                                .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
                         new Vaccine(4, "Hepatite B", "2022-11-05")
