@@ -18,3 +18,10 @@ INSERT INTO pessoa (nome, cpf, sexo, data_nascimento) VALUES
 ('Maria Oliveira', '12345678903', 'F', '2000-08-15'),
 ('Carlos Souza', '12345678904', 'M', '1978-11-25'),
 ('Beatriz Lima', '12345678905', 'F', '1995-01-05');
+
+INSERT INTO endereco_pessoa (pessoa_id, logradouro, numero, complemento, bairro, cidade_id, cep) VALUES
+(1, 'Rua A', '100', 'Apto 1', 'Centro', 1, '01001000'),
+(2, 'Av B', '200', NULL, 'Bairro B', 2, '13000000'),
+(3, 'Rua C', '300', 'Casa', 'Bairro C', 3, '20000000'),
+(4, 'Av D', '400', NULL, 'Bairro D', 4, '30000000'),
+(5, 'Rua E', '500', 'Bloco 5', 'Bairro E', 5, '40000000');
