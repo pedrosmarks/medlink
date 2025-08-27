@@ -1,6 +1,6 @@
-package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.clinical;
+package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery;
 
-import br.fai.lds.medlink.domain.Vaccine;
+import br.fai.lds.medlink.domain.Surgery;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class VaccineCreateDto {
+public class SurgeryCreateDto {
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -17,19 +17,26 @@ public class VaccineCreateDto {
     @NotNull(message = "Date is required")
     private String date;
 
-    public Vaccine toEntity() {
-        return Vaccine.builder()
+    private String location;
+
+    private String notes;
+
+    public Surgery toEntity() {
+        return Surgery.builder()
                 .name(this.name)
                 .date(this.date)
+                .location(this.location)
+                .notes(this.notes)
                 .build();
     }
 
-    public static VaccineCreateDto fromEntity(Vaccine entity) {
+    public static SurgeryCreateDto fromEntity(Surgery entity) {
         if (entity == null) return null;
-        return VaccineCreateDto.builder()
+        return SurgeryCreateDto.builder()
                 .name(entity.getName())
                 .date(entity.getDate())
+                .location(entity.getLocation())
+                .notes(entity.getNotes())
                 .build();
     }
 }
-

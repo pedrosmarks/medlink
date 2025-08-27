@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.clinical;
+package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Medication;
 
 import br.fai.lds.medlink.domain.Medication;
 import jakarta.validation.constraints.NotBlank;
