@@ -3,7 +3,11 @@ package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 import br.fai.lds.medlink.domain.BloodType;
 import br.fai.lds.medlink.domain.MedicalRecord;
 import br.fai.lds.medlink.domain.OrganDonorStatus;
-import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.clinical.*;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Allergy.AllergyCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Consultation.ConsultationCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Medication.MedicationCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.SurgeryCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
 import lombok.Builder;
 import lombok.Data;
 

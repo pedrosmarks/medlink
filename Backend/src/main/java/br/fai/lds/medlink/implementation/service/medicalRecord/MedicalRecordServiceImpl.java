@@ -1,9 +1,13 @@
 package br.fai.lds.medlink.implementation.service.medicalRecord;
 
 import br.fai.lds.medlink.domain.*;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Allergy.AllergyCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Consultation.ConsultationCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.MedicalRecordResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.MedicalRecordUpdateDto;
-import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.clinical.*;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Medication.MedicationCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.SurgeryCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import br.fai.lds.medlink.port.service.medicalRecordService.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
