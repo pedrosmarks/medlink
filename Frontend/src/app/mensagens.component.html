@@ -1,0 +1,24 @@
+<div class="mensagens-container">
+  <h2>Mensagens</h2>
+  <div class="form-group">
+    <input [(ngModel)]="senderId" placeholder="Seu ID">
+    <input [(ngModel)]="senderType" placeholder="Seu Tipo (ex: medico, paciente)">
+    <input [(ngModel)]="receiverId" placeholder="Destinatário ID">
+    <input [(ngModel)]="receiverType" placeholder="Destinatário Tipo">
+    <button (click)="listarConversas()">Listar Conversas</button>
+  </div>
+
+  <div class="mensagens-lista">
+    <div *ngFor="let msg of mensagens" class="mensagem-item">
+      <span><b>{{msg.senderType}}:</b> {{msg.conteudo}}</span>
+      <span *ngIf="!msg.lida">
+        <button (click)="marcarComoLida(msg.id!)">Marcar como lida</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <textarea [(ngModel)]="novaMensagemConteudo" placeholder="Digite sua mensagem..."></textarea>
+    <button (click)="enviarMensagem()">Enviar</button>
+  </div>
+</div>

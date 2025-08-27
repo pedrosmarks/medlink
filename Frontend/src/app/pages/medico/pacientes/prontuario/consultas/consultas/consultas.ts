@@ -42,7 +42,7 @@ export class Consultas implements OnInit {
     });
     
     // Buscar consultas do novo endpoint
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/consultations`).subscribe({
+    this.http.get<any>(`http://localhost:8080/patients/${this.pacienteId}/consultations`).subscribe({
       next: (response) => {
         console.log('Response consultas:', response);
         this.consultas = response.data || response || [];

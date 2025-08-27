@@ -13,6 +13,6 @@ export class PerfilUpdateService {
   }
 
   updatePerfilPaciente(perfil: any): Observable<any> {
-    return this.http.put(`http://localhost:8080/api/patients/${perfil.id}`, perfil);
+    return this.http.put(`http://localhost:8080/patients/${perfil.id}`, perfil);
   }
 }

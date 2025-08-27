@@ -1,148 +1,159 @@
-import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MensagensService } from '../../../services/mensagens/mensagem.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+interface Paciente {
+  id: number;
+  name: string;
+  avatar: string;
+  especialistasAutorizados: number[];
+}
+
+interface Mensagem {
+  id: string;
+  remetenteId: string;
+  remetenteTipo: string;
+  remetenteNome: string;
+  destinatarioId: string;
+  destinatarioTipo: string;
+  destinatarioNome: string;
+  texto: string;
+  data: string;
+  lida: boolean;
+}
+
+interface PacienteComMensagens {
+  paciente: Paciente;
+  mensagens: Mensagem[];
+  ultimaMensagem?: Mensagem;
+}
 
 @Component({
   selector: 'app-mensagem',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './mensagem.component.html',
   styleUrls: ['./mensagem.component.css']
 })
-export class MensagemComponent implements OnInit, AfterViewChecked {
-  @ViewChild('mensagensContainer') private mensagensContainer!: ElementRef;
-  
-  medicos: any[] = [];
-  pacientes: any[] = [];
-  conversas: any[] = [];
-  destinatarioSelecionado: any = null;
-  usuarioAtual: any = { id: localStorage.getItem('userId'), nome: localStorage.getItem('userName'), tipo: 'medico' };
-  novaMensagem: string = '';
-  private shouldScrollToBottom = false;
+export class MensagemComponent implements OnInit {
+  medicoId = 1; // ID do médico logado
+  pacientesComMensagens: PacienteComMensagens[] = [];
+  pacienteSelecionado: PacienteComMensagens | null = null;
+  novaMensagem = '';
+  loading = false;
 
-  constructor(private mensagensService: MensagensService) {}
+  constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-    this.carregarConversas();
+  ngOnInit() {
+  // Busca id do médico logado do localStorage
+  const medicoLogado = localStorage.getItem('medicoId');
+  this.medicoId = medicoLogado ? Number(medicoLogado) : 1;
+  this.carregarPacientesEMensagens();
   }
 
-  ngAfterViewChecked(): void {
-    if (this.shouldScrollToBottom) {
-      this.scrollToBottom();
-      this.shouldScrollToBottom = false;
-    }
-  }
-
-  private scrollToBottom(): void {
+  async carregarPacientesEMensagens() {
+    this.loading = true;
+    
     try {
-      if (this.mensagensContainer) {
-        this.mensagensContainer.nativeElement.scrollTop = this.mensagensContainer.nativeElement.scrollHeight;
-      }
-    } catch(err) {
-      console.error('Erro ao fazer scroll:', err);
+      // 1. Buscar todos os pacientes
+      const pacientesResponse = await this.http.get<any>('http://localhost:8080/patients').toPromise();
+      const todosPacientes: Paciente[] = pacientesResponse.data;
+
+      // 2. Filtrar pacientes que têm o médico autorizado
+      const pacientesAutorizados = todosPacientes.filter(paciente => 
+        paciente.especialistasAutorizados.includes(this.medicoId)
+      );
+
+      // 3. Buscar todas as mensagens
+      const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();
+      const todasMensagens: Mensagem[] = mensagensResponse.data;
+
+      // Filtra apenas mensagens onde o médico logado está envolvido
+      const idMedico = `medico_${this.medicoId}`;
+      const mensagensDoMedico = todasMensagens.filter(msg =>
+        (msg.remetenteId === idMedico && msg.remetenteTipo === 'medico') ||
+        (msg.destinatarioId === idMedico && msg.destinatarioTipo === 'medico')
+      );
+
+      // 4. Agrupar mensagens por paciente autorizado
+      this.pacientesComMensagens = pacientesAutorizados.map(paciente => {
+        const idPaciente = paciente.id.toString();
+        const msgsPaciente = mensagensDoMedico.filter(msg =>
+          (msg.remetenteId === idPaciente && msg.remetenteTipo === 'paciente') ||
+          (msg.destinatarioId === idPaciente && msg.destinatarioTipo === 'paciente')
+        );
+        msgsPaciente.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+        return {
+          paciente,
+          mensagens: msgsPaciente,
+          ultimaMensagem: msgsPaciente[msgsPaciente.length - 1]
+        };
+      });
+
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+    } finally {
+      this.loading = false;
     }
   }
 
-  carregarConversas() {
-    this.mensagensService.getMensagens().subscribe(mensagens => {
-      const conversasMap: { [pacienteId: string]: any } = {};
-
-      mensagens.forEach((msg: any) => {
-        // Só mostra conversas onde o médico atual está envolvido
-        const medicoId = this.usuarioAtual.id;
-        const isMedicoRemetente = msg.remetenteId === `medico_${medicoId}` && msg.remetenteTipo === 'medico';
-        const isMedicoDestinatario = msg.destinatarioId === `medico_${medicoId}` && msg.destinatarioTipo === 'medico';
-        
-        if (!isMedicoRemetente && !isMedicoDestinatario) return;
-
-        // Descobre o paciente envolvido
-        let pacienteId = '';
-        let pacienteNome = '';
-        if (msg.remetenteTipo === 'paciente') {
-          pacienteId = msg.remetenteId;
-          pacienteNome = msg.remetenteNome;
-        } else if (msg.destinatarioTipo === 'paciente') {
-          pacienteId = msg.destinatarioId;
-          pacienteNome = msg.destinatarioNome;
-        }
-        if (!pacienteId) return;
-
-        if (!conversasMap[pacienteId]) {
-          conversasMap[pacienteId] = {
-            usuario: { id: pacienteId, nome: pacienteNome },
-            mensagens: [],
-            ultimaMensagem: null
-          };
-        }
-        conversasMap[pacienteId].mensagens.push(msg);
-      });
-
-      // Ordena as mensagens por data e define a última mensagem
-      Object.values(conversasMap).forEach((conversa: any) => {
-        conversa.mensagens.sort((a: any, b: any) => new Date(a.data).getTime() - new Date(b.data).getTime());
-        conversa.ultimaMensagem = conversa.mensagens[conversa.mensagens.length - 1] || {};
-      });
-
-      this.conversas = Object.values(conversasMap);
-      
-      // Extrai lista de pacientes únicos para poder iniciar novas conversas
-      const pacientesUnicos: { [id: string]: any } = {};
-      mensagens.forEach(msg => {
-        if (msg.remetenteTipo === 'paciente' && !pacientesUnicos[msg.remetenteId]) {
-          pacientesUnicos[msg.remetenteId] = { id: msg.remetenteId, nome: msg.remetenteNome };
-        }
-        if (msg.destinatarioTipo === 'paciente' && !pacientesUnicos[msg.destinatarioId]) {
-          pacientesUnicos[msg.destinatarioId] = { id: msg.destinatarioId, nome: msg.destinatarioNome };
-        }
-      });
-      this.pacientes = Object.values(pacientesUnicos);
-    });
+  selecionarPaciente(pacienteComMensagens: PacienteComMensagens) {
+    this.pacienteSelecionado = pacienteComMensagens;
   }
 
-  iniciarNovaConversa(paciente: any) {
-    let conversa = this.conversas.find(c => c.usuario.id === paciente.id);
-    if (!conversa) {
-      conversa = {
-        usuario: paciente,
-        ultimaMensagem: {},
-        mensagens: []
-      };
-      this.conversas.push(conversa);
-    }
-    this.selecionarConversa(conversa);
-  }
+  async enviarMensagem() {
+    if (!this.novaMensagem.trim() || !this.pacienteSelecionado) return;
 
-  selecionarConversa(conversa: any) {
-    this.destinatarioSelecionado = conversa;
-    if (!Array.isArray(this.destinatarioSelecionado.mensagens)) {
-      this.destinatarioSelecionado.mensagens = [];
-    }
-    // Faz scroll para baixo quando seleciona uma conversa
-    setTimeout(() => {
-      this.shouldScrollToBottom = true;
-    }, 100);
-  }
-
-  enviarMensagem() {
-    if (!this.novaMensagem.trim() || !this.destinatarioSelecionado) return;
+    // Recupera nome do médico logado do localStorage
+    const nomeMedico = localStorage.getItem('medicoNome') || `medico_${this.medicoId}`;
     const mensagem = {
-      texto: this.novaMensagem.trim(),
-      data: new Date(),
-      remetenteId: `medico_${this.usuarioAtual.id}`,
+      remetenteId: `medico_${this.medicoId}`,
       remetenteTipo: 'medico',
-      remetenteNome: this.usuarioAtual.nome,
-      destinatarioId: this.destinatarioSelecionado.usuario.id,
+      remetenteNome: nomeMedico,
+      destinatarioId: this.pacienteSelecionado.paciente.id.toString(),
       destinatarioTipo: 'paciente',
-      destinatarioNome: this.destinatarioSelecionado.usuario.nome,
-      lida: false
+      destinatarioNome: '', // paciente não precisa do nome do médico aqui
+      texto: this.novaMensagem.trim()
     };
-    this.mensagensService.enviarMensagem(mensagem).subscribe(() => {
-      this.destinatarioSelecionado.mensagens.push(mensagem);
-      this.destinatarioSelecionado.ultimaMensagem = mensagem;
+
+    try {
+      await this.http.post('http://localhost:8080/messages', mensagem).toPromise();
       this.novaMensagem = '';
-      this.shouldScrollToBottom = true; // Ativa o scroll automático
-      this.carregarConversas();
-    });
+      
+      // Recarregar mensagens
+      await this.carregarPacientesEMensagens();
+      
+      // Manter paciente selecionado
+      const pacienteAtualizado = this.pacientesComMensagens.find(p => 
+        p.paciente.id === this.pacienteSelecionado?.paciente.id
+      );
+      if (pacienteAtualizado) {
+        this.pacienteSelecionado = pacienteAtualizado;
+      }
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+    }
+  }
+
+  async marcarComoLida(mensagemId: string) {
+    try {
+      await this.http.patch(`http://localhost:8080/messages/${mensagemId}`, {}).toPromise();
+      await this.carregarPacientesEMensagens();
+    } catch (error) {
+      console.error('Erro ao marcar como lida:', error);
+    }
+  }
+
+  temMensagensNaoLidas(item: PacienteComMensagens): boolean {
+    return item.mensagens.some(m => !m.lida && m.destinatarioId === `medico_${this.medicoId}`);
+  }
+
+  contarMensagensNaoLidas(item: PacienteComMensagens): number {
+    return item.mensagens.filter(m => !m.lida && m.destinatarioId === `medico_${this.medicoId}`).length;
+  }
+
+  getMedicoId(): string {
+    return `medico_${this.medicoId}`;
   }
 }

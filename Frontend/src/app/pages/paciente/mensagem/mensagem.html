@@ -1,1 +1,47 @@
-<p>mensagem works!</p>
+<!-- Improved patient chat layout -->
+<div class="chat-root">
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h3>Conversas</h3>
+    </div>
+
+    <div class="sidebar-list">
+      <div *ngIf="!conversas || conversas.length === 0" class="empty-state">Nenhuma conversa encontrada</div>
+
+      <button *ngFor="let conv of conversas" class="sidebar-item" (click)="selecionarConversa(conv)" [class.active]="conversaSelecionada?.contatoId === conv.contatoId">
+        <div class="avatar-mini">{{ conv.contatoNome ? (conv.contatoNome.charAt(0) || '') : (conv.contatoId ? conv.contatoId.charAt(0) : 'U') }}</div>
+        <div class="info">
+          <div class="title">{{ conv.contatoNome || conv.contatoId || 'Contato' }}</div>
+          <div class="preview">{{ conv.ultimaMensagem?.texto || conv.ultimaMensagem?.conteudo || 'Sem mensagens' }}</div>
+        </div>
+        <div class="meta"> <small>{{ conv.ultimaMensagem?.data ? (conv.ultimaMensagem.data | date:'dd/MM') : '' }}</small></div>
+      </button>
+    </div>
+  </aside>
+
+  <main class="chat-panel">
+    <div *ngIf="!conversaSelecionada" class="panel-empty">
+      <div class="welcome">Selecione uma conversa para começar</div>
+    </div>
+
+    <div *ngIf="conversaSelecionada" class="panel-chat">
+      <header class="panel-header">
+        <div class="title">{{ conversaSelecionada.contatoNome || conversaSelecionada.contatoId || 'Contato' }}</div>
+      </header>
+
+      <div class="panel-messages" id="panelMessages">
+        <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.remetenteId === senderId">
+          <div class="msg-bubble">
+            <div class="msg-text">{{ m.texto || m.conteudo }}</div>
+            <div class="msg-meta"><small>{{ (m.data || m.dataEnvio) | date:'dd/MM HH:mm' }}</small></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="panel-composer">
+        <textarea class="composer-input" [(ngModel)]="novaMensagemConteudo" placeholder="Escreva sua mensagem..."></textarea>
+        <button class="composer-send" (click)="enviarMensagem()" [disabled]="!novaMensagemConteudo || !novaMensagemConteudo.trim()">Enviar</button>
+      </footer>
+    </div>
+  </main>
+</div>

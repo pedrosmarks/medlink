@@ -1,4 +1,128 @@
+/* Hamburger menu e menu lateral responsivo */
+.hamburger {
+	display: none;
+	position: fixed;
+	top: 16px;
+	left: 16px;
+	z-index: 1001;
+	width: 40px;
+	height: 40px;
+	background: none;
+	border: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+.hamburger span {
+	display: block;
+	width: 28px;
+	height: 4px;
+	background: #333;
+	margin: 4px 0;
+	border-radius: 2px;
+}
+.menu-lateral {
+	transition: transform 0.3s;
+	z-index: 1002;
+}
+.menu-overlay {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(0,0,0,0.3);
+	z-index: 1000;
+}
+@media (max-width: 700px) {
+	.hamburger {
+		display: flex;
+	}
+	.menu-lateral {
+		position: fixed;
+		top: 0; left: 0; bottom: 0;
+		width: 80vw;
+		max-width: 320px;
+		height: 100vh;
+		background: #fff;
+		box-shadow: 2px 0 12px rgba(0,0,0,0.12);
+		transform: translateX(-100%);
+		border-radius: 0;
+		padding: 0;
+		overflow-y: auto;
+	}
+	.menu-lateral.aberto {
+		transform: translateX(0);
+	}
+	.main-content, .chat-root, .dashboard, .perfil, .prontuario {
+		margin-left: 0 !important;
+	}
+}
 /* You can add global styles to this file, and also import other style files */
+
+/* Responsividade global */
+@media (max-width: 700px) {
+	html, body {
+		font-size: 16px;
+		padding: 0;
+		margin: 0;
+		width: 100vw;
+		overflow-x: hidden;
+	}
+	.container, .main-content, .card, .dashboard, .perfil, .prontuario, .notificacoes, .relatorios {
+		width: 100vw !important;
+		max-width: 100vw !important;
+		border-radius: 0 !important;
+		margin: 0 !important;
+		padding: 8px !important;
+		box-shadow: none !important;
+	}
+	.sidebar, .menu-lateral, .nav-tabs {
+		width: 100vw !important;
+		min-width: 0 !important;
+		border-radius: 0 !important;
+		box-shadow: none !important;
+		flex-direction: row !important;
+		overflow-x: auto !important;
+		overflow-y: visible !important;
+		padding: 0 !important;
+	}
+	.sidebar .menu-item, .nav-tabs .nav-link {
+		min-width: 80px;
+		max-width: 120px;
+		font-size: 15px;
+		padding: 8px 6px;
+		margin-bottom: 0;
+	}
+	.card {
+		margin-bottom: 12px !important;
+		padding: 10px !important;
+	}
+	.btn, button {
+		width: 100%;
+		font-size: 16px;
+		border-radius: 6px;
+		padding: 10px;
+		margin-bottom: 8px;
+	}
+	input, textarea, select {
+		font-size: 16px;
+		border-radius: 6px;
+		padding: 8px;
+		width: 100%;
+		margin-bottom: 8px;
+	}
+	img, .avatar, .avatar-mini {
+		max-width: 80px;
+		max-height: 80px;
+		border-radius: 12px;
+	}
+	.header, .topbar {
+		width: 100vw !important;
+		min-width: 0 !important;
+		border-radius: 0 !important;
+		box-shadow: none !important;
+		padding: 8px !important;
+	}
+}
 
 .nav-tabs{
 border:none;

@@ -26,16 +26,16 @@ export class PacientesReadService {
   }
 
   getPacienteById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/api/patients/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/patients/${id}`);
   }
 
   updatePaciente(id: number, changes: any): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/api/patients/${id}`, changes);
+    return this.http.patch(`${this.baseUrl}/patients/${id}`, changes);
   }
 
   buscarTodosPacientes(termo: string): Observable<any> {
     // Endpoint para buscar TODOS os pacientes do sistema
-    const url = `${this.baseUrl}/api/patients/search?name=${encodeURIComponent(termo)}`;
+    const url = `${this.baseUrl}/patients/search?name=${encodeURIComponent(termo)}`;
     console.log('Buscando todos os pacientes:', url);
     return this.http.get<any>(url);
   }

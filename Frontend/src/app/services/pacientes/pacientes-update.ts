@@ -8,7 +8,7 @@ export class PacientesUpdateService {
   buscarPaciente(paciente: any) {
     throw new Error('Method not implemented.');
   }
-  private apiUrl = 'http://localhost:8080/api/pacientes';
+  private apiUrl = 'http://localhost:8080/patients';
 
   constructor(private http: HttpClient) {}
 

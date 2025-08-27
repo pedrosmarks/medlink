@@ -49,7 +49,7 @@ export class Diagnosticos implements OnInit {
   }
 
   carregarDiagnosticos() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`;
+    const url = `http://localhost:8080/patients/${this.pacienteId}/diagnoses`;
     console.log('Carregando diagnósticos de:', url);
     
     this.http.get<any>(url).subscribe({

@@ -55,7 +55,7 @@ export class Alergias implements OnInit {
   }
 
   carregarAlergias() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies`;
+    const url = `http://localhost:8080/patients/${this.pacienteId}/allergies`;
     console.log('Carregando alergias de:', url);
     
     this.http.get<any>(url).subscribe({

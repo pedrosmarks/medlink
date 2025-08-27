@@ -39,7 +39,7 @@ export class Medicamentos implements OnInit {
     });
     
     // Buscar medicamentos do novo endpoint
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/medications`).subscribe({
+    this.http.get<any>(`http://localhost:8080/patients/${this.pacienteId}/medications`).subscribe({
       next: (response) => {
         this.medicamentos = response.data || response || [];
       },

@@ -50,7 +50,7 @@ export class Cirurgias implements OnInit {
   }
 
   carregarCirurgias() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries`;
+    const url = `http://localhost:8080/patients/${this.pacienteId}/surgeries`;
     console.log('Carregando cirurgias de:', url);
     
     this.http.get<any>(url).subscribe({

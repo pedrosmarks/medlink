@@ -1,55 +1,49 @@
-<!-- src/app/pages/mensagens/mensagens.component.html -->
-<div class="mensagens-container">
-  <div class="conversas-lista">
-    <h3>Conversas</h3>
-    
-    <!-- Lista de pacientes para nova conversa -->
-    <div class="novos-contatos">
-      <h5>Iniciar nova conversa</h5>
-      <div class="medico-item" *ngFor="let paciente of pacientes" (click)="iniciarNovaConversa(paciente)">
-        <img [src]="paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'" width="30" [alt]="paciente.nome">
-        <span>{{ paciente.nome }}</span>
-      </div>
+<!-- Improved medico chat layout -->
+<div class="chat-root">
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h3>Pacientes</h3>
     </div>
 
-    <!-- Lista de conversas existentes -->
-    <div class="conversa-item" 
-         *ngFor="let conversa of conversas" 
-         (click)="selecionarConversa(conversa)"
-         [class.ativa]="destinatarioSelecionado?.usuario.id === conversa.usuario.id">
-      <img [src]="conversa.usuario.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'" 
-           width="40" [alt]="conversa.usuario.nome">
-      <div>
-        <strong>{{ conversa.usuario.nome }}</strong>
-        <p>{{ conversa.ultimaMensagem.texto | slice:0:50 }}...</p>
-        <small>{{ conversa.ultimaMensagem.data | date:'dd/MM HH:mm' }}</small>
-      </div>
-    </div>
-  </div>
+    <div class="sidebar-list">
+      <div *ngIf="!pacientesComMensagens || pacientesComMensagens.length === 0" class="empty-state">Nenhum paciente encontrado</div>
 
-  <div class="chat-area" *ngIf="destinatarioSelecionado">
-    <div class="chat-header">
-      <h4>{{ destinatarioSelecionado.usuario.nome }}</h4>
+      <button *ngFor="let item of pacientesComMensagens" class="sidebar-item" (click)="selecionarPaciente(item)" [class.active]="pacienteSelecionado?.paciente?.id === item.paciente.id">
+        <div class="avatar-mini">{{ item.paciente.name.charAt(0) }}</div>
+        <div class="info">
+          <div class="title">{{ item.paciente.name }}</div>
+          <div class="preview">{{ item.ultimaMensagem?.texto || 'Sem mensagens' }}</div>
+        </div>
+  <div class="meta"> <small>{{ item.ultimaMensagem?.data ? (item.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
+        <div class="unread" *ngIf="contarMensagensNaoLidas(item) > 0">{{ contarMensagensNaoLidas(item) }}</div>
+      </button>
     </div>
-    
-    <div class="mensagens-lista" #mensagensContainer>
-      <div class="mensagem" 
-           *ngFor="let mensagem of destinatarioSelecionado.mensagens"
-           [class.minha]="mensagem.remetenteId === 'medico_' + usuarioAtual.id && mensagem.remetenteTipo === 'medico'">
-        <div class="mensagem-conteudo">
-          <p>{{ mensagem.texto }}</p>
-          <small>{{ mensagem.data | date:'dd/MM HH:mm' }}</small>
+  </aside>
+
+  <main class="chat-panel">
+    <div *ngIf="!pacienteSelecionado" class="panel-empty">
+      <div class="welcome">Selecione um paciente para começar</div>
+    </div>
+
+    <div *ngIf="pacienteSelecionado" class="panel-chat">
+      <header class="panel-header">
+        <div class="title">{{ pacienteSelecionado.paciente.name }}</div>
+      </header>
+
+      <div class="panel-messages" id="panelMessages">
+        <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.remetenteTipo === 'medico'">
+          <div class="msg-bubble">
+            <div class="msg-text">{{ m.texto }}</div>
+            <div class="msg-meta"><small>{{ m.data | date:'dd/MM HH:mm' }}</small></div>
+            <!-- botão 'Marcar lida' removido para visual mais limpo -->
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="enviar-mensagem">
-      <input type="text" 
-             class="form-control" 
-             [(ngModel)]="novaMensagem" 
-             placeholder="Digite sua mensagem..."
-             (keyup.enter)="enviarMensagem()">
-      <button class="btn btn-primary" (click)="enviarMensagem()">Enviar</button>
+      <footer class="panel-composer">
+        <textarea class="composer-input" [(ngModel)]="novaMensagem" placeholder="Digite sua mensagem..."></textarea>
+        <button class="composer-send" (click)="enviarMensagem()" [disabled]="!novaMensagem.trim()">Enviar</button>
+      </footer>
     </div>
-  </div>
+  </main>
 </div>

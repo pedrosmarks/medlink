@@ -1,1 +1,15 @@
+<!-- Hamburger menu for mobile -->
+<button class="hamburger" (click)="menuAberto = !menuAberto" aria-label="Abrir menu" *ngIf="isMobile()">
+	<span></span><span></span><span></span>
+</button>
+
+<nav class="menu-lateral" [class.aberto]="menuAberto || !isMobile()">
+	<!-- ...menu lateral existente aqui... -->
+	<ng-container *ngIf="!isMobile() || menuAberto">
+		<!-- Adicione aqui o conteúdo do menu lateral (links, avatar, etc) -->
+	</ng-container>
+</nav>
+
+<div [class.menu-overlay]="menuAberto && isMobile()" (click)="menuAberto = false" *ngIf="menuAberto && isMobile()"></div>
+
 <router-outlet/>
