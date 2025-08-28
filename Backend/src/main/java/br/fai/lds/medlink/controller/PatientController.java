@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/patients")
+@RequestMapping("api/patients")
 @Slf4j
 public class PatientController {
 
@@ -378,25 +378,39 @@ public class PatientController {
             
             // Se aprovado, vincular médico e paciente
             if ("approve".equals(action)) {
+                log.info("Aprovando acesso do médico {} para paciente {}", medicId, patientId);
+                
                 // Adicionar médico à lista de especialistas autorizados do paciente
                 if (patient.getEspecialistasAutorizados() == null) {
                     patient.setEspecialistasAutorizados(new ArrayList<>());
+                    log.info("Lista de especialistas autorizados criada para paciente {}", patientId);
                 }
                 
                 boolean medicAlreadyAuthorized = patient.getEspecialistasAutorizados().stream()
-                        .anyMatch(esp -> esp.getMedicoId() == medicId);
+                        .anyMatch(esp -> esp.getMedicoId().intValue() == medicId);
                 
                 if (!medicAlreadyAuthorized) {
                     patient.getEspecialistasAutorizados().add(new EspecialistaAutorizado((long) medicId));
+                    log.info("Médico {} adicionado à lista de especialistas do paciente {}", medicId, patientId);
+                } else {
+                    log.info("Médico {} já estava autorizado para paciente {}", medicId, patientId);
                 }
                 
-                // Definir o médico como médico principal do paciente (se não tiver)
-                if (patient.getMedicId() == 0) {
-                    patient.setMedicId(medicId);
-                }
+                // Não alterar o médico principal, apenas adicionar como especialista autorizado
+                // O paciente pode ter múltiplos médicos autorizados sem mudar o médico principal
+                
+                log.info("Paciente {} agora tem {} especialistas autorizados", patientId, patient.getEspecialistasAutorizados().size());
             }
             
             patientService.update(patientId, patient);
+            log.info("Paciente {} atualizado no banco de dados", patientId);
+            
+            // Verificar se a atualização foi salva corretamente
+            Patient updatedPatient = patientService.findById(patientId);
+            if ("approve".equals(action) && updatedPatient.getEspecialistasAutorizados() != null) {
+                log.info("Verificação: Paciente {} tem {} especialistas após atualização", 
+                    patientId, updatedPatient.getEspecialistasAutorizados().size());
+            }
             
             String message = "approve".equals(action) ? 
                 "Acesso aprovado com sucesso. Médico vinculado ao paciente." : "Acesso rejeitado com sucesso.";
@@ -406,6 +420,36 @@ public class PatientController {
             log.error("Erro ao atualizar requisição de acesso: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
+    // DEBUG: Verificar dados do paciente
+    @GetMapping("/{patientId}/debug")
+    public ResponseEntity<String> debugPatient(@PathVariable int patientId) {
+        try {
+            Patient patient = patientService.findById(patientId);
+            if (patient == null) {
+                return ResponseEntity.ok("Paciente não encontrado");
+            }
+            
+            StringBuilder debug = new StringBuilder();
+            debug.append("Paciente: ").append(patient.getName()).append("\n");
+            debug.append("ID: ").append(patient.getId()).append("\n");
+            debug.append("MedicId: ").append(patient.getMedicId()).append("\n");
+            debug.append("Especialistas autorizados: ");
+            
+            if (patient.getEspecialistasAutorizados() != null) {
+                debug.append(patient.getEspecialistasAutorizados().size()).append("\n");
+                for (EspecialistaAutorizado esp : patient.getEspecialistasAutorizados()) {
+                    debug.append("  - Médico ID: ").append(esp.getMedicoId()).append("\n");
+                }
+            } else {
+                debug.append("null\n");
+            }
+            
+            return ResponseEntity.ok(debug.toString());
+        } catch (Exception e) {
+            return ResponseEntity.ok("Erro: " + e.getMessage());
         }
     }
 
@@ -428,7 +472,8 @@ public class PatientController {
                         authorizedDoctors.add(new AuthorizedDoctorDto(
                             medic.getId(),
                             medic.getName(),
-                            medic.getSpecialty()
+                            medic.getSpecialty(),
+                            medic.getCrm()
                         ));
                     }
                 }
@@ -439,6 +484,35 @@ public class PatientController {
             log.error("Erro ao buscar médicos autorizados do paciente ID {}: {}", patientId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
+    // DEBUG: Listar todos os pacientes com seus médicos
+    @GetMapping("/debug/all")
+    public ResponseEntity<String> debugAllPatients() {
+        try {
+            List<Patient> patients = patientService.findAll();
+            StringBuilder debug = new StringBuilder();
+            debug.append("Total de pacientes: ").append(patients.size()).append("\n\n");
+            
+            for (Patient p : patients) {
+                debug.append("Paciente: ").append(p.getName()).append(" (ID: ").append(p.getId()).append(")\n");
+                debug.append("  MedicId: ").append(p.getMedicId()).append("\n");
+                debug.append("  Especialistas: ");
+                if (p.getEspecialistasAutorizados() != null) {
+                    debug.append(p.getEspecialistasAutorizados().size()).append("\n");
+                    for (EspecialistaAutorizado esp : p.getEspecialistasAutorizados()) {
+                        debug.append("    - Médico ID: ").append(esp.getMedicoId()).append("\n");
+                    }
+                } else {
+                    debug.append("null\n");
+                }
+                debug.append("\n");
+            }
+            
+            return ResponseEntity.ok(debug.toString());
+        } catch (Exception e) {
+            return ResponseEntity.ok("Erro: " + e.getMessage());
         }
     }
 
