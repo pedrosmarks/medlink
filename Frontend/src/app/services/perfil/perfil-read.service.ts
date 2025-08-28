@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PerfilReadService {
 
-  private apiUrl = 'http://localhost:8080/medic';
+  private apiUrl = 'http://localhost:8080/api/medic';
 
   constructor(private http: HttpClient) { }
 
