@@ -42,24 +42,27 @@
       </div>
 
       <div class="card-body">
-        <h3 class="medico-nome">{{ medico.nome }}</h3>
-        <p class="especialidade">
+
+        
+        <div style="background: yellow; padding: 5px;">TESTE: {{ medico.name }}</div>
+        <h3 class="medico-nome" style="color: black !important; font-size: 18px !important;">{{ medico.name || medico.nome || 'Nome não informado' }}</h3>
+        <p class="especialidade" style="color: black !important; font-size: 14px !important;">
           <i class="fas fa-stethoscope"></i>
-          {{ medico.especialidade }}
+          {{ medico.specialty || medico.especialidade || 'Especialidade não informada' }}
         </p>
         <p class="crm">
           <i class="fas fa-id-card"></i>
-          CRM: {{ medico.crm }}
+          CRM: {{ medico.crm || medico.registrationNumber || 'Não informado' }}
         </p>
 
         <div class="contact-info">
           <div class="contact-item">
             <i class="fas fa-phone"></i>
-            <span>{{ formatarTelefone(medico.telefone) }}</span>
+            <span>{{ formatarTelefone(medico.telefone || medico.phone) }}</span>
           </div>
           <div class="contact-item">
             <i class="fas fa-envelope"></i>
-            <span>{{ medico.email }}</span>
+            <span>{{ medico.email || 'Email não informado' }}</span>
           </div>
         </div>
 

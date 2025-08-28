@@ -35,10 +35,34 @@ export class PacientesComponent implements OnInit {
     this.medicoId = parseInt(localStorage.getItem('userId') || '1');
     console.log('🚀 CARREGANDO PACIENTES REAIS - Médico ID:', this.medicoId);
     
+    this.carregarPacientes();
+    
+    // Recarregar quando houver aprovações
+    setInterval(() => {
+      this.carregarPacientes();
+    }, 30000); // A cada 30 segundos
+  }
+
+  carregarPacientes(): void {
+    console.log('🔄 RECARREGANDO PACIENTES - Médico ID:', this.medicoId);
+    console.log('🌐 URL da requisição:', `http://localhost:8080/api/medic/${this.medicoId}/patients`);
+    
     this.pacientesReadService.getPacientes().subscribe({
       next: (response: any) => {
-        console.log('✅ Response do backend:', response);
-        console.log('✅ Dados recebidos:', response.data);
+        console.log('✅ RESPONSE COMPLETO DO BACKEND:', response);
+        console.log('✅ response.data:', response.data);
+        console.log('✅ Quantidade de pacientes retornados:', response.data?.length || 0);
+        console.log('✅ Timestamp:', new Date().toLocaleTimeString());
+        
+        // Log dos IDs dos pacientes retornados
+        if (response.data && response.data.length > 0) {
+          console.log('📋 IDs dos pacientes retornados:');
+          response.data.forEach((p: any, i: number) => {
+            console.log(`  Paciente ${i + 1}: ID=${p.id}, Nome=${p.name}`);
+          });
+        } else {
+          console.log('⚠️ NENHUM PACIENTE RETORNADO PELO BACKEND!');
+        }
         
         // LOG DETALHADO DOS CAMPOS
         response.data.forEach((paciente: any, index: number) => {
@@ -66,19 +90,32 @@ export class PacientesComponent implements OnInit {
 
   pesquisarPacientes() {
     const termo = this.buscaNome.trim();
+    console.log('🔍 BUSCANDO PACIENTES:', termo);
+    
     if (termo.length < 2) {
       this.resultadosBusca = [];
       return;
     }
 
     this.buscandoPacientes = true;
+    console.log('📡 Fazendo chamada para:', `http://localhost:8080/api/patients/search?name=${encodeURIComponent(termo)}`);
+    
     this.accessRequestsService.searchPatients(termo).subscribe({
       next: (response) => {
+        console.log('✅ RESPOSTA DA BUSCA:', response);
+        console.log('✅ DADOS DA BUSCA:', response.data);
         this.resultadosBusca = response.data || [];
+        console.log('✅ RESULTADOS FINAIS:', this.resultadosBusca);
         this.buscandoPacientes = false;
       },
       error: (error) => {
-        console.error('Erro ao buscar pacientes:', error);
+        console.error('❌ ERRO NA BUSCA:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error
+        });
         this.buscandoPacientes = false;
       }
     });

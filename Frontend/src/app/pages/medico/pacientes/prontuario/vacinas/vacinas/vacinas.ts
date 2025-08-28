@@ -49,7 +49,7 @@ export class Vacinas implements OnInit {
   }
 
   carregarVacinas() {
-    const url = `http://localhost:8080/patients/${this.pacienteId}/vaccines`;
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;
     console.log('Carregando vacinas de:', url);
     
     this.http.get<any>(url).subscribe({

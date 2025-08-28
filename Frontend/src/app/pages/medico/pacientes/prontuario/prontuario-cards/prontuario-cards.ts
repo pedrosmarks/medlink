@@ -43,7 +43,7 @@ export class ProntuarioCards implements OnInit {
   }
 
   carregarPaciente(): void {
-    const url = `http://localhost:8080/patients/${this.pacienteId}`;
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}`;
     console.log('Carregando paciente de:', url);
     
     this.http.get<any>(url).subscribe({

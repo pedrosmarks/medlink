@@ -19,23 +19,23 @@ export class PacientesReadService {
       throw new Error('ID do médico não encontrado');
     }
     
-    const url = `${this.baseUrl}/medic/${medicoId}/patients`;
+    const url = `${this.baseUrl}/api/medic/${medicoId}/patients`;
     console.log('Buscando pacientes em:', url);
     
     return this.http.get<any[]>(url);
   }
 
   getPacienteById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/patients/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/api/patients/${id}`);
   }
 
   updatePaciente(id: number, changes: any): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/patients/${id}`, changes);
+    return this.http.patch(`${this.baseUrl}/api/patients/${id}`, changes);
   }
 
   buscarTodosPacientes(termo: string): Observable<any> {
     // Endpoint para buscar TODOS os pacientes do sistema
-    const url = `${this.baseUrl}/patients/search?name=${encodeURIComponent(termo)}`;
+    const url = `${this.baseUrl}/api/patients/search?name=${encodeURIComponent(termo)}`;
     console.log('Buscando todos os pacientes:', url);
     return this.http.get<any>(url);
   }

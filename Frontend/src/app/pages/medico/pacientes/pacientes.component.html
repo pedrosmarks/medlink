@@ -48,8 +48,11 @@
 
   <!-- Meus Pacientes -->
   <div class="card">
-    <div class="card-header">
-      <h5>Meus Pacientes</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Meus Pacientes</h5>
+      <button class="btn btn-outline-primary btn-sm" (click)="carregarPacientes()">
+        <i class="fas fa-sync-alt"></i> Recarregar
+      </button>
     </div>
     <div class="card-body">
       <div class="row">

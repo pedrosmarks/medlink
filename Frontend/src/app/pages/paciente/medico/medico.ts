@@ -42,30 +42,73 @@ export class Medico implements OnInit {
     }
     
     console.log('🔍 Carregando médicos autorizados para paciente:', pacienteId);
+    console.log('🌐 URL da requisição:', `http://localhost:8080/api/patients/${pacienteId}/authorized-doctors`);
 
     this.medicosService.getMedicosAutorizados(pacienteId).subscribe({
       next: (response: any) => {
-        console.log('✅ Response médicos autorizados:', response);
-        this.medicosAutorizados = response.data || response || [];
+        console.log('✅ Response completo:', response);
+        console.log('✅ Tipo da response:', typeof response);
+        console.log('✅ É array?', Array.isArray(response));
+        console.log('✅ response.data:', response.data);
+        console.log('✅ response.data é array?', Array.isArray(response.data));
+        
+        // Tenta diferentes estruturas de resposta
+        let medicos = [];
+        if (Array.isArray(response)) {
+          medicos = response;
+        } else if (response.data && Array.isArray(response.data)) {
+          medicos = response.data;
+        } else if (response.result && Array.isArray(response.result)) {
+          medicos = response.result;
+        }
+        
+        this.medicosAutorizados = medicos;
         this.loading = false;
         
+        console.log('📊 Médicos processados:', this.medicosAutorizados);
         console.log('📊 Total de médicos autorizados:', this.medicosAutorizados.length);
+        
+        if (this.medicosAutorizados.length > 0) {
+          const medico = this.medicosAutorizados[0];
+          console.log('🔍 PRIMEIRO MÉDICO:', JSON.stringify(medico, null, 2));
+          console.log('🔍 CAMPOS:', Object.keys(medico));
+          console.log('🔍 medico.name:', medico.name);
+          console.log('🔍 medico.nome:', medico.nome);
+          console.log('🔍 medico.fullName:', medico.fullName);
+          console.log('🔍 medico.doctorName:', medico.doctorName);
+        }
+        
+        // Log detalhado de cada médico
+        this.medicosAutorizados.forEach((medico, index) => {
+          console.log(`👨‍⚕️ MÉDICO ${index + 1}:`, medico);
+          console.log('Campos disponíveis:', Object.keys(medico));
+          console.log('Nome:', medico.nome || medico.name);
+          console.log('Especialidade:', medico.especialidade || medico.specialty);
+        });
+        
         if (this.medicosAutorizados.length === 0) {
-          console.log('Nenhum médico autorizado encontrado para o paciente:', pacienteId);
+          console.log('⚠️ Nenhum médico autorizado encontrado para o paciente:', pacienteId);
+          this.error = 'Você ainda não possui médicos autorizados. Aguarde a aprovação das requisições.';
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar médicos autorizados:', error);
+        console.error('❌ Erro completo:', error);
+        console.error('❌ Status:', error.status);
+        console.error('❌ StatusText:', error.statusText);
+        console.error('❌ URL:', error.url);
+        console.error('❌ Error body:', error.error);
         
         // Tratamento específico para diferentes tipos de erro
         if (error.status === 404) {
-          this.error = 'Nenhum médico autorizado encontrado';
+          this.error = 'Endpoint não encontrado. Verifique se o backend está rodando.';
         } else if (error.status === 401) {
           this.error = 'Não autorizado a acessar estes dados';
         } else if (error.status === 500) {
           this.error = 'Erro interno do servidor';
+        } else if (error.status === 0) {
+          this.error = 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
         } else {
-          this.error = 'Erro ao carregar médicos autorizados. Tente novamente.';
+          this.error = `Erro ${error.status}: ${error.statusText || 'Erro desconhecido'}`;
         }
         
         this.loading = false;

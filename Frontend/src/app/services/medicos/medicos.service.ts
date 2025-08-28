@@ -12,33 +12,12 @@ export class MedicosService {
 
   // Buscar médicos autorizados para um paciente específico
   getMedicosAutorizados(pacienteId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/patients/${pacienteId}/authorized-doctors`);
+    return this.http.get<any[]>(`${this.apiUrl}/api/patients/${pacienteId}/authorized-doctors`);
   }
 
-  // Buscar pacientes autorizados para um médico específico (versão simplificada)
+  // Buscar pacientes autorizados para um médico específico
   getPacientesAutorizados(medicoId: string): Observable<any[]> {
-    // Por enquanto, dados simulados até termos a API correta
-    return new Observable(observer => {
-      const pacientesSimulados = [
-        {
-          id: 1,
-          nome: 'Ana Silva',
-          idade: 34,
-          avatar: 'https://via.placeholder.com/40/3498db/ffffff?text=AS'
-        },
-        {
-          id: 2,
-          nome: 'João Santos',
-          idade: 45,
-          avatar: 'https://via.placeholder.com/40/e74c3c/ffffff?text=JS'
-        }
-      ];
-      
-      setTimeout(() => {
-        observer.next(pacientesSimulados);
-        observer.complete();
-      }, 500);
-    });
+    return this.http.get<any[]>(`${this.apiUrl}/api/medic/${medicoId}/patients`);
   }
 
   // Buscar todos os médicos

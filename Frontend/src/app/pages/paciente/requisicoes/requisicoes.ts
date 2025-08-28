@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccessRequestsService } from '../../../services/access-requests/access-requests.service';
 import { AccessRequest } from '../../../models/access-request.interface';
@@ -10,16 +10,30 @@ import { AccessRequest } from '../../../models/access-request.interface';
   templateUrl: './requisicoes.html',
   styleUrls: ['./requisicoes.css']
 })
-export class Requisicoes implements OnInit {
+export class Requisicoes implements OnInit, OnDestroy {
   requisicoes: AccessRequest[] = [];
   pacienteId: number = 0;
   loading = false;
+  private refreshInterval: any;
 
   constructor(private accessRequestsService: AccessRequestsService) {}
 
   ngOnInit(): void {
     this.pacienteId = parseInt(localStorage.getItem('userId') || '0');
     this.carregarRequisicoes();
+    this.startAutoRefresh();
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+  }
+
+  private startAutoRefresh(): void {
+    this.refreshInterval = setInterval(() => {
+      this.carregarRequisicoes();
+    }, 15000); // Atualiza a cada 15 segundos
   }
 
   carregarRequisicoes(): void {
