@@ -113,8 +113,20 @@ public class MedicController {
 
     // Listar pacientes vinculados ao médico
     @GetMapping("/{id}/patients")
+    @CrossOrigin
     public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getPatientsByMedic(@PathVariable("id") int medicId) {
+        System.out.println("Buscando pacientes para médico ID: " + medicId);
+        
         List<Patient> patients = patientService.findByMedicId(medicId);
+        System.out.println("Encontrados " + patients.size() + " pacientes para médico " + medicId);
+        
+        for (Patient p : patients) {
+            System.out.println("Paciente: " + p.getName() + " (ID: " + p.getId() + "), medicId: " + p.getMedicId());
+            if (p.getEspecialistasAutorizados() != null) {
+                System.out.println("  Especialistas autorizados: " + p.getEspecialistasAutorizados().size());
+            }
+        }
+        
         List<PatientResponseDto> dtos = patients.stream()
                 .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());
