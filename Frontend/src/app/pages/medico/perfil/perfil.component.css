@@ -328,7 +328,6 @@
   .perfil-cards {
     grid-template-columns: 1fr;
   }
-}
   
   .info-row {
     flex-direction: column;

@@ -12,7 +12,7 @@ import { Medico as MedicoInterface } from '../../../models/medico.interface';
   styleUrl: './medico.css'
 })
 export class Medico implements OnInit {
-  medicosAutorizados: MedicoInterface[] = [];
+  medicosAutorizados: any[] = [];
   loading = true;
   error = '';
 
