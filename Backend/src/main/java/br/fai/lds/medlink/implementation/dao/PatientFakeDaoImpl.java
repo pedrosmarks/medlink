@@ -276,9 +276,27 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public List<Patient> findByMedicId(int medicId) {
-        return patientList.stream()
-                .filter(patient -> patient.getMedicId() == medicId)
+        System.out.println("DAO: Buscando pacientes para médico " + medicId);
+        System.out.println("DAO: Total de pacientes na lista: " + patientList.size());
+        
+        List<Patient> result = patientList.stream()
+                .filter(patient -> {
+                    // Verifica se o médico é o médico principal
+                    boolean isMedicoPrincipal = patient.getMedicId() == medicId;
+                    
+                    // Verifica se o médico está na lista de especialistas autorizados
+                    boolean isEspecialistaAutorizado = patient.getEspecialistasAutorizados() != null &&
+                            patient.getEspecialistasAutorizados().stream()
+                                    .anyMatch(esp -> esp.getMedicoId().intValue() == medicId);
+                    
+                    System.out.println("DAO: Paciente " + patient.getName() + " - medicoPrincipal: " + isMedicoPrincipal + ", especialistaAutorizado: " + isEspecialistaAutorizado);
+                    
+                    return isMedicoPrincipal || isEspecialistaAutorizado;
+                })
                 .collect(Collectors.toList());
+                
+        System.out.println("DAO: Retornando " + result.size() + " pacientes");
+        return result;
     }
 
     @Override
