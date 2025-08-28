@@ -4,12 +4,11 @@ import br.fai.lds.medlink.domain.dataTransferObject.Report.BirthdayReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.ConsultationReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.PatientReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.PlanTypeReportDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Report.ReportTypeDto;
-
 import java.util.List;
+import java.util.Map;
 
 public interface ReportService {
-    List<ReportTypeDto> getAvailableReportTypes();
+    List<Map<String, String>> getAvailableReportTypes();
     List<BirthdayReportDto> getBirthdayReport();
     List<PlanTypeReportDto> getPlanTypeReport();
     List<ConsultationReportDto> getConsultationReport();

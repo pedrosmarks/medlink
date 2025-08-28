@@ -4,13 +4,13 @@ import br.fai.lds.medlink.domain.dataTransferObject.Report.BirthdayReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.ConsultationReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.PatientReportDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Report.PlanTypeReportDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Report.ReportTypeDto;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,16 +20,32 @@ public class ReportServiceImpl implements ReportService {
     private PatientDao patientDao;
 
     @Override
-    public List<ReportTypeDto> getAvailableReportTypes() {
+    public List<Map<String, String>> getAvailableReportTypes() {
         return List.of(
-            new ReportTypeDto("1", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", 
-                "Relatório de atendimentos", "Resumo dos atendimentos realizados no mês."),
-            new ReportTypeDto("2", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", 
-                "Relatório financeiro", "Resumo financeiro mensal."),
-            new ReportTypeDto("3", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", 
-                "Relatório de aniversariantes", "Lista de pacientes aniversariantes do mês."),
-            new ReportTypeDto("4", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", 
-                "Relatório por tipo de plano", "Distribuição de pacientes por tipo de plano.")
+            Map.of(
+                "id", "1",
+                "icone", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                "titulo", "Relatório de atendimentos",
+                "descricao", "Resumo dos atendimentos realizados no mês."
+            ),
+            Map.of(
+                "id", "2",
+                "icone", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                "titulo", "Relatório financeiro",
+                "descricao", "Resumo financeiro mensal."
+            ),
+            Map.of(
+                "id", "3",
+                "icone", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                "titulo", "Relatório de aniversariantes",
+                "descricao", "Lista de pacientes aniversariantes do mês."
+            ),
+            Map.of(
+                "id", "4",
+                "icone", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                "titulo", "Relatório por tipo de plano",
+                "descricao", "Distribuição de pacientes por tipo de plano."
+            )
         );
     }
 
