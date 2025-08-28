@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 // Controlador REST consolidado para gerenciar os médicos da aplicação
 @RestController
-@RequestMapping("/medic")
+@RequestMapping("/api/medic")
 public class MedicController {
 
     private final MedicService medicService;
