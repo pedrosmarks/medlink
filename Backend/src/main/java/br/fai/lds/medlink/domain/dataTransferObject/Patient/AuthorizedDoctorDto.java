@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthorizedDoctorDto {
     private int id;
-    private String nome;
-    private String especialidade;
+    private String name;
+    private String specialty;
+    private String crm;
 }
