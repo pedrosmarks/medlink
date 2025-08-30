@@ -11,8 +11,8 @@ public enum BloodType {
     B_NEGATIVE("B-"),
     AB_POSITIVE("AB+"),
     AB_NEGATIVE("AB-"),
-    O_POSITIVE("0+"),
-    O_NEGATIVE("0-");
+    O_POSITIVE("O+"),
+    O_NEGATIVE("O-");
 
     //responsavel por acessar o texto tratado fora da enum
     //Declaracao de variavel de instancia label
