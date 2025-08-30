@@ -108,12 +108,10 @@ public class PatientController {
             }
             
             // Generate new ID for vaccine
-            int newVaccineId = patient.getVacinas().size() + 1;
-            for (Vaccine v : patient.getVacinas()) {
-                if (v.getId() >= newVaccineId) {
-                    newVaccineId = v.getId() + 1;
-                }
-            }
+            int newVaccineId = patient.getVacinas().stream()
+                .mapToInt(Vaccine::getId)
+                .max()
+                .orElse(0) + 1;
             
             Vaccine newVaccine = new Vaccine(newVaccineId, vaccineDto.getName(), vaccineDto.getDate());
             patient.getVacinas().add(newVaccine);
@@ -151,12 +149,10 @@ public class PatientController {
             }
             
             // Generate new ID for surgery
-            int newSurgeryId = patient.getCirurgias().size() + 1;
-            for (Surgery s : patient.getCirurgias()) {
-                if (s.getId() >= newSurgeryId) {
-                    newSurgeryId = s.getId() + 1;
-                }
-            }
+            int newSurgeryId = patient.getCirurgias().stream()
+                .mapToInt(Surgery::getId)
+                .max()
+                .orElse(0) + 1;
             
             Surgery newSurgery = new Surgery(newSurgeryId, surgeryDto.getName(), 
                 surgeryDto.getDate(), surgeryDto.getLocation(), surgeryDto.getNotes());
@@ -219,12 +215,10 @@ public class PatientController {
             }
             
             // Generate new ID for diagnosis
-            int newDiagnosisId = patient.getDiagnosticos().size() + 1;
-            for (Diagnosis d : patient.getDiagnosticos()) {
-                if (d.getId() >= newDiagnosisId) {
-                    newDiagnosisId = d.getId() + 1;
-                }
-            }
+            int newDiagnosisId = patient.getDiagnosticos().stream()
+                .mapToInt(Diagnosis::getId)
+                .max()
+                .orElse(0) + 1;
             
             Diagnosis newDiagnosis = new Diagnosis(newDiagnosisId, diagnosisDto.getDescription(), diagnosisDto.getDate());
             patient.getDiagnosticos().add(newDiagnosis);
