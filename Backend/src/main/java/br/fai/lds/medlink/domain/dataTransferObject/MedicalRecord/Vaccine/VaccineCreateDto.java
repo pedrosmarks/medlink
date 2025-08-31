@@ -15,7 +15,7 @@ public class VaccineCreateDto {
     private String name;
 
     @NotNull(message = "Date is required")
-    private String date;
+    private LocalDate date;
 
     public Vaccine toEntity() {
         return Vaccine.builder()
