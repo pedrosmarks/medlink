@@ -15,7 +15,7 @@ public class DiagnosisCreateDto {
     private String description;
 
     @NotNull(message = "Date is required")
-    private String date;
+    private LocalDate date;
 
     public Diagnosis toEntity() {
         return Diagnosis.builder()
