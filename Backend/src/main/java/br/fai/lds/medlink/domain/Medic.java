@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-//Representa um médico no sistema
+// Representa um médico no sistema
 
 @Data
 @SuperBuilder
@@ -19,7 +19,6 @@ public class Medic extends Person {
 
     @NotNull(message = "O crm não pode estar em branco")
     private String crm;
-
 
     @NotNull(message = "A especialidade médica não pode estar em branco")
     private String specialty;
