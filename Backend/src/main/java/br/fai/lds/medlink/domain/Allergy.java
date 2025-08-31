@@ -2,8 +2,7 @@ package br.fai.lds.medlink.domain;
 
 import lombok.*;
 
-
-//Representa uma alergia registrada no prontuário do paciente.
+// Representa uma alergia registrada no prontuário do paciente.
 
 @Data
 @NoArgsConstructor
@@ -16,5 +15,4 @@ public class Allergy {
     private String substance;
     private String reaction;
     private String severity;
-
 }
