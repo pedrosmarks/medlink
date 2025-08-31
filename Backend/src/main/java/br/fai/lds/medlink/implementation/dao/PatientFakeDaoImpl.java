@@ -2,6 +2,7 @@ package br.fai.lds.medlink.implementation.dao;
 
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Primary
 @Repository
 public class PatientFakeDaoImpl implements PatientDao {
@@ -69,14 +71,14 @@ public class PatientFakeDaoImpl implements PatientDao {
                 )))
                 .consultations(new ArrayList<>(List.of(
                         Consultation.builder()
-                                .date("2024-06-10")
+                                .date(LocalDate.of(2024, 6, 10))
                                 .reason("Consulta de rotina")
                                 .notes("Paciente apresentou bom estado geral")
                                 .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vaccine(1, "COVID-19", "2023-01-15"),
-                        new Vaccine(2, "Febre amarela", "2025-08-06")
+                        new Vaccine(1, "COVID-19", LocalDate.of(2023, 1, 15)),
+                        new Vaccine(2, "Febre amarela", LocalDate.of(2025, 8, 6))
                 )))
                 .medications(new ArrayList<>(List.of(
                         Medication.builder()
@@ -91,10 +93,10 @@ public class PatientFakeDaoImpl implements PatientDao {
                                 .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
-                        new Surgery(1, "Apendicectomia", "2015-08-20", "Hospital São Paulo", "Cirurgia sem complicações")
+                        new Surgery(1, "Apendicectomia", LocalDate.of(2015, 8, 20), "Hospital São Paulo", "Cirurgia sem complicações")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnosis(1, "Hipertensão arterial sistêmica", "2022-03-01")
+                        new Diagnosis(1, "Hipertensão arterial sistêmica", LocalDate.of(2022, 3, 1))
                 )))
                 .alergias(new ArrayList<>(List.of(
                         new Allergy(1, "Dipirona", "Dipirona", "Erupção cutânea", "Moderada")
@@ -133,13 +135,13 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .requisicoesAcesso(new ArrayList<>())
                 .consultations(new ArrayList<>(List.of(
                         Consultation.builder()
-                                .date("2024-05-20")
+                                .date(LocalDate.of(2024, 5, 20))
                                 .reason("Avaliação de rotina")
                                 .notes("Controle glicêmico adequado")
                                 .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vaccine(3, "Influenza", "2023-03-10")
+                        new Vaccine(3, "Influenza", LocalDate.of(2023, 3, 10))
                 )))
                 .medications(new ArrayList<>(List.of(
                         Medication.builder()
@@ -150,7 +152,7 @@ public class PatientFakeDaoImpl implements PatientDao {
                 )))
                 .cirurgias(new ArrayList<>())
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnosis(2, "Diabetes mellitus tipo 2", "2020-09-15")
+                        new Diagnosis(2, "Diabetes mellitus tipo 2", LocalDate.of(2020, 9, 15))
                 )))
                 .alergias(new ArrayList<>(List.of(
                         new Allergy(2, "Penicilina", "Penicilina", "Anafilaxia", "Grave")
@@ -189,13 +191,13 @@ public class PatientFakeDaoImpl implements PatientDao {
                 .requisicoesAcesso(new ArrayList<>())
                 .consultations(new ArrayList<>(List.of(
                         Consultation.builder()
-                                .date("2024-04-15")
+                                .date(LocalDate.of(2024, 4, 15))
                                 .reason("Pós-operatório")
                                 .notes("Recuperação dentro do esperado")
                                 .build()
                 )))
                 .vacinas(new ArrayList<>(List.of(
-                        new Vaccine(4, "Hepatite B", "2022-11-05")
+                        new Vaccine(4, "Hepatite B", LocalDate.of(2022, 11, 5))
                 )))
                 .medications(new ArrayList<>(List.of(
                         Medication.builder()
@@ -205,10 +207,10 @@ public class PatientFakeDaoImpl implements PatientDao {
                                 .build()
                 )))
                 .cirurgias(new ArrayList<>(List.of(
-                        new Surgery(2, "Revascularização do miocárdio", "2023-12-01", "Hospital do Coração", "Procedimento realizado com sucesso")
+                        new Surgery(2, "Revascularização do miocárdio", LocalDate.of(2023, 12, 1), "Hospital do Coração", "Procedimento realizado com sucesso")
                 )))
                 .diagnosticos(new ArrayList<>(List.of(
-                        new Diagnosis(3, "Cardiopatia isquêmica crônica", "2023-10-20")
+                        new Diagnosis(3, "Cardiopatia isquêmica crônica", LocalDate.of(2023, 10, 20))
                 )))
                 .alergias(new ArrayList<>())
                 .build());
@@ -276,26 +278,27 @@ public class PatientFakeDaoImpl implements PatientDao {
 
     @Override
     public List<Patient> findByMedicId(int medicId) {
-        System.out.println("DAO: Buscando pacientes para médico " + medicId);
-        System.out.println("DAO: Total de pacientes na lista: " + patientList.size());
+        log.debug("DAO: Buscando pacientes para médico {}", medicId);
+        log.debug("DAO: Total de pacientes na lista: {}", patientList.size());
         
         List<Patient> result = patientList.stream()
                 .filter(patient -> {
                     // Verifica se o médico é o médico principal
-                    boolean isMedicoPrincipal = patient.getMedicId() == medicId;
+                    boolean isMedicoPrincipal = patient.getMedicId() != null && patient.getMedicId() == medicId;
                     
                     // Verifica se o médico está na lista de especialistas autorizados
                     boolean isEspecialistaAutorizado = patient.getEspecialistasAutorizados() != null &&
                             patient.getEspecialistasAutorizados().stream()
                                     .anyMatch(esp -> esp.getMedicoId().intValue() == medicId);
                     
-                    System.out.println("DAO: Paciente " + patient.getName() + " - medicoPrincipal: " + isMedicoPrincipal + ", especialistaAutorizado: " + isEspecialistaAutorizado);
+                    log.debug("DAO: Paciente {} - medicoPrincipal: {}, especialistaAutorizado: {}", 
+                        patient.getName(), isMedicoPrincipal, isEspecialistaAutorizado);
                     
                     return isMedicoPrincipal || isEspecialistaAutorizado;
                 })
                 .collect(Collectors.toList());
                 
-        System.out.println("DAO: Retornando " + result.size() + " pacientes");
+        log.debug("DAO: Retornando {} pacientes", result.size());
         return result;
     }
 

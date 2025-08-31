@@ -13,12 +13,18 @@ public class PacienteResponseDto {
     private String name;
     private String avatar;
     private String cpf;
+    private Gender gender;
+    private LocalDate birthDate;
     private Integer idade;
     private String tipoSanguineo;
     private String telefone;
     private String email;
     private Address address;
     private String observacoes;
+    private String plan;
+    private String susCard;
+    private Integer medicId;
+    private boolean active;
     private List<Long> especialistasAutorizados;
     private List<RequisicaoAcesso> requisicoesAcesso;
     private List<Consultation> consultations;
@@ -35,6 +41,8 @@ public class PacienteResponseDto {
         dto.setName(entity.getName());
         dto.setAvatar(entity.getAvatar());
         dto.setCpf(entity.getCpf());
+        dto.setGender(entity.getGender());
+        dto.setBirthDate(entity.getBirthDate());
 
         Integer idade = null;
         if (entity.getBirthDate() != null) {
@@ -47,6 +55,10 @@ public class PacienteResponseDto {
         dto.setEmail(entity.getEmail());
         dto.setAddress(entity.getAddress());
         dto.setObservacoes(entity.getObservations());
+        dto.setPlan(entity.getPlan());
+        dto.setSusCard(entity.getSusCard());
+        dto.setMedicId(entity.getMedicId());
+        dto.setActive(entity.isActive());
 
         // Mapear diretamente das entidades
         dto.setEspecialistasAutorizados(

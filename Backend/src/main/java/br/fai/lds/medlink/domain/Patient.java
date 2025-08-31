@@ -22,7 +22,7 @@ public class Patient {
     private String email;
     private String plan;
     private String susCard;
-    private int medicId;
+    private Integer medicId;
     private boolean active;
     private List<EspecialistaAutorizado> especialistasAutorizados;
     private List<RequisicaoAcesso> requisicoesAcesso;
@@ -38,7 +38,7 @@ public class Patient {
     public Patient(int id, String name, String cpf, String password, Gender gender,
                    LocalDate birthDate, String phoneNumber, String avatar, String bloodType,
                    String observations, Address address, String email, String plan,
-                   String susCard, int medicId, boolean active,
+                   String susCard, Integer medicId, boolean active,
                    List<EspecialistaAutorizado> especialistasAutorizados,
                    List<RequisicaoAcesso> requisicoesAcesso, List<Consultation> consultations,
                    List<Vaccine> vacinas, List<Medication> medications,
