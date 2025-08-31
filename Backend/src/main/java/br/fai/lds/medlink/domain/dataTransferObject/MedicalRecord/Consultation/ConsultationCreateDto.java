@@ -5,13 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class ConsultationCreateDto {
 
     @NotNull(message = "Consultation date is required")
-    private String date;
+    private LocalDate date;
 
     @NotBlank(message = "Reason is required")
     private String reason;
