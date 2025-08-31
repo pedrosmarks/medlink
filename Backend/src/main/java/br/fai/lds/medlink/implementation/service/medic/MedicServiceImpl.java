@@ -3,11 +3,13 @@ package br.fai.lds.medlink.implementation.service.medic;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.service.medic.MedicService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class MedicServiceImpl implements MedicService {
 
@@ -20,50 +22,104 @@ public class MedicServiceImpl implements MedicService {
 
     @Override
     public int create(Medic entity) {
-        medicDao.create(entity);
-        return entity.getId();
+        if (entity == null) {
+            throw new IllegalArgumentException("Médico não pode ser nulo");
+        }
+        try {
+            medicDao.create(entity);
+            log.info("Médico criado com sucesso: {}", entity.getName());
+            return entity.getId();
+        } catch (Exception e) {
+            log.error("Erro ao criar médico: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao criar médico", e);
+        }
     }
 
     @Override
     public boolean delete(int id) {
-        Medic medic = medicDao.readById(id);
-        if (medic == null) {
-            return false;
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID deve ser maior que zero");
         }
-        medic.setActive(false);
-        medicDao.updateInformation(id, medic);
-        return true;
+        try {
+            Medic medic = medicDao.readById(id);
+            if (medic == null) {
+                log.warn("Tentativa de deletar médico inexistente com ID: {}", id);
+                return false;
+            }
+            medic.setActive(false);
+            medicDao.updateInformation(id, medic);
+            log.info("Médico desativado com sucesso: {} (ID: {})", medic.getName(), id);
+            return true;
+        } catch (Exception e) {
+            log.error("Erro ao deletar médico ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Erro ao deletar médico", e);
+        }
     }
 
     @Override
     public Medic findById(int id) {
-        return medicDao.readById(id);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID deve ser maior que zero");
+        }
+        try {
+            Medic medic = medicDao.readById(id);
+            if (medic == null) {
+                log.warn("Médico não encontrado com ID: {}", id);
+            }
+            return medic;
+        } catch (Exception e) {
+            log.error("Erro ao buscar médico ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar médico", e);
+        }
     }
 
     @Override
     public List<Medic> findAll() {
-        return medicDao.readAll();
+        try {
+            List<Medic> medics = medicDao.readAll();
+            log.debug("Encontrados {} médicos", medics.size());
+            return medics;
+        } catch (Exception e) {
+            log.error("Erro ao buscar todos os médicos: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao buscar médicos", e);
+        }
     }
 
     @Override
     public Medic update(int id, Medic entity) {
-        Medic existingMedic = medicDao.readById(id);
-        if (existingMedic == null) {
-            throw new IllegalArgumentException("Médico com o id " + id + " não foi encontrado");
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID deve ser maior que zero");
         }
+        if (entity == null) {
+            throw new IllegalArgumentException("Médico não pode ser nulo");
+        }
+        
+        try {
+            Medic existingMedic = medicDao.readById(id);
+            if (existingMedic == null) {
+                throw new IllegalArgumentException("Médico com o id " + id + " não foi encontrado");
+            }
 
-        existingMedic.setName(entity.getName());
-        existingMedic.setGender(entity.getGender());
-        existingMedic.setBirthDate(entity.getBirthDate());
-        existingMedic.setPhoneNumber(entity.getPhoneNumber());
-        existingMedic.setAddress(entity.getAddress());
-        existingMedic.setCrm(entity.getCrm());
-        existingMedic.setSpecialty(entity.getSpecialty());
-        existingMedic.setEmail(entity.getEmail());
-        existingMedic.setActive(entity.isActive());
+            existingMedic.setName(entity.getName());
+            existingMedic.setGender(entity.getGender());
+            existingMedic.setBirthDate(entity.getBirthDate());
+            existingMedic.setPhoneNumber(entity.getPhoneNumber());
+            existingMedic.setAddress(entity.getAddress());
+            existingMedic.setCrm(entity.getCrm());
+            existingMedic.setSpecialty(entity.getSpecialty());
+            existingMedic.setEmail(entity.getEmail());
+            existingMedic.setActive(entity.isActive());
 
-        medicDao.updateInformation(id, existingMedic);
-
-        return existingMedic;
+            medicDao.updateInformation(id, existingMedic);
+            log.info("Médico atualizado com sucesso: {} (ID: {})", existingMedic.getName(), id);
+            
+            return existingMedic;
+        } catch (IllegalArgumentException e) {
+            log.warn("Erro de validação ao atualizar médico ID {}: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao atualizar médico ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Erro ao atualizar médico", e);
+        }
     }
 }

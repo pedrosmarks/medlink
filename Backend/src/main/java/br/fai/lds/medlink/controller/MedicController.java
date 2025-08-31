@@ -10,6 +10,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // Controlador REST consolidado para gerenciar os médicos da aplicação
+@Slf4j
 @RestController
 @RequestMapping("/api/medic")
 public class MedicController {
@@ -65,6 +67,10 @@ public class MedicController {
     // Endpoint para buscar um médico pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getMedicById(@PathVariable int id) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         Medic medic = medicService.findById(id);
         if (medic == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -83,6 +89,10 @@ public class MedicController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMedic(@PathVariable int id,
                                          @Valid @RequestBody MedicUpdateDto dto) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         Medic medic = medicService.findById(id);
         if (medic == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -103,6 +113,10 @@ public class MedicController {
     // Endpoint para "desativar" ou excluir um médico pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deactivateMedic(@PathVariable int id) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         boolean success = medicService.delete(id);
         if (!success) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -115,15 +129,19 @@ public class MedicController {
     @GetMapping("/{id}/patients")
     @CrossOrigin
     public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getPatientsByMedic(@PathVariable("id") int medicId) {
-        System.out.println("Buscando pacientes para médico ID: " + medicId);
+        if (medicId <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID do médico deve ser maior que zero."));
+        }
+        log.debug("Buscando pacientes para médico ID: {}", medicId);
         
         List<Patient> patients = patientService.findByMedicId(medicId);
-        System.out.println("Encontrados " + patients.size() + " pacientes para médico " + medicId);
+        log.debug("Encontrados {} pacientes para médico {}", patients.size(), medicId);
         
         for (Patient p : patients) {
-            System.out.println("Paciente: " + p.getName() + " (ID: " + p.getId() + "), medicId: " + p.getMedicId());
+            log.debug("Paciente: {} (ID: {}), medicId: {}", p.getName(), p.getId(), p.getMedicId());
             if (p.getEspecialistasAutorizados() != null) {
-                System.out.println("  Especialistas autorizados: " + p.getEspecialistasAutorizados().size());
+                log.debug("  Especialistas autorizados: {}", p.getEspecialistasAutorizados().size());
             }
         }
         
