@@ -15,7 +15,7 @@ public class SurgeryCreateDto {
     private String name;
 
     @NotNull(message = "Date is required")
-    private String date;
+    private LocalDate date;
 
     private String location;
 
