@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class MedicalRecordResponseDto {
 
     private int id;
-    private int patientId;
+    private Integer patientId;
     private BloodType bloodType;
     private OrganDonorStatus organDonor;
     private String diagnosis;
@@ -39,7 +39,10 @@ public class MedicalRecordResponseDto {
         if (entity.getAllergies() != null && !entity.getAllergies().isEmpty()) {
             allergies = entity.getAllergies().stream()
                     .map(allergy -> AllergyCreateDto.builder()
+                            .name(allergy.getName())
                             .substance(allergy.getSubstance())
+                            .reaction(allergy.getReaction())
+                            .severity(allergy.getSeverity())
                             .build())
                     .collect(Collectors.toList());
         }
@@ -49,6 +52,8 @@ public class MedicalRecordResponseDto {
             medications = entity.getMedications().stream()
                     .map(med -> MedicationCreateDto.builder()
                             .name(med.getName())
+                            .dosage(med.getDosage())
+                            .frequency(med.getFrequency())
                             .build())
                     .collect(Collectors.toList());
         }
@@ -74,6 +79,18 @@ public class MedicalRecordResponseDto {
                     .collect(Collectors.toList());
         }
 
+        List<SurgeryCreateDto> surgeries = List.of();
+        if (entity.getSurgeries() != null && !entity.getSurgeries().isEmpty()) {
+            surgeries = entity.getSurgeries().stream()
+                    .map(surgery -> SurgeryCreateDto.builder()
+                            .name(surgery.getName())
+                            .date(surgery.getDate())
+                            .location(surgery.getLocation())
+                            .notes(surgery.getNotes())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
         return MedicalRecordResponseDto.builder()
                 .id(entity.getId())
                 .patientId(entity.getPatientId())
@@ -84,6 +101,7 @@ public class MedicalRecordResponseDto {
                 .medicalRecordActive(entity.isMedicalRecordActive())
                 .allergies(allergies)
                 .medications(medications)
+                .surgeries(surgeries)
                 .vaccines(vaccines)
                 .consultations(consultations)
                 .build();

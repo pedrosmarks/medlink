@@ -31,7 +31,7 @@ public class MedicalRecord {
 
     private boolean medicalRecordActive = true;
 
-    private int patientId;
+    private Integer patientId;
 
     @Builder.Default
     private List<Allergy> allergies = new ArrayList<>();
@@ -47,5 +47,4 @@ public class MedicalRecord {
 
     @Builder.Default
     private List<Consultation> consultations = new ArrayList<>();
-
 }

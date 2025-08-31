@@ -15,18 +15,18 @@ public interface MedicalRecordService extends CrudService<MedicalRecord> {
 
         MedicalRecordResponseDto findByPatientId(int medicId, int patientId);
 
-        void addConsultation(int medicalRecordId, Consultation consultation);
+        boolean addConsultation(int medicalRecordId, Consultation consultation);
 
-        void addMedication(int medicalRecordId, Medication medication);
+        boolean addMedication(int medicalRecordId, Medication medication);
 
-        void addAllergy(int medicalRecordId, Allergy allergy);
+        boolean addAllergy(int medicalRecordId, Allergy allergy);
 
-        void addVaccine(int medicalRecordId, Vaccine vaccine);
+        boolean addVaccine(int medicalRecordId, Vaccine vaccine);
 
-        void addSurgery(int medicalRecordId, Surgery surgery);
+        boolean addSurgery(int medicalRecordId, Surgery surgery);
 
-        void addDiagnosis(int medicalRecordId, Diagnosis diagnosis);
+        boolean addDiagnosis(int medicalRecordId, Diagnosis diagnosis);
 
-        void addFamilyHistory(int id, String familyHistory);
+        boolean addFamilyHistory(int id, String familyHistory);
 }
 

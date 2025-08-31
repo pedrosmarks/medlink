@@ -5,6 +5,7 @@ import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,13 +42,13 @@ public class MedicalRecordFakeDaoImpl implements MedicalRecordDao {
                 .vaccines(List.of(
                         Vaccine.builder()
                                 .name("Covid-19")
-                                .date("2021-05-20")
+                                .date(LocalDate.of(2021, 5, 20))
                                 .build()
                 ))
                 .surgeries(List.of(
                         Surgery.builder()
                                 .name("Apendicectomia")
-                                .date("2010-01-01")
+                                .date(LocalDate.of(2010, 1, 1))
                                 .location("Hospital XYZ")
                                 .notes("Sem complicações")
                                 .build()

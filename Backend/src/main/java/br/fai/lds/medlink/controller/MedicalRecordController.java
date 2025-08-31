@@ -30,21 +30,27 @@ public class MedicalRecordController {
         this.medicalRecordService = medicalRecordService;
     }
 
-    // Operações CRUD básico no prontuário médico
-
     // Endpoint para criar um novo prontuario médico
     @PostMapping
     public ResponseEntity<ApiResponse<MedicalRecordResponseDto>> create(@Valid @RequestBody MedicalRecordCreateDto dto) {
-        MedicalRecord entity = dto.toEntity();
-        int id = medicalRecordService.create(entity);
-        entity.setId(id);
+        try {
+            MedicalRecord entity = dto.toEntity();
+            int id = medicalRecordService.create(entity);
+            entity.setId(id);
 
-        ApiResponse<MedicalRecordResponseDto> response = new ApiResponse<>(
-                "Prontuário criado com sucesso!",
-                MedicalRecordResponseDto.fromEntity(entity)
-        );
+            ApiResponse<MedicalRecordResponseDto> response = new ApiResponse<>(
+                    "Prontuário criado com sucesso!",
+                    MedicalRecordResponseDto.fromEntity(entity)
+            );
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("Dados inválidos: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
     }
 
     // Endpoint para listar todos os prontuários médicos cadastrados
@@ -60,6 +66,10 @@ public class MedicalRecordController {
     // Endpoint para buscar um prontuário médico pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable int id) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         MedicalRecord record = medicalRecordService.findById(id);
         if (record == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -72,6 +82,10 @@ public class MedicalRecordController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id,
                                     @Valid @RequestBody MedicalRecordUpdateDto dto) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         MedicalRecord entity = dto.toEntity();
         entity.setId(id);
 
@@ -92,6 +106,10 @@ public class MedicalRecordController {
     // Endpoint para "excluir um prontuário médico pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable int id) {
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
         boolean deleted = medicalRecordService.delete(id);
         if (!deleted) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,6 +123,14 @@ public class MedicalRecordController {
     public ResponseEntity<?> getMedicalRecordByPatient(
             @PathVariable int medicId,
             @PathVariable int patientId) {
+        if (medicId <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID do médico deve ser maior que zero."));
+        }
+        if (patientId <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID do paciente deve ser maior que zero."));
+        }
 
         boolean hasPermission = true; // lógica fake
 
@@ -122,63 +148,111 @@ public class MedicalRecordController {
         return ResponseEntity.ok(dto);
     }
 
-    // Endpoints para adicionar dados clínicos
-
     // Consultas
     @PostMapping("/{id}/consultations")
     public ResponseEntity<ApiResponse<Void>> addConsultation(@PathVariable int id,
                                                              @Valid @RequestBody ConsultationCreateDto dto) {
-        medicalRecordService.addConsultation(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Consulta adicionada ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addConsultation(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Consulta adicionada ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar consulta ao prontuário."));
+        }
     }
 
     // Medicamentos
     @PostMapping("/{id}/medications")
     public ResponseEntity<ApiResponse<Void>> addMedication(@PathVariable int id,
                                                            @Valid @RequestBody MedicationCreateDto dto) {
-        medicalRecordService.addMedication(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Medicamento adicionado ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addMedication(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Medicamento adicionado ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar medicamento ao prontuário."));
+        }
     }
 
     // Alergias
     @PostMapping("/{id}/allergies")
     public ResponseEntity<ApiResponse<Void>> addAllergy(@PathVariable int id,
                                                         @Valid @RequestBody AllergyCreateDto dto) {
-        medicalRecordService.addAllergy(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Alergia adicionada ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addAllergy(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Alergia adicionada ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar alergia ao prontuário."));
+        }
     }
 
-    //Vacinas
+    // Vacinas
     @PostMapping("/{id}/vaccines")
     public ResponseEntity<ApiResponse<Void>> addVaccine(@PathVariable int id,
                                                         @Valid @RequestBody VaccineCreateDto dto) {
-        medicalRecordService.addVaccine(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Vacina adicionada ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addVaccine(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Vacina adicionada ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar vacina ao prontuário."));
+        }
     }
 
-    //Cirurgia
+    // Cirurgia
     @PostMapping("/{id}/surgeries")
     public ResponseEntity<ApiResponse<Void>> addSurgery(@PathVariable int id,
                                                         @Valid @RequestBody SurgeryCreateDto dto) {
-        medicalRecordService.addSurgery(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Cirurgia adicionada ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addSurgery(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Cirurgia adicionada ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar cirurgia ao prontuário."));
+        }
     }
 
-    //Diagnostico
+    // Diagnóstico
     @PostMapping("/{id}/diagnosis")
     public ResponseEntity<ApiResponse<Void>> addDiagnosis(@PathVariable int id,
                                                           @Valid @RequestBody DiagnosisCreateDto dto) {
-        medicalRecordService.addDiagnosis(id, dto.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Diagnostico adicionado ao prontuário com sucesso."));
+        if (id <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("ID deve ser maior que zero."));
+        }
+        boolean success = medicalRecordService.addDiagnosis(id, dto.toEntity());
+        if (success) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Diagnostico adicionado ao prontuário com sucesso."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro ao adicionar diagnóstico ao prontuário."));
+        }
     }
-
-
-
-
 }
