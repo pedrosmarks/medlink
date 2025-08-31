@@ -11,7 +11,7 @@ public interface PatientService extends CrudService<Patient> {
 
     Patient findByEmail(String email);
 
-    void updateInformation(int id, Patient entity);
+    boolean updateInformation(int id, Patient entity);
 
     boolean deactivate(int id);
     boolean delete(int id);
