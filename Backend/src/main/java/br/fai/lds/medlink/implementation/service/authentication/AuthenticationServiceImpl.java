@@ -7,12 +7,14 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDT
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -27,18 +29,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient authenticatePatient(String email, String password) {
-        System.out.println("Tentando autenticar paciente com email: " + email);
+        log.info("Tentando autenticar paciente com email: {}", email);
         Patient patient = patientDao.findByEmail(email);
         if (patient != null) {
-            System.out.println("Paciente encontrado: " + patient.getName() + ", senha no BD: " + patient.getPassword());
+            log.info("Paciente encontrado: {}", patient.getName());
             if (patient.getPassword().equals(password)) {
-                System.out.println("Senha correta!");
+                log.info("Autenticação bem-sucedida para paciente: {}", patient.getName());
                 return patient;
             } else {
-                System.out.println("Senha incorreta!");
+                log.warn("Senha incorreta para paciente: {}", email);
             }
         } else {
-            System.out.println("Paciente não encontrado com email: " + email);
+            log.warn("Paciente não encontrado com email: {}", email);
         }
         return null;
     }
@@ -67,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         resetCodes.put(email, resetCode);
 
         // Simula envio do código por email
-        System.out.println("Enviando código de reset '" + resetCode + "' para o email: " + email);
+        log.info("Enviando código de reset '{}' para o email: {}", resetCode, email);
 
         return true;
     }
@@ -113,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String code = generateResetCode();
         resetCodes.put(identifier, code);
 
-        System.out.println("Enviando código de verificação '" + code + "' para: " + identifier);
+        log.info("Enviando código de verificação '{}' para: {}", code, identifier);
 
         return true;
     }
