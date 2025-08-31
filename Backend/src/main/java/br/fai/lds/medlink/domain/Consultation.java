@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.domain;
 
 import lombok.*;
+import java.time.LocalDate;
 
 
 //Representa uma consulta médica registrada no prontuário do paciente
@@ -9,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Consultation {
-    private String date;
+    private LocalDate date;
     private String reason;
     private String notes;
 }
