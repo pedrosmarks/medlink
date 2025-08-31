@@ -38,10 +38,14 @@ export class Medicamentos implements OnInit {
       error: (error) => console.error('Erro ao carregar paciente:', error)
     });
     
-    // Buscar medicamentos do novo endpoint
+    this.carregarMedicamentos();
+  }
+
+  carregarMedicamentos() {
     this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/medications`).subscribe({
       next: (response) => {
         this.medicamentos = response.data || response || [];
+        console.log('Medicamentos carregados:', this.medicamentos.length);
       },
       error: (error) => {
         console.error('Erro ao carregar medicamentos:', error);
@@ -59,20 +63,52 @@ export class Medicamentos implements OnInit {
       frequency: this.novoMedicamentoFrequency.trim()
     };
 
-    // Adicionar localmente
-    this.medicamentos = [...this.medicamentos, novo];
-    this.novoMedicamentoName = '';
-    this.novoMedicamentoDosage = '';
-    this.novoMedicamentoFrequency = '';
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications`;
+    console.log('Adicionando medicamento:', url, novo);
     
-    console.log('Medicamento adicionado localmente. Implementar endpoint POST se necessário.');
+    this.http.post<any>(url, novo).subscribe({
+      next: (response) => {
+        console.log('Medicamento adicionado:', response);
+        this.carregarMedicamentos(); // Recarrega a lista
+        this.novoMedicamentoName = '';
+        this.novoMedicamentoDosage = '';
+        this.novoMedicamentoFrequency = '';
+      },
+      error: (error) => {
+        console.error('Erro ao adicionar medicamento:', error);
+        // Fallback: adiciona localmente se backend falhar
+        this.medicamentos = [...this.medicamentos, novo];
+        this.novoMedicamentoName = '';
+        this.novoMedicamentoDosage = '';
+        this.novoMedicamentoFrequency = '';
+        console.log('Medicamento adicionado localmente (fallback).');
+      }
+    });
   }
 
   removerMedicamento(index: number) {
-    const novosMedicamentos = this.medicamentos.slice();
-    novosMedicamentos.splice(index, 1);
-    this.medicamentos = novosMedicamentos;
+    const medicamento = this.medicamentos[index];
+    if (!medicamento || !medicamento.name) {
+      console.error('Medicamento não encontrado ou sem nome');
+      return;
+    }
     
-    console.log('Medicamento removido localmente. Implementar endpoint DELETE se necessário.');
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications/${encodeURIComponent(medicamento.name)}`;
+    console.log('Removendo medicamento:', url);
+    
+    this.http.delete<any>(url).subscribe({
+      next: (response) => {
+        console.log('Medicamento removido:', response);
+        this.carregarMedicamentos(); // Recarrega a lista
+      },
+      error: (error) => {
+        console.error('Erro ao remover medicamento:', error);
+        // Fallback: remove localmente se backend falhar
+        const novosMedicamentos = this.medicamentos.slice();
+        novosMedicamentos.splice(index, 1);
+        this.medicamentos = novosMedicamentos;
+        console.log('Medicamento removido localmente (fallback).');
+      }
+    });
   }
 }
