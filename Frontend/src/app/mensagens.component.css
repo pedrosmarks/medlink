@@ -27,7 +27,7 @@ textarea {
   resize: vertical;
 }
 button {
-  background: #1976d2;
+  background: #28a745;
   color: #fff;
   border: none;
   padding: 6px 12px;
@@ -35,5 +35,5 @@ button {
   cursor: pointer;
 }
 button:hover {
-  background: #1565c0;
+  background: #1e7e34;
 }

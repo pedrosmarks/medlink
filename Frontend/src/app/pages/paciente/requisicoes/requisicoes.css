@@ -1,3 +1,103 @@
+.container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
 .card {
-  background: #f8f9fa;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid rgba(40, 167, 69, 0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  border-color: rgba(40, 167, 69, 0.2);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
+  border: none;
+  padding: 1.5rem;
+}
+
+.card-header h5 {
+  color: white;
+  font-weight: 600;
+  margin: 0;
+}
+
+.badge.bg-primary {
+  background: rgba(255,255,255,0.2) !important;
+}
+
+.spinner-border {
+  color: #28a745;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #218838 0%, #1c7a73 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.text-primary {
+  color: #28a745 !important;
+}
+
+.border-success {
+  border-color: #28a745 !important;
+  border-width: 2px !important;
+}
+
+.border-warning {
+  border-color: #ffc107 !important;
+  border-width: 2px !important;
+}
+
+.border-danger {
+  border-color: #dc3545 !important;
+  border-width: 2px !important;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.fa-clipboard-list {
+  color: #28a745;
+}
+
+.fa-user-md {
+  margin-right: 0.5rem;
 }

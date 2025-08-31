@@ -10,18 +10,17 @@
       <h2 *ngIf="!editando">{{ perfil.name }}</h2>
       <input *ngIf="editando" type="text" [(ngModel)]="perfil.name" name="name" class="header-input" placeholder="Nome completo" />
       <p class="specialty" *ngIf="!editando">{{ perfil.specialty }}</p>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.specialty" name="specialty" class="specialty-input" placeholder="Especialidade" />
       <div class="personal-info" *ngIf="!editando">
         <span class="info-item">CRM: {{ perfil.crm }}</span>
       </div>
-      <span class="status-badge" [class.active]="perfil.active">{{ perfil.active ? 'Ativo' : 'Inativo' }}</span>
+      <span class="status-badge active">Médico</span>
     </div>
   </div>
 
   <!-- Cards de Informações -->
   <div class="perfil-cards">
-    <!-- Card Informações Profissionais (apenas para edição) -->
-    <div class="info-card" *ngIf="editando">
+    <!-- Card Informações Profissionais -->
+    <div class="info-card">
       <div class="card-header">
         <i class="fas fa-id-card"></i>
         <h3>Informações Profissionais</h3>
@@ -29,11 +28,13 @@
       <div class="card-content">
         <div class="info-row">
           <label>CRM:</label>
-          <input type="text" [(ngModel)]="perfil.crm" name="crm" placeholder="CRM" />
+          <span *ngIf="!editando">{{ perfil.crm }}</span>
+          <input *ngIf="editando" type="text" [(ngModel)]="perfil.crm" name="crm" placeholder="CRM" />
         </div>
         <div class="info-row">
           <label>Especialidade:</label>
-          <input type="text" [(ngModel)]="perfil.specialty" name="specialty" placeholder="Especialidade" />
+          <span *ngIf="!editando">{{ perfil.specialty }}</span>
+          <input *ngIf="editando" type="text" [(ngModel)]="perfil.specialty" name="specialty" placeholder="Especialidade" />
         </div>
       </div>
     </div>
@@ -146,6 +147,21 @@
             <label>CEP:</label>
             <input type="text" [(ngModel)]="perfil.address.zipCode" name="zipCode" placeholder="CEP" />
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Observações -->
+    <div class="info-card observations-card">
+      <div class="card-header">
+        <i class="fas fa-notes-medical"></i>
+        <h3>Observações Profissionais</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span *ngIf="!editando && perfil.observations">{{ perfil.observations }}</span>
+          <span *ngIf="!editando && !perfil.observations" class="no-data">Nenhuma observação registrada</span>
+          <textarea *ngIf="editando" [(ngModel)]="perfil.observations" name="observations" placeholder="Observações profissionais importantes..." rows="4"></textarea>
         </div>
       </div>
     </div>

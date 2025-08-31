@@ -1,18 +1,10 @@
 <div class="medicos-container">
   <div class="header">
-    <h2>
-      <i class="fas fa-user-md"></i>
-      Meus Médicos Autorizados
-    </h2>
-    <p class="subtitle">Médicos que têm permissão para acessar seus dados de saúde</p>
-    
-    <div class="header-actions">
-      <button class="btn btn-reload" (click)="recarregarDados()" [disabled]="loading">
-        <i class="fas fa-sync-alt" [class.spinning]="loading"></i>
-        Recarregar
-      </button>
-    </div>
+    <h2>Meus Médicos Autorizados</h2>
+    <p>Médicos que têm permissão para acessar seus dados de saúde.</p>
   </div>
+
+ 
 
   <div *ngIf="loading" class="loading">
     <div class="spinner"></div>
@@ -44,7 +36,7 @@
       <div class="card-body">
 
         
-        <div style="background: yellow; padding: 5px;">TESTE: {{ medico.name }}</div>
+        
         <h3 class="medico-nome" style="color: black !important; font-size: 18px !important;">{{ medico.name || medico.nome || 'Nome não informado' }}</h3>
         <p class="especialidade" style="color: black !important; font-size: 14px !important;">
           <i class="fas fa-stethoscope"></i>
@@ -79,10 +71,6 @@
         <button class="btn btn-primary" (click)="iniciarConversa(medico.id)">
           <i class="fas fa-comments"></i>
           Enviar Mensagem
-        </button>
-        <button class="btn btn-secondary" (click)="agendarConsulta(medico.id)">
-          <i class="fas fa-calendar-alt"></i>
-          Agendar Consulta
         </button>
         <button class="btn btn-info" (click)="verDetalhes(medico.id)">
           <i class="fas fa-info-circle"></i>

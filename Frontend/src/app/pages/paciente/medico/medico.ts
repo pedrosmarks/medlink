@@ -128,12 +128,6 @@ export class Medico implements OnInit {
     });
   }
 
-  agendarConsulta(medicoId: string) {
-    // Implementar navegação para agendamento
-    console.log('Agendar consulta com médico:', medicoId);
-    // Futura implementação: this.router.navigate(['/paciente/agendar-consulta'], { queryParams: { medicoId } });
-  }
-
   recarregarDados() {
     this.loading = true;
     this.error = '';

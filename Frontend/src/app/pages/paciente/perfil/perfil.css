@@ -30,13 +30,13 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 3rem;
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
 }
 
 .perfil-info-header {
@@ -63,7 +63,7 @@
 }
 
 .specialty {
-  color: #007bff;
+  color: #28a745;
   font-size: 1.2rem;
   margin: 0 0 1rem 0;
   font-weight: 500;
@@ -74,7 +74,7 @@
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   background: white;
-  color: #007bff;
+  color: #28a745;
   padding: 0.75rem;
   width: 100%;
   outline: none;
@@ -99,77 +99,95 @@
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
-  background: #007bff;
+  background: #28a745;
   color: white;
 }
 
 /* Cards de Informações */
 .perfil-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Quando editando, usar 4 colunas */
-.perfil-container:has(.info-card:nth-child(4)) .perfil-cards {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
 .info-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: fit-content;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(40, 167, 69, 0.1);
+  width: 100%;
 }
 
 .info-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  border-color: rgba(40, 167, 69, 0.2);
 }
 
 .card-header {
-  background: #007bff;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -50px;
+  width: 100px;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  transform: skewX(-20deg);
 }
 
 .card-header i {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .card-header h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .card-content {
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  padding: 2rem;
   min-height: auto;
+  background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f0f0f0;
+  flex: 1;
+  min-width: 300px;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0;
 }
 
-.info-row:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+.info-row:hover {
+  background: rgba(40, 167, 69, 0.02);
+  transform: translateX(5px);
 }
 
 .info-row label {
@@ -202,8 +220,8 @@
 .info-row input:focus,
 .info-row select:focus,
 .info-row textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
 .info-row textarea {
@@ -245,14 +263,14 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
 }
 
 .btn-success {
@@ -284,27 +302,44 @@
 }
 
 /* Responsividade */
+@media (max-width: 1400px) {
+  .perfil-cards {
+    max-width: 1200px;
+  }
+}
+
 @media (max-width: 1200px) {
   .perfil-cards {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }
 
 @media (max-width: 900px) {
   .perfil-cards {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .perfil-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 2rem;
   }
 }
 
 @media (max-width: 768px) {
   .perfil-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .perfil-header {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .avatar-circle {
@@ -315,6 +350,11 @@
   
   .perfil-cards {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .card-content {
+    padding: 1.5rem;
   }
   
   .info-row {

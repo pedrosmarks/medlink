@@ -2,7 +2,7 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
   color: white;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -40,7 +40,7 @@
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  border-color: #667eea;
+  border-color: #28a745;
 }
 
 .card img {
@@ -73,13 +73,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
   color: white;
 }
 
 .btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
 }
 
 .mt-2 {

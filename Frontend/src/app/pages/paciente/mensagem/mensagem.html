@@ -2,34 +2,41 @@
 <div class="chat-root">
   <aside class="chat-sidebar">
     <div class="sidebar-header">
-      <h3>Conversas</h3>
+      <h3>Médicos</h3>
     </div>
 
     <div class="sidebar-list">
-      <div *ngIf="!conversas || conversas.length === 0" class="empty-state">Nenhuma conversa encontrada</div>
+      <div *ngIf="loading" class="empty-state">
+        <p>Carregando médicos autorizados...</p>
+      </div>
+      <div *ngIf="!loading && (!medicosComMensagens || medicosComMensagens.length === 0)" class="empty-state">
+        <p>Nenhum médico autorizado encontrado.</p>
+        <small>Você precisa ter pelo menos um médico com acesso liberado ao seu prontuário para iniciar conversas.</small>
+      </div>
 
-      <button *ngFor="let conv of conversas" class="sidebar-item" (click)="selecionarConversa(conv)" [class.active]="conversaSelecionada?.contatoId === conv.contatoId">
-        <div class="avatar-mini">{{ conv.contatoNome ? (conv.contatoNome.charAt(0) || '') : (conv.contatoId ? conv.contatoId.charAt(0) : 'U') }}</div>
+      <button *ngFor="let conv of medicosComMensagens" class="sidebar-item" (click)="selecionarConversa(conv)" [class.active]="conversaSelecionada?.medico?.id === conv.medico.id">
+        <div class="avatar-mini">{{ conv.medico.name ? conv.medico.name.charAt(0) : 'M' }}</div>
         <div class="info">
-          <div class="title">{{ conv.contatoNome || conv.contatoId || 'Contato' }}</div>
+          <div class="title">{{ conv.medico.name || 'Médico' }}</div>
           <div class="preview">{{ conv.ultimaMensagem?.texto || conv.ultimaMensagem?.conteudo || 'Sem mensagens' }}</div>
         </div>
-        <div class="meta"> <small>{{ conv.ultimaMensagem?.data ? (conv.ultimaMensagem.data | date:'dd/MM') : '' }}</small></div>
+        <div class="meta"> <small>{{ conv.ultimaMensagem?.data ? (conv.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
+        <div class="unread" *ngIf="contarMensagensNaoLidas(conv) > 0">{{ contarMensagensNaoLidas(conv) }}</div>
       </button>
     </div>
   </aside>
 
   <main class="chat-panel">
     <div *ngIf="!conversaSelecionada" class="panel-empty">
-      <div class="welcome">Selecione uma conversa para começar</div>
+      <div class="welcome">Selecione um médico para começar</div>
     </div>
 
     <div *ngIf="conversaSelecionada" class="panel-chat">
       <header class="panel-header">
-        <div class="title">{{ conversaSelecionada.contatoNome || conversaSelecionada.contatoId || 'Contato' }}</div>
+        <div class="title">{{ conversaSelecionada.medico.name || 'Médico' }}</div>
       </header>
 
-      <div class="panel-messages" id="panelMessages">
+      <div class="panel-messages" #messagesContainer>
         <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.remetenteId === senderId">
           <div class="msg-bubble">
             <div class="msg-text">{{ m.texto || m.conteudo }}</div>

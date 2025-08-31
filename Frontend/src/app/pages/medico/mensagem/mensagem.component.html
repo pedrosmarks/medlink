@@ -6,7 +6,13 @@
     </div>
 
     <div class="sidebar-list">
-      <div *ngIf="!pacientesComMensagens || pacientesComMensagens.length === 0" class="empty-state">Nenhum paciente encontrado</div>
+      <div *ngIf="loading" class="empty-state">
+        <p>Carregando pacientes...</p>
+      </div>
+      <div *ngIf="!loading && (!pacientesComMensagens || pacientesComMensagens.length === 0)" class="empty-state">
+        <p>Nenhum paciente autorizado encontrado.</p>
+        <small>Você só pode conversar com pacientes que liberaram acesso ao prontuário.</small>
+      </div>
 
       <button *ngFor="let item of pacientesComMensagens" class="sidebar-item" (click)="selecionarPaciente(item)" [class.active]="pacienteSelecionado?.paciente?.id === item.paciente.id">
         <div class="avatar-mini">{{ item.paciente.name.charAt(0) }}</div>
@@ -14,7 +20,7 @@
           <div class="title">{{ item.paciente.name }}</div>
           <div class="preview">{{ item.ultimaMensagem?.texto || 'Sem mensagens' }}</div>
         </div>
-  <div class="meta"> <small>{{ item.ultimaMensagem?.data ? (item.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
+        <div class="meta"> <small>{{ item.ultimaMensagem?.data ? (item.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
         <div class="unread" *ngIf="contarMensagensNaoLidas(item) > 0">{{ contarMensagensNaoLidas(item) }}</div>
       </button>
     </div>
@@ -30,12 +36,11 @@
         <div class="title">{{ pacienteSelecionado.paciente.name }}</div>
       </header>
 
-      <div class="panel-messages" id="panelMessages">
-        <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.remetenteTipo === 'medico'">
+      <div class="panel-messages" #messagesContainer>
+        <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.remetenteId === getMedicoId()">
           <div class="msg-bubble">
             <div class="msg-text">{{ m.texto }}</div>
             <div class="msg-meta"><small>{{ m.data | date:'dd/MM HH:mm' }}</small></div>
-            <!-- botão 'Marcar lida' removido para visual mais limpo -->
           </div>
         </div>
       </div>

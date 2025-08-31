@@ -3,16 +3,16 @@
   <div class="welcome-header">
     <div class="welcome-content">
       <h1 class="welcome-title">Olá, {{ medicoNome }}! 👋</h1>
-      <p class="welcome-subtitle">Bem-vindo ao seu painel médico. Aqui você pode gerenciar seus pacientes e acompanhar suas atividades.</p>
+      <p class="welcome-subtitle">Bem-vindo ao seu painel médico. Gerencie seus pacientes e acompanhe suas atividades.</p>
     </div>
-    <div class="welcome-stats">
+    <div class="welcome-stats" *ngIf="!loading">
       <div class="stat-card">
         <div class="stat-icon">
           <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
-          <h3>{{ totalPacientes }}</h3>
-          <p>Pacientes</p>
+          <h3>{{ totalPacientesAutorizados }}</h3>
+          <p>Pacientes Autorizados</p>
         </div>
       </div>
       <div class="stat-card">
@@ -29,19 +29,70 @@
 
   <!-- Cards do Dashboard -->
   <div class="dashboard-grid">
-    <div *ngFor="let card of cards" class="dashboard-card">
+    <div class="dashboard-card">
       <div class="card-content">
         <div class="card-header">
-          <h3 class="card-title">{{ card.title }}</h3>
+          <h3 class="card-title">Mensagens</h3>
           <div class="card-icon">
-            <i [class]="card.icon"></i>
+            <i class="fas fa-envelope"></i>
           </div>
         </div>
-        <p class="card-description">{{ card.text }}</p>
+        <p class="card-description">Conversas com seus pacientes autorizados</p>
         <div class="card-footer">
-          <span class="card-value">{{ card.value || '---' }}</span>
+          <span class="card-value">{{ mensagensNaoLidas }} não lidas</span>
         </div>
       </div>
     </div>
+
+    <div class="dashboard-card">
+      <div class="card-content">
+        <div class="card-header">
+          <h3 class="card-title">Pacientes</h3>
+          <div class="card-icon">
+            <i class="fas fa-user-injured"></i>
+          </div>
+        </div>
+        <p class="card-description">Pacientes com acesso liberado ao prontuário</p>
+        <div class="card-footer">
+          <span class="card-value">{{ totalPacientesAutorizados }} autorizados</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-content">
+        <div class="card-header">
+          <h3 class="card-title">Consultas Realizadas</h3>
+          <div class="card-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+        </div>
+        <p class="card-description">Total de consultas no histórico</p>
+        <div class="card-footer">
+          <span class="card-value">{{ totalConsultas }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-content">
+        <div class="card-header">
+          <h3 class="card-title">Prontuários</h3>
+          <div class="card-icon">
+            <i class="fas fa-file-medical-alt"></i>
+          </div>
+        </div>
+        <p class="card-description">Acesso aos prontuários dos pacientes</p>
+        <div class="card-footer">
+          <span class="card-value">{{ totalPacientesAutorizados }} disponíveis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Carregando dados...</p>
   </div>
 </div>
