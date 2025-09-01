@@ -130,7 +130,7 @@ CREATE TABLE historico_cirurgico (
     CONSTRAINT fk_historico_cirurgico_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
-CREATE TABLE medicamento_diario (
+CREATE TABLE medicamento_continuo (
     id SERIAL PRIMARY KEY,
     prontuario_id INT NOT NULL,
     descricao_medicamento VARCHAR(500) NOT NULL,
