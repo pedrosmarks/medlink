@@ -165,12 +165,7 @@ CREATE TABLE medico (
     CONSTRAINT fk_medico_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 );
 
-CREATE TABLE crm (
-    id SERIAL PRIMARY KEY,
-    medico_id INT NOT NULL UNIQUE,
-    numero VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_crm_medico FOREIGN KEY (medico_id) REFERENCES medico(id)
-);
+-- Tabela CRM não existe mais...
 
 CREATE TABLE medico_clinica_especialidade (
     id SERIAL PRIMARY KEY,
