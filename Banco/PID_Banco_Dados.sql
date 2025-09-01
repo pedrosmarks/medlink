@@ -145,6 +145,7 @@ CREATE TABLE medico (
     pessoa_id INT NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     ativo BOOLEAN DEFAULT TRUE,
+    crm VARCHAR(20) NOT NULL UNIQUE,
     CONSTRAINT fk_medico_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 );
 
