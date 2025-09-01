@@ -18,28 +18,28 @@ CREATE TABLE cidade (
     CONSTRAINT fk_cidade_estado FOREIGN KEY (estado_id) REFERENCES estado(id)
 );
 
+CREATE TABLE endereco (
+    id SERIAL PRIMARY KEY,
+    logradouro VARCHAR(100) NOT NULL,
+    numero VARCHAR(10) NOT NULL,
+    complemento VARCHAR(50),
+    bairro VARCHAR(100) NOT NULL,
+    cidade_id INT NOT NULL,
+    cep CHAR(8) NOT NULL CHECK (char_length(cep) = 8),
+    CONSTRAINT fk_endereco_cidade FOREIGN KEY (cidade_id) REFERENCES cidade(id)
+);
+
 -- Tabela Pessoa e seus dados básicos
 CREATE TABLE pessoa (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     cpf CHAR(11) NOT NULL UNIQUE CHECK (char_length(cpf) = 11),
     sexo CHAR(1) NOT NULL CHECK (sexo IN ('M', 'F')),
-    data_nascimento DATE NOT NULL
+    data_nascimento DATE NOT NULL,
+    endereco_id INT,
+    CONSTRAINT fk_pessoa_endereco FOREIGN KEY (endereco_id) REFERENCES endereco(id)
 );
 
--- Endereço (apenas 1 endereço por pessoa, se mudar, atualiza)
-CREATE TABLE endereco_pessoa (
-    id SERIAL PRIMARY KEY,
-    pessoa_id INT NOT NULL UNIQUE,
-    logradouro VARCHAR(100) NOT NULL,
-    numero VARCHAR(5) NOT NULL,
-    complemento VARCHAR(50),
-    bairro VARCHAR(100) NOT NULL,
-    cidade_id INT NOT NULL,
-    cep CHAR(8) NOT NULL CHECK (char_length(cep) = 8),
-    CONSTRAINT fk_endereco_pessoa_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id),
-    CONSTRAINT fk_endereco_pessoa_cidade FOREIGN KEY (cidade_id) REFERENCES cidade(id)
-);
 
 -- Telefones da pessoa (podem ter vários, tipo opcional)
 CREATE TABLE telefone_pessoa (
@@ -59,20 +59,9 @@ CREATE TABLE clinica (
     cnpj CHAR(14) NOT NULL UNIQUE CHECK (char_length(cnpj) = 14),
     razao_social VARCHAR(100) NOT NULL,
     nome_fantasia VARCHAR(100) NOT NULL,
-    ativo BOOLEAN DEFAULT TRUE
-);
-
-CREATE TABLE endereco_clinica (
-    id SERIAL PRIMARY KEY,
-    clinica_id INT NOT NULL UNIQUE,
-    logradouro VARCHAR(100) NOT NULL,
-    numero VARCHAR(5) NOT NULL,
-    complemento VARCHAR(50),
-    bairro VARCHAR(100) NOT NULL,
-    cidade_id INT NOT NULL,
-    cep CHAR(8) NOT NULL CHECK (char_length(cep) = 8),
-    CONSTRAINT fk_endereco_clinica_clinica FOREIGN KEY (clinica_id) REFERENCES clinica(id),
-    CONSTRAINT fk_endereco_clinica_cidade FOREIGN KEY (cidade_id) REFERENCES cidade(id)
+    ativo BOOLEAN DEFAULT TRUE,
+    endereco_id INT,
+    CONSTRAINT fk_clinica_endereco FOREIGN KEY (endereco_id) REFERENCES endereco(id)
 );
 
 CREATE TABLE telefone_clinica (
