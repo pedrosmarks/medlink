@@ -86,6 +86,8 @@ CREATE TABLE paciente (
     CONSTRAINT fk_paciente_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 );
 
+-- Tabela Prontuário refeita
+
 CREATE TABLE prontuario (
     id SERIAL PRIMARY KEY,
     paciente_id INT NOT NULL UNIQUE,
@@ -93,22 +95,17 @@ CREATE TABLE prontuario (
     doador_orgao BOOLEAN NOT NULL,
     diagnostico VARCHAR(500),
     historico_familiar VARCHAR(100),
+    
+    -- Campo para substituir as tabelas de alergia, vacina, medicamento, cirurgia...
+    registro_tipo VARCHAR(30) CHECK (registro_tipo IN ('ALERGIA', 'VACINA', 'MEDICAMENTO', 'CIRURGIA')),
+    registro_descricao TEXT,
+    
     CONSTRAINT fk_prontuario_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
 );
 
-CREATE TABLE alergia (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    descricao_alergia VARCHAR(500) NOT NULL,
-    CONSTRAINT fk_alergia_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
+-- Tabela de alergia removida...
 
-CREATE TABLE vacina (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    descricao_vacina VARCHAR(500) NOT NULL,
-    CONSTRAINT fk_vacina_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
+-- Tabela de vacina removida...
 
 -- Tabela Procedimento não existe mais
 
@@ -119,12 +116,7 @@ CREATE TABLE historico_cirurgico (
     CONSTRAINT fk_historico_cirurgico_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
-CREATE TABLE medicamento_continuo (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    descricao_medicamento VARCHAR(500) NOT NULL,
-    CONSTRAINT fk_medicamento_diario_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
+-- Tabela medicamento continuo nao existe mais...
 
 CREATE TABLE consulta (
     id SERIAL PRIMARY KEY,
