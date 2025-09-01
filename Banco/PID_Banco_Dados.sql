@@ -121,12 +121,7 @@ CREATE TABLE vacina (
     CONSTRAINT fk_vacina_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
-CREATE TABLE procedimento (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    descricao_procedimento VARCHAR(500) NOT NULL,
-    CONSTRAINT fk_procedimento_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
+-- Tabela Procedimento não existe mais
 
 CREATE TABLE historico_cirurgico (
     id SERIAL PRIMARY KEY,
@@ -150,14 +145,7 @@ CREATE TABLE consulta (
     CONSTRAINT fk_consulta_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
-CREATE TABLE resultado_consulta (
-    id SERIAL PRIMARY KEY,
-    prontuario_id INT NOT NULL,
-    exame_solicitado BOOLEAN NOT NULL,
-    nome_exame VARCHAR(100),
-    receita VARCHAR(1000),
-    CONSTRAINT fk_resultado_consulta_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
-);
+-- Tabela Resultado Consulta não existe mais...
 
 -- =============================
 -- MÉDICOS E ESPECIALIDADES
