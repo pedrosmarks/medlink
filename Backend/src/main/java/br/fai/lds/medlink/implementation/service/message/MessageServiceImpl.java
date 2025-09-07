@@ -1,25 +1,32 @@
 package br.fai.lds.medlink.implementation.service.message;
 
 import br.fai.lds.medlink.domain.Mensagem;
-import br.fai.lds.medlink.implementation.dao.MensagesFakeDao;
 import br.fai.lds.medlink.port.service.message.MessageService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class MessageServiceImpl implements MessageService {
+    @org.springframework.beans.factory.annotation.Autowired
+    private javax.sql.DataSource dataSource;
 
-    private final MensagesFakeDao fakeDao = new MensagesFakeDao();
+    // Lista temporária em memória até implementar o DAO do banco
+    private final List<Mensagem> messages = new ArrayList<>();
 
     public List<Mensagem> findAll() {
-        return fakeDao.listarTodas();
+        return new ArrayList<>(messages);
     }
 
     public void sendMessage(Mensagem message) {
+        // Validação: só permite se médico e paciente estão autorizados
+        if (!isAuthorized(message.getRemetenteId(), message.getRemetenteTipo(), message.getDestinatarioId(), message.getDestinatarioTipo())) {
+            throw new RuntimeException("Médico e paciente não estão autorizados para troca de mensagens.");
+        }
         // Gera ID único se não estiver definido
         if (message.getId() == null || message.getId().isEmpty()) {
             message.setId(UUID.randomUUID().toString().substring(0, 8));
@@ -42,7 +49,8 @@ public class MessageServiceImpl implements MessageService {
             message.setDestinatarioNome(buscarNomeMedicoPorId(message.getDestinatarioId()));
         }
         
-        fakeDao.adicionarMensagem(message);
+        // Adiciona a mensagem à lista
+        messages.add(message);
     }
 
     // Busca simples pelo nome do médico (mock)
@@ -53,8 +61,40 @@ public class MessageServiceImpl implements MessageService {
         return idMedico;
     }
 
+    private boolean isAuthorized(String remetenteId, String remetenteTipo, String destinatarioId, String destinatarioTipo) {
+        try {
+            // Só valida se for médico <-> paciente
+            String medicoId = null;
+            String pacienteId = null;
+            if ("medico".equals(remetenteTipo) && "paciente".equals(destinatarioTipo)) {
+                medicoId = remetenteId;
+                pacienteId = destinatarioId;
+            } else if ("paciente".equals(remetenteTipo) && "medico".equals(destinatarioTipo)) {
+                medicoId = destinatarioId;
+                pacienteId = remetenteId;
+            } else {
+                // Não é relação médico-paciente
+                return false;
+            }
+            // Consulta no banco
+            try (java.sql.Connection conn = dataSource.getConnection();
+                 java.sql.PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT 1 FROM solicitacao_acesso_prontuario WHERE medico_id = ? AND paciente_id = ? AND status = 'ACEITA'::status_solicitacao")) {
+                stmt.setInt(1, Integer.parseInt(medicoId));
+                stmt.setInt(2, Integer.parseInt(pacienteId));
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    return rs.next();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao validar autorização médico-paciente: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Mensagem markAsRead(String id) {
-        for (Mensagem message : fakeDao.listarTodas()) {
+        for (Mensagem message : messages) {
             if (message.getId().equals(id)) {
                 message.setLida(true);
                 return message;
@@ -64,7 +104,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     public List<Mensagem> findConversationsByUser(String senderId, String senderType) {
-        return fakeDao.listarTodas().stream()
+        return messages.stream()
                 .filter(message -> message.getRemetenteId().equals(senderId) && message.getRemetenteTipo().equals(senderType))
                 .toList();
     }

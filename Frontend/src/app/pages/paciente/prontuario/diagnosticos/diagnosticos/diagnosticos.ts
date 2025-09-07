@@ -25,9 +25,11 @@ export class Diagnosticos implements OnInit {
   }
 
   carregarDiagnosticos(): void {
-    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/diagnosticos`)
+    console.log('Carregando diagnósticos para paciente ID:', this.pacienteId);
+    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`)
       .subscribe({
         next: (response) => {
+          console.log('Diagnósticos carregados:', response);
           this.diagnosticos = response.data || [];
           this.carregando = false;
         },

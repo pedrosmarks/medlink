@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/patients")
 @Slf4j
 public class PatientController {
+    // Logger já gerenciado pelo @Slf4j
 
     @Autowired
     private PatientService patientService;
@@ -368,17 +369,7 @@ public class PatientController {
             @PathVariable int patientId, 
             @RequestBody RequisicaoAcessoDto request) {
         try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            RequisicaoAcesso newRequest = new RequisicaoAcesso(request.getMedicoId(), "pendente");
-            patient.getRequisicoesAcesso().add(newRequest);
-            
-            patientService.update(patientId, patient);
-            
+            patientService.sendAccessRequest(patientId, request.getMedicoId());
             return ResponseEntity.ok(new ApiResponse<>("Requisição de acesso enviada com sucesso."));
         } catch (Exception e) {
             log.error("Erro ao enviar requisição de acesso para paciente ID {}: {}", patientId, e.getMessage(), e);
@@ -398,7 +389,7 @@ public class PatientController {
             }
             
             List<AccessRequestResponseDto> pendingRequests = patient.getRequisicoesAcesso().stream()
-                    .filter(req -> "pendente".equals(req.getStatus()))
+                        .filter(req -> "PENDENTE".equals(req.getStatus()))
                     .map(req -> {
                         Medic medic = medicService.findById(req.getMedicoId());
                         return new AccessRequestResponseDto(
@@ -424,22 +415,18 @@ public class PatientController {
             @PathVariable int medicId,
             @RequestParam String action) {
         try {
-            Patient patient = findPatientOrThrow(patientId);
-            RequisicaoAcesso request = findPendingRequestOrThrow(patient, medicId);
-            
-            updateRequestStatus(request, action);
-            
+            // Atualiza status da requisição
+            String newStatus = "approve".equals(action) ? "ACEITA" : "RECUSADA";
+            patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
+
+            // Se for aprovação, vincula o médico ao paciente
             if ("approve".equals(action)) {
+                Patient patient = findPatientOrThrow(patientId);
                 authorizeSpecialist(patient, medicId, patientId);
+                patientService.update(patientId, patient);
             }
-            
-            patientService.update(patientId, patient);
             String message = getSuccessMessage(action);
-            
             return ResponseEntity.ok(new ApiResponse<>(message));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(e.getMessage()));
         } catch (Exception e) {
             log.error("Erro ao atualizar requisição de acesso: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -456,28 +443,28 @@ public class PatientController {
     }
 
     private RequisicaoAcesso findPendingRequestOrThrow(Patient patient, int medicId) {
-        return patient.getRequisicoesAcesso().stream()
-                .filter(req -> req.getMedicoId() == medicId && "pendente".equals(req.getStatus()))
+    return patient.getRequisicoesAcesso().stream()
+        .filter(req -> req.getMedicoId() == medicId && "PENDENTE".equals(req.getStatus()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Requisição não encontrada."));
     }
 
     private void updateRequestStatus(RequisicaoAcesso request, String action) {
-        String newStatus = "approve".equals(action) ? "aprovado" : "rejeitado";
-        request.setStatus(newStatus);
+    String newStatus = "approve".equals(action) ? "ACEITA" : "RECUSADA";
+    request.setStatus(newStatus);
     }
 
     private void authorizeSpecialist(Patient patient, int medicId, int patientId) {
         if (patient.getEspecialistasAutorizados() == null) {
             patient.setEspecialistasAutorizados(new ArrayList<>());
         }
-        
         boolean alreadyAuthorized = patient.getEspecialistasAutorizados().stream()
                 .anyMatch(esp -> esp.getMedicoId().intValue() == medicId);
-        
         if (!alreadyAuthorized) {
             patient.getEspecialistasAutorizados().add(new EspecialistaAutorizado((long) medicId));
             log.info("Médico {} autorizado para paciente {}", medicId, patientId);
+            // Persistir vínculo no banco via service
+            patientService.authorizeSpecialist(patientId, medicId);
         }
     }
 
@@ -539,59 +526,22 @@ public class PatientController {
             if (patient == null) {
                 return ResponseEntity.ok("Paciente não encontrado");
             }
-            
             StringBuilder debug = new StringBuilder();
             debug.append("Paciente: ").append(patient.getName()).append("\n");
             debug.append("ID: ").append(patient.getId()).append("\n");
             debug.append("MedicId: ").append(patient.getMedicId()).append("\n");
             debug.append("Especialistas autorizados: ");
-            
             if (patient.getEspecialistasAutorizados() != null) {
                 debug.append(patient.getEspecialistasAutorizados().size()).append("\n");
                 for (EspecialistaAutorizado esp : patient.getEspecialistasAutorizados()) {
                     debug.append("  - Médico ID: ").append(esp.getMedicoId()).append("\n");
                 }
-            } else {
-                debug.append("null\n");
             }
-            
             return ResponseEntity.ok(debug.toString());
         } catch (Exception e) {
-            return ResponseEntity.ok("Erro: " + e.getMessage());
-        }
-    }
-
-    // Get authorized doctors for patient
-    @GetMapping("/{patientId}/authorized-doctors")
-    public ResponseEntity<ApiResponse<List<AuthorizedDoctorDto>>> getAuthorizedDoctors(@PathVariable int patientId) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            List<AuthorizedDoctorDto> authorizedDoctors = new ArrayList<>();
-            
-            if (patient.getEspecialistasAutorizados() != null) {
-                for (EspecialistaAutorizado especialista : patient.getEspecialistasAutorizados()) {
-                    Medic medic = medicService.findById(especialista.getMedicoId().intValue());
-                    if (medic != null) {
-                        authorizedDoctors.add(new AuthorizedDoctorDto(
-                            medic.getId(),
-                            medic.getName(),
-                            medic.getSpecialty(),
-                            medic.getCrm()
-                        ));
-                    }
-                }
-            }
-            
-            return ResponseEntity.ok(new ApiResponse<>("Médicos autorizados recuperados com sucesso.", authorizedDoctors));
-        } catch (Exception e) {
-            log.error("Erro ao buscar médicos autorizados do paciente ID {}: {}", patientId, e.getMessage(), e);
+            log.error("Erro ao buscar dados do paciente ID {}: {}", patientId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
+                    .body("Erro interno do servidor.");
         }
     }
 
@@ -640,6 +590,40 @@ public class PatientController {
             return ResponseEntity.ok(new ApiResponse<>(successMessage, data));
         } catch (Exception e) {
             log.error("Erro ao buscar dados médicos do paciente ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
+    // Endpoint para listar médicos autorizados de um paciente
+    @GetMapping("/{id}/authorized-doctors")
+    public ResponseEntity<ApiResponse<List<AuthorizedDoctorDto>>> getAuthorizedDoctors(@PathVariable int id) {
+        try {
+            if (id <= 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponse<>("ID deve ser maior que zero."));
+            }
+            Patient patient = patientService.findById(id);
+            if (patient == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>("Paciente não encontrado."));
+            }
+            // Busca médicos autorizados (status ACEITA)
+            List<AuthorizedDoctorDto> authorizedDoctors = new ArrayList<>();
+            List<RequisicaoAcesso> requisicoes = patient.getRequisicoesAcesso();
+            if (requisicoes != null) {
+                for (RequisicaoAcesso req : requisicoes) {
+                    if ("ACEITA".equals(req.getStatus())) {
+                        Medic medic = medicService.findById(req.getMedicoId());
+                        if (medic != null) {
+                            authorizedDoctors.add(new AuthorizedDoctorDto(medic.getId(), medic.getName(), medic.getSpecialty(), medic.getCrm()));
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.ok(new ApiResponse<>("Médicos autorizados recuperados com sucesso.", authorizedDoctors));
+        } catch (Exception e) {
+            log.error("Erro ao buscar médicos autorizados do paciente ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Erro interno do servidor."));
         }

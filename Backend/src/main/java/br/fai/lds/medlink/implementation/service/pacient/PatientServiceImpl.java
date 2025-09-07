@@ -13,6 +13,14 @@ import java.util.List;
 @Slf4j
 @Service
 public class PatientServiceImpl implements PatientService {
+    @Override
+    public void updateAccessRequestStatus(int patientId, int medicoId, String status) {
+        patientDao.updateAccessRequestStatus(patientId, medicoId, status);
+    }
+    @Override
+    public void authorizeSpecialist(int patientId, int medicoId) {
+        patientDao.authorizeSpecialist(patientId, medicoId);
+    }
 
     @Autowired
     private PatientDao patientDao;
@@ -130,12 +138,17 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public boolean delete(int id) {
-        return false;
+    throw new UnsupportedOperationException("Delete não implementado");
     }
 
     @Override
     public List<PatientResponseDto> getPatientsByMedicId(int medicId) {
-        return List.of();
+        List<Patient> patients = patientDao.findByMedicId(medicId);
+        List<PatientResponseDto> dtos = new java.util.ArrayList<>();
+        for (Patient p : patients) {
+            dtos.add(PatientResponseDto.fromEntity(p));
+        }
+        return dtos;
     }
 
     @Override
@@ -173,5 +186,10 @@ public class PatientServiceImpl implements PatientService {
             log.error("Erro ao atualizar paciente ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Erro ao atualizar paciente", e);
         }
+    }
+
+    @Override
+    public void sendAccessRequest(int patientId, int medicoId) {
+        patientDao.createAccessRequest(patientId, medicoId);
     }
 }

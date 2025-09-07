@@ -25,9 +25,11 @@ export class Vacinas implements OnInit {
   }
 
   carregarVacinas(): void {
-    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/vacinas`)
+    console.log('Carregando vacinas para paciente ID:', this.pacienteId);
+    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/vaccines`)
       .subscribe({
         next: (response) => {
+          console.log('Vacinas carregadas:', response);
           this.vacinas = response.data || [];
           this.carregando = false;
         },

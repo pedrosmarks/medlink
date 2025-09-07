@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MensagemService } from '../../../mensagem.service';
+import { MedicosService } from '../../../services/medicos/medicos.service';
 
 export interface Medico {
   id: number;
@@ -48,7 +49,7 @@ export class Mensagem implements OnInit, AfterViewChecked {
   loading = false;
   shouldScrollToBottom = false;
 
-  constructor(private mensagemService: MensagemService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private mensagemService: MensagemService, private http: HttpClient, private cdr: ChangeDetectorRef, private medicosService: MedicosService) {}
 
   ngOnInit() {
     // Busca id do paciente logado do localStorage
@@ -62,9 +63,8 @@ export class Mensagem implements OnInit, AfterViewChecked {
     this.loading = true;
     
     try {
-      // 1. Buscar médicos autorizados para este paciente
-      const medicosResponse = await this.http.get<any>(`http://localhost:8080/api/patients/${this.senderId}/authorized-doctors`).toPromise();
-      const medicosAutorizados: Medico[] = medicosResponse.data || medicosResponse || [];
+  // 1. Buscar médicos autorizados para este paciente (objetos completos) via serviço
+  const medicosAutorizados: Medico[] = (await this.medicosService.getMedicosAutorizadosCompletos(this.senderId).toPromise().catch(() => [])) || [];
 
       // 2. Buscar todas as mensagens
       const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();

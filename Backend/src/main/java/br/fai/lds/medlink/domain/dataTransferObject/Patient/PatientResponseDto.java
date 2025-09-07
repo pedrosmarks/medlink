@@ -24,6 +24,13 @@ public class PatientResponseDto {
     private Integer medicId;
     private boolean active;
 
+    public PatientResponseDto(int id, String name, String email) {
+    }
+
+    public PatientResponseDto() {
+
+    }
+
     public static PatientResponseDto fromEntity(Patient entity) {
         PatientResponseDto dto = new PatientResponseDto();
         dto.setId(entity.getId());

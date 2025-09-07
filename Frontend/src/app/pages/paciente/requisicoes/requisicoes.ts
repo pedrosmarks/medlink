@@ -43,7 +43,12 @@ export class Requisicoes implements OnInit, OnDestroy {
     this.accessRequestsService.getPendingRequests(this.pacienteId).subscribe({
       next: (response) => {
         console.log('✅ Requisições carregadas:', response);
-        this.requisicoes = response.data || [];
+        this.requisicoes = (response.data || []).map(req => ({
+          ...req,
+          status: (['pendente', 'aprovado', 'rejeitado'].includes(req.status?.toLowerCase())
+            ? req.status.toLowerCase()
+            : 'pendente') as 'pendente' | 'aprovado' | 'rejeitado'
+        }));
         console.log('📊 Total de requisições:', this.requisicoes.length);
         this.loading = false;
       },
@@ -80,16 +85,17 @@ export class Requisicoes implements OnInit, OnDestroy {
       endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=approve`
     });
     
+    // Remove imediatamente da lista local para melhor UX
+    this.requisicoes = this.requisicoes.filter(req => req.medicoId !== request.medicoId);
+    
     this.accessRequestsService.approveRequest(this.pacienteId, request.medicoId).subscribe({
       next: (response) => {
         console.log('✅ Requisição aprovada:', response);
         alert(response.message + '\n\nO médico agora aparece na sua lista de médicos!');
+        // Recarrega para garantir sincronização com o backend
         this.carregarRequisicoes();
-        
-        // Forçar atualização da lista de médicos
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('medico-aprovado'));
-        }, 500);
+        // Notifica outros componentes que um médico foi aprovado
+        window.dispatchEvent(new CustomEvent('medico-aprovado'));
       },
       error: (error) => {
         console.error('❌ Erro ao aprovar:', {
@@ -98,6 +104,8 @@ export class Requisicoes implements OnInit, OnDestroy {
           error: error.error,
           url: error.url
         });
+        // Em caso de erro, recarrega a lista para voltar ao estado original
+        this.carregarRequisicoes();
         alert(`Erro ao aprovar: ${error.status} - ${error.statusText}`);
       }
     });
@@ -110,10 +118,14 @@ export class Requisicoes implements OnInit, OnDestroy {
       endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=reject`
     });
     
+    // Remove imediatamente da lista local para melhor UX
+    this.requisicoes = this.requisicoes.filter(req => req.medicoId !== request.medicoId);
+    
     this.accessRequestsService.rejectRequest(this.pacienteId, request.medicoId).subscribe({
       next: (response) => {
         console.log('❌ Requisição rejeitada:', response);
         alert(response.message);
+        // Recarrega para garantir sincronização com o backend
         this.carregarRequisicoes();
       },
       error: (error) => {
@@ -123,6 +135,8 @@ export class Requisicoes implements OnInit, OnDestroy {
           error: error.error,
           url: error.url
         });
+        // Em caso de erro, recarrega a lista para voltar ao estado original
+        this.carregarRequisicoes();
         alert(`Erro ao rejeitar: ${error.status} - ${error.statusText}`);
       }
     });

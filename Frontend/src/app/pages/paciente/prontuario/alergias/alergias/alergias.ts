@@ -33,9 +33,11 @@ carregando: any;
   }
 
   carregarAlergias(): void {
-    this.http.get<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}/alergias`)
+    console.log('Carregando alergias para paciente ID:', this.pacienteId);
+    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/allergies`)
       .subscribe({
         next: (response) => {
+          console.log('Alergias carregadas:', response);
           this.alergias = response.data || [];
           this.carregando = false;
         },
@@ -56,7 +58,7 @@ carregando: any;
       const alergiasAtualizadas = [...(paciente.alergias || []), nova];
       const pacienteAtualizado = { ...paciente, alergias: alergiasAtualizadas };
 
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+      this.http.put<any>(`http://localhost:8080/api/patients/${this.pacienteId}`, pacienteAtualizado)
         .subscribe(() => {
           this.alergias = alergiasAtualizadas;
           this.novaAlergia = '';
@@ -70,7 +72,7 @@ carregando: any;
       novasAlergias.splice(index, 1);
       const pacienteAtualizado = { ...paciente, alergias: novasAlergias };
 
-      this.http.put<any>(`http://localhost:8080/api/pacientes/${this.pacienteId}`, pacienteAtualizado)
+      this.http.put<any>(`http://localhost:8080/api/patients/${this.pacienteId}`, pacienteAtualizado)
         .subscribe(() => {
           this.alergias = novasAlergias;
         });

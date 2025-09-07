@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MedicosService } from '../../../services/medicos/medicos.service';
 
 @Component({
   selector: 'app-paciente-dashboard',
@@ -18,7 +19,7 @@ export class Dashboard implements OnInit {
   consultasRealizadas: number = 0;
   loading: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private medicosService: MedicosService) {}
 
   async ngOnInit(): Promise<void> {
     // Busca dados do paciente do localStorage
@@ -33,9 +34,8 @@ export class Dashboard implements OnInit {
     
     try {
       // Buscar médicos autorizados
-      const medicosResponse = await this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/authorized-doctors`).toPromise();
-      const medicos = medicosResponse.data || medicosResponse || [];
-      this.medicosAutorizados = medicos.length;
+  const medicos = await this.medicosService.getMedicosAutorizadosCompletos(this.pacienteId).toPromise().catch(() => []);
+  this.medicosAutorizados = Array.isArray(medicos) ? medicos.length : 0;
 
       // Buscar mensagens não lidas
       const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();
