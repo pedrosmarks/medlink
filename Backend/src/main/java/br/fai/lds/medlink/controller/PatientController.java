@@ -23,10 +23,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import br.fai.lds.medlink.util.LogSanitizer;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controlador para gerenciamento de pacientes e seus dados médicos.
  */
+@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("api/patients")
@@ -300,13 +302,13 @@ public class PatientController extends BaseController {
     @GetMapping("/{id}/authorized-doctors")
     public ResponseEntity<ApiResponse<List<AuthorizedDoctorDto>>> getAuthorizedDoctors(@PathVariable int id) {
         return executePatientOperation(id, patient -> {
-            List<RequisicaoAcesso> requisicoes = patient.getRequisicoesAcesso();
-            if (requisicoes == null || requisicoes.isEmpty()) {
+            List<RequisicaoAcesso> accessRequests = patient.getRequisicoesAcesso();
+            if (accessRequests == null || accessRequests.isEmpty()) {
                 return success("Médicos autorizados recuperados com sucesso.", new ArrayList<>());
             }
             
             // Collect all authorized medic IDs to avoid N+1 queries
-            List<Integer> authorizedMedicIds = requisicoes.stream()
+            List<Integer> authorizedMedicIds = accessRequests.stream()
                     .filter(req -> "ACEITA".equals(req.getStatus()))
                     .map(RequisicaoAcesso::getMedicoId)
                     .distinct()
@@ -326,50 +328,7 @@ public class PatientController extends BaseController {
         });
     }
 
-    // DEBUG endpoints
-    @GetMapping("/{patientId}/debug")
-    public ResponseEntity<String> debugPatient(@PathVariable int patientId) {
-        Patient patient = patientService.findById(patientId);
-        if (patient == null) {
-            return ResponseEntity.ok("Paciente não encontrado");
-        }
-        StringBuilder debug = new StringBuilder();
-        debug.append("Paciente: ").append(patient.getName()).append("\n");
-        debug.append("ID: ").append(patient.getId()).append("\n");
-        debug.append("MedicId: ").append(patient.getMedicId()).append("\n");
-        debug.append("Especialistas autorizados: ");
-        if (patient.getEspecialistasAutorizados() != null) {
-            debug.append(patient.getEspecialistasAutorizados().size()).append("\n");
-            for (EspecialistaAutorizado esp : patient.getEspecialistasAutorizados()) {
-                debug.append("  - Médico ID: ").append(esp.getMedicoId()).append("\n");
-            }
-        }
-        return ResponseEntity.ok(debug.toString());
-    }
 
-    @GetMapping("/debug/all")
-    public ResponseEntity<String> debugAllPatients() {
-        List<Patient> patients = patientService.findAll();
-        StringBuilder debug = new StringBuilder();
-        debug.append("Total de pacientes: ").append(patients.size()).append("\n\n");
-        
-        for (Patient p : patients) {
-            debug.append("Paciente: ").append(p.getName()).append(" (ID: ").append(p.getId()).append(")\n");
-            debug.append("  MedicId: ").append(p.getMedicId()).append("\n");
-            debug.append("  Especialistas: ");
-            if (p.getEspecialistasAutorizados() != null) {
-                debug.append(p.getEspecialistasAutorizados().size()).append("\n");
-                for (EspecialistaAutorizado esp : p.getEspecialistasAutorizados()) {
-                    debug.append("    - Médico ID: ").append(esp.getMedicoId()).append("\n");
-                }
-            } else {
-                debug.append("null\n");
-            }
-            debug.append("\n");
-        }
-        
-        return ResponseEntity.ok(debug.toString());
-    }
 
     // Helper methods
     private Patient findPatientOrThrow(int patientId) {
