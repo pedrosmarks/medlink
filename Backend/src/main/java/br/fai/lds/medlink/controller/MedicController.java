@@ -122,7 +122,8 @@ public class MedicController extends BaseController {
      * @return lista de pacientes do médico
      */
     @GetMapping("/{id}/patients")
-    @CrossOrigin
+    @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
+                methods = {RequestMethod.GET})
     public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getPatientsByMedic(@PathVariable("id") int medicId) {
         validateId(medicId);
         

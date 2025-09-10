@@ -14,7 +14,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/messages")
-@CrossOrigin
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
+           methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH})
 public class MessageController extends BaseController {
 
     private final MessageService messageService;

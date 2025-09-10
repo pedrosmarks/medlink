@@ -30,7 +30,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
+           methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("api/patients")
 public class PatientController extends BaseController {
 
