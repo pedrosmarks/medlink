@@ -33,24 +33,21 @@ public class AppConfiguration {
 
     @Bean
     public PatientDao getPatientDao(final Connection connection) {
-        // return new PatientFakeDaoImpl(); // DAO Fake (comentado)
-        return new PatientPostgresDaoImpl(connection); // DAO PostgreSQL
+        return new PatientPostgresDaoImpl(connection);
     }
 
     @Bean
     public MedicDao getMedicDao(final Connection connection) {
-        // return new MedicFakeDaoImpl(); // DAO Fake (comentado)
-        return new MedicPostgresDaoImpl(connection); // DAO PostgreSQL
+        return new MedicPostgresDaoImpl(connection);
     }
 
     @Bean
     public MedicalRecordDao getMedicalRecordDao(final Connection connection) {
-        // return new MedicalRecordFakeDaoImpl(); // DAO Fake (comentado)
-        return new MedicalRecordPostgresDaoImpl(connection); // DAO PostgreSQL
+        return new MedicalRecordPostgresDaoImpl(connection);
     }
 
     @Bean
     public MessageDao getMessageDao(final Connection connection) {
-        return new MessagePostgresDaoImpl(connection); // DAO PostgreSQL
+        return new MessagePostgresDaoImpl(connection);
     }
 }
