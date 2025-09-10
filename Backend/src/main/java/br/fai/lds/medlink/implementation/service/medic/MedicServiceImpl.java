@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import br.fai.lds.medlink.util.LogSanitizer;
 
 @Slf4j
 @Service
@@ -27,10 +31,10 @@ public class MedicServiceImpl implements MedicService {
         }
         try {
             medicDao.create(entity);
-            log.info("Médico criado com sucesso: {}", entity.getName());
+            log.info("Médico criado com sucesso: {}", LogSanitizer.sanitizeAndLimit(entity.getName(), 50));
             return entity.getId();
         } catch (Exception e) {
-            log.error("Erro ao criar médico: {}", e.getMessage(), e);
+            log.error("Erro ao criar médico: {}", LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao criar médico", e);
         }
     }
@@ -43,15 +47,15 @@ public class MedicServiceImpl implements MedicService {
         try {
             Medic medic = medicDao.readById(id);
             if (medic == null) {
-                log.warn("Tentativa de deletar médico inexistente com ID: {}", id);
+                log.warn("Tentativa de deletar médico inexistente com ID: {}", LogSanitizer.sanitizeId(id));
                 return false;
             }
             medic.setActive(false);
             medicDao.updateInformation(id, medic);
-            log.info("Médico desativado com sucesso: {} (ID: {})", medic.getName(), id);
+            log.info("Médico desativado com sucesso: {} (ID: {})", LogSanitizer.sanitizeAndLimit(medic.getName(), 50), LogSanitizer.sanitizeId(id));
             return true;
         } catch (Exception e) {
-            log.error("Erro ao deletar médico ID {}: {}", id, e.getMessage(), e);
+            log.error("Erro ao deletar médico ID {}: {}", LogSanitizer.sanitizeId(id), LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao deletar médico", e);
         }
     }
@@ -64,11 +68,11 @@ public class MedicServiceImpl implements MedicService {
         try {
             Medic medic = medicDao.readById(id);
             if (medic == null) {
-                log.warn("Médico não encontrado com ID: {}", id);
+                log.warn("Médico não encontrado com ID: {}", LogSanitizer.sanitizeId(id));
             }
             return medic;
         } catch (Exception e) {
-            log.error("Erro ao buscar médico ID {}: {}", id, e.getMessage(), e);
+            log.error("Erro ao buscar médico ID {}: {}", LogSanitizer.sanitizeId(id), LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao buscar médico", e);
         }
     }
@@ -80,7 +84,7 @@ public class MedicServiceImpl implements MedicService {
             log.debug("Encontrados {} médicos", medics.size());
             return medics;
         } catch (Exception e) {
-            log.error("Erro ao buscar todos os médicos: {}", e.getMessage(), e);
+            log.error("Erro ao buscar todos os médicos: {}", LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao buscar médicos", e);
         }
     }
@@ -111,15 +115,39 @@ public class MedicServiceImpl implements MedicService {
             existingMedic.setActive(entity.isActive());
 
             medicDao.updateInformation(id, existingMedic);
-            log.info("Médico atualizado com sucesso: {} (ID: {})", existingMedic.getName(), id);
+            log.info("Médico atualizado com sucesso: {} (ID: {})", LogSanitizer.sanitizeAndLimit(existingMedic.getName(), 50), LogSanitizer.sanitizeId(id));
             
             return existingMedic;
         } catch (IllegalArgumentException e) {
-            log.warn("Erro de validação ao atualizar médico ID {}: {}", id, e.getMessage());
+            log.warn("Erro de validação ao atualizar médico ID {}: {}", LogSanitizer.sanitizeId(id), LogSanitizer.sanitize(e.getMessage()));
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao atualizar médico ID {}: {}", id, e.getMessage(), e);
+            log.error("Erro ao atualizar médico ID {}: {}", LogSanitizer.sanitizeId(id), LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao atualizar médico", e);
+        }
+    }
+
+    @Override
+    public Map<Integer, Medic> findByIds(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return new HashMap<>();
+        }
+        
+        try {
+            Map<Integer, Medic> medicsMap = new HashMap<>();
+            for (Integer id : ids) {
+                if (id != null && id > 0) {
+                    Medic medic = medicDao.readById(id);
+                    if (medic != null) {
+                        medicsMap.put(id, medic);
+                    }
+                }
+            }
+            log.debug("Encontrados {} médicos de {} IDs solicitados", medicsMap.size(), ids.size());
+            return medicsMap;
+        } catch (Exception e) {
+            log.error("Erro ao buscar médicos por IDs {}: {}", ids.toString(), LogSanitizer.sanitize(e.getMessage()), e);
+            throw new RuntimeException("Erro ao buscar médicos por IDs", e);
         }
     }
 }
