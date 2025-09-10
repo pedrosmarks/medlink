@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/medical-records")
-@CrossOrigin
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
+           methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class MedicalRecordController extends BaseController {
 
     private final MedicalRecordService medicalRecordService;
@@ -123,12 +124,10 @@ public class MedicalRecordController extends BaseController {
             @PathVariable int medicId,
             @PathVariable int patientId) {
         if (!isValidId(medicId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("ID do médico deve ser maior que zero."));
+            return badRequestInvalidId();
         }
         if (!isValidId(patientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("ID do paciente deve ser maior que zero."));
+            return badRequestInvalidId();
         }
 
         boolean hasPermission = true; // lógica fake

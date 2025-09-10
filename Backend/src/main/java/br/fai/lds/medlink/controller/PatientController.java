@@ -245,7 +245,7 @@ public class PatientController extends BaseController {
             @PathVariable int patientId, 
             @Valid @RequestBody RequisicaoAcessoDto request) {
         patientService.sendAccessRequest(patientId, request.getMedicoId());
-        return ResponseEntity.ok(new ApiResponse<>("Requisição de acesso enviada com sucesso."));
+        return success("Requisição de acesso enviada com sucesso.", null);
     }
 
     @GetMapping("/{patientId}/pending-requests")
@@ -297,7 +297,7 @@ public class PatientController extends BaseController {
             patientService.update(patientId, patient);
         }
         String message = getSuccessMessage(action);
-        return ResponseEntity.ok(new ApiResponse<>(message));
+        return success(message, null);
     }
 
     @GetMapping("/{id}/authorized-doctors")
@@ -377,7 +377,7 @@ public class PatientController extends BaseController {
         Patient patient = findPatientOrThrow(patientId);
         Patient updatedPatient = addOperation.apply(patient);
         patientService.update(patientId, updatedPatient);
-        return ResponseEntity.ok(new ApiResponse<>(itemType + " adicionada com sucesso."));
+        return success(itemType + " adicionada com sucesso.", null);
     }
 
     private ResponseEntity<ApiResponse<String>> removeMedicalItem(int patientId, int itemId, 
@@ -391,7 +391,7 @@ public class PatientController extends BaseController {
         }
         
         patientService.update(patientId, patient);
-        return ResponseEntity.ok(new ApiResponse<>(itemType + " removida com sucesso."));
+        return success(itemType + " removida com sucesso.", null);
     }
 
     private ResponseEntity<ApiResponse<String>> removeMedicalItemByName(int patientId, String itemName, 
@@ -405,7 +405,7 @@ public class PatientController extends BaseController {
         }
         
         patientService.update(patientId, patient);
-        return ResponseEntity.ok(new ApiResponse<>(itemType + " removido com sucesso."));
+        return success(itemType + " removido com sucesso.", null);
     }
 
     private <T> int generateNextId(java.util.List<T> items, java.util.function.ToIntFunction<T> idExtractor) {

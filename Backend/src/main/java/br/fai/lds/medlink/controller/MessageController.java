@@ -69,6 +69,6 @@ public class MessageController extends BaseController {
         Message message = messageService.markAsRead(id);
         return message != null ? 
             success("Mensagem marcada como lida.", message) : 
-            notFound("Mensagem não encontrada.");
+            notFound("Mensagem");
     }
 }
