@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-    //DTO usado quando o usuário solicita recuperação de senh.O identificador e o e-mail.
+    // DTO usado quando o usuário solicita recuperação de senha. O identificador é o e-mail.
 
     @Getter
     @Setter

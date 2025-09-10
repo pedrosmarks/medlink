@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-    // DTO usado para redefinir a senha e/ou ativar a conta,após o usuário informar o código de verificação.
+    // DTO usado para redefinir a senha e/ou ativar a conta, após o usuário informar o código de verificação.
 
     @Getter
     @Setter
