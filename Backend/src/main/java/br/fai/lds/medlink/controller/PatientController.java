@@ -112,22 +112,10 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addMedication(
             @PathVariable int patientId,
             @Valid @RequestBody Medication medicationDto) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
+        return addMedicalItem(patientId, "medicamento", (patient) -> {
             patient.getMedications().add(medicationDto);
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Medicamento adicionado com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao adicionar medicamento para paciente ID {}: {}", LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+            return patient;
+        });
     }
 
     // Delete medication from patient
@@ -135,29 +123,10 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteMedication(
             @PathVariable int patientId,
             @PathVariable String medicationName) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            boolean removed = patient.getMedications().removeIf(medication -> 
-                medication.getName() != null && medication.getName().equals(medicationName));
-            
-            if (!removed) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Medicamento não encontrado."));
-            }
-            
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Medicamento removido com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao remover medicamento {} do paciente ID {}: {}", LogSanitizer.sanitizeAndLimit(medicationName, 50), LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return removeMedicalItemByName(patientId, medicationName, "medicamento", patient -> 
+            patient.getMedications().removeIf(medication -> 
+                medication.getName() != null && medication.getName().equals(medicationName))
+        );
     }
 
     @GetMapping("/{id}/surgeries")
@@ -197,27 +166,12 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addDiagnosis(
             @PathVariable int patientId,
             @Valid @RequestBody DiagnosisCreateDto diagnosisDto) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            // Generate new ID for diagnosis using existing helper method
-            int newDiagnosisId = generateNextId(patient.getDiagnosticos(), Diagnosis::getId);
-            
-            Diagnosis newDiagnosis = new Diagnosis(newDiagnosisId, diagnosisDto.getDescription(), diagnosisDto.getDate());
+        return addMedicalItem(patientId, "diagnóstico", (patient) -> {
+            int newId = generateNextId(patient.getDiagnosticos(), Diagnosis::getId);
+            Diagnosis newDiagnosis = new Diagnosis(newId, diagnosisDto.getDescription(), diagnosisDto.getDate());
             patient.getDiagnosticos().add(newDiagnosis);
-            
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Diagnóstico adicionado com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao adicionar diagnóstico para paciente ID {}: {}", LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+            return patient;
+        });
     }
 
     // Delete diagnosis from patient
@@ -225,28 +179,9 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteDiagnosis(
             @PathVariable int patientId,
             @PathVariable int diagnosisId) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            boolean removed = patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId);
-            
-            if (!removed) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Diagnóstico não encontrado."));
-            }
-            
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Diagnóstico removido com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao remover diagnóstico ID {} do paciente ID {}: {}", LogSanitizer.sanitizeId(diagnosisId), LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return removeMedicalItem(patientId, diagnosisId, "diagnóstico", patient -> 
+            patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId)
+        );
     }
 
     @GetMapping("/{id}/allergies")
@@ -259,27 +194,12 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addAllergy(
             @PathVariable int patientId,
             @Valid @RequestBody Allergy allergyDto) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            // Generate new ID for allergy using existing helper method
-            int newAllergyId = generateNextId(patient.getAlergias(), Allergy::getId);
-            
-            allergyDto.setId(newAllergyId);
+        return addMedicalItem(patientId, "alergia", (patient) -> {
+            int newId = generateNextId(patient.getAlergias(), Allergy::getId);
+            allergyDto.setId(newId);
             patient.getAlergias().add(allergyDto);
-            
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Alergia adicionada com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao adicionar alergia para paciente ID {}: {}", LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+            return patient;
+        });
     }
 
     // Delete allergy from patient
@@ -287,28 +207,9 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteAllergy(
             @PathVariable int patientId,
             @PathVariable int allergyId) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
-            boolean removed = patient.getAlergias().removeIf(allergy -> allergy.getId() == allergyId);
-            
-            if (!removed) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Alergia não encontrada."));
-            }
-            
-            patientService.update(patientId, patient);
-            
-            return ResponseEntity.ok(new ApiResponse<>("Alergia removida com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao remover alergia ID {} do paciente ID {}: {}", LogSanitizer.sanitizeId(allergyId), LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        return removeMedicalItem(patientId, allergyId, "alergia", patient -> 
+            patient.getAlergias().removeIf(allergy -> allergy.getId() == allergyId)
+        );
     }
 
     // Endpoint para buscar pacientes por nome
@@ -331,26 +232,14 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> sendAccessRequest(
             @PathVariable int patientId, 
             @Valid @RequestBody RequisicaoAcessoDto request) {
-        try {
-            patientService.sendAccessRequest(patientId, request.getMedicoId());
-            return ResponseEntity.ok(new ApiResponse<>("Requisição de acesso enviada com sucesso."));
-        } catch (Exception e) {
-            log.error("Erro ao enviar requisição de acesso para paciente ID {}: {}", LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        patientService.sendAccessRequest(patientId, request.getMedicoId());
+        return success("Requisição de acesso enviada com sucesso.");
     }
 
     // Get pending access requests (for notifications)
     @GetMapping("/{patientId}/pending-requests")
     public ResponseEntity<ApiResponse<List<AccessRequestResponseDto>>> getPendingRequests(@PathVariable int patientId) {
-        try {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
+        return executePatientOperation(patientId, patient -> {
             // Filter pending requests once to avoid duplicate iterations
             List<RequisicaoAcesso> pendingRequestsList = patient.getRequisicoesAcesso().stream()
                     .filter(req -> "PENDENTE".equals(req.getStatus()))
@@ -377,12 +266,8 @@ public class PatientController extends BaseController {
                     })
                     .collect(Collectors.toList());
             
-            return ResponseEntity.ok(new ApiResponse<>("Requisições pendentes recuperadas.", pendingRequests));
-        } catch (Exception e) {
-            log.error("Erro ao buscar requisições pendentes do paciente ID {}: {}", LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+            return success("Requisições pendentes recuperadas.", pendingRequests);
+        });
     }
 
     @PutMapping("/{patientId}/access-request/{medicId}")
@@ -390,24 +275,18 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int medicId,
             @RequestParam String action) {
-        try {
-            // Atualiza status da requisição
-            String newStatus = "approve".equals(action) ? "ACEITA" : "RECUSADA";
-            patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
+        // Atualiza status da requisição
+        String newStatus = "approve".equals(action) ? "ACEITA" : "RECUSADA";
+        patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
 
-            // Se for aprovação, vincula o médico ao paciente
-            if ("approve".equals(action)) {
-                Patient patient = findPatientOrThrow(patientId);
-                authorizeSpecialist(patient, medicId, patientId);
-                patientService.update(patientId, patient);
-            }
-            String message = getSuccessMessage(action);
-            return ResponseEntity.ok(new ApiResponse<>(message));
-        } catch (Exception e) {
-            log.error("Erro ao atualizar requisição de acesso: {}", LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
+        // Se for aprovação, vincula o médico ao paciente
+        if ("approve".equals(action)) {
+            Patient patient = findPatientOrThrow(patientId);
+            authorizeSpecialist(patient, medicId, patientId);
+            patientService.update(patientId, patient);
         }
+        String message = getSuccessMessage(action);
+        return success(message);
     }
 
     private Patient findPatientOrThrow(int patientId) {
@@ -505,6 +384,29 @@ public class PatientController extends BaseController {
         }
     }
 
+    private ResponseEntity<ApiResponse<String>> removeMedicalItemByName(int patientId, String itemName, 
+            String itemType, java.util.function.Function<Patient, Boolean> removeOperation) {
+        try {
+            Patient patient = findPatientOrThrow(patientId);
+            boolean removed = removeOperation.apply(patient);
+            
+            if (!removed) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>(itemType + " não encontrado."));
+            }
+            
+            patientService.update(patientId, patient);
+            return ResponseEntity.ok(new ApiResponse<>(itemType + " removido com sucesso."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Erro ao remover {} '{}' do paciente ID {}: {}", LogSanitizer.sanitizeAndLimit(itemType, 20), LogSanitizer.sanitizeAndLimit(itemName, 50), LogSanitizer.sanitizeId(patientId), LogSanitizer.sanitize(e.getMessage()), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Erro interno do servidor."));
+        }
+    }
+
     private <T> int generateNextId(java.util.List<T> items, java.util.function.ToIntFunction<T> idExtractor) {
         return items.stream().mapToInt(idExtractor).max().orElse(0) + 1;
     }
@@ -576,20 +478,10 @@ public class PatientController extends BaseController {
     // Endpoint para listar médicos autorizados de um paciente
     @GetMapping("/{id}/authorized-doctors")
     public ResponseEntity<ApiResponse<List<AuthorizedDoctorDto>>> getAuthorizedDoctors(@PathVariable int id) {
-        try {
-            if (id <= 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse<>("ID deve ser maior que zero."));
-            }
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Paciente não encontrado."));
-            }
-            
+        return executePatientOperation(id, patient -> {
             List<RequisicaoAcesso> requisicoes = patient.getRequisicoesAcesso();
             if (requisicoes == null || requisicoes.isEmpty()) {
-                return ResponseEntity.ok(new ApiResponse<>("Médicos autorizados recuperados com sucesso.", new ArrayList<>()));
+                return success("Médicos autorizados recuperados com sucesso.", new ArrayList<>());
             }
             
             // Collect all authorized medic IDs to avoid N+1 queries
@@ -609,11 +501,7 @@ public class PatientController extends BaseController {
                     .map(medic -> new AuthorizedDoctorDto(medic.getId(), medic.getName(), medic.getSpecialty(), medic.getCrm()))
                     .collect(Collectors.toList());
             
-            return ResponseEntity.ok(new ApiResponse<>("Médicos autorizados recuperados com sucesso.", authorizedDoctors));
-        } catch (Exception e) {
-            log.error("Erro ao buscar médicos autorizados do paciente ID {}: {}", LogSanitizer.sanitizeId(id), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+            return success("Médicos autorizados recuperados com sucesso.", authorizedDoctors);
+        });
     }
 }
