@@ -26,63 +26,57 @@ public class AuthController extends BaseController {
     //Realiza o login do usuário (médico ou paciente).
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
-        return executeWithErrorHandling(() -> {
-            String email = loginDTO.getEmail();
-            String password = loginDTO.getPassword();
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
 
-            var medic = authenticationService.authenticateMedic(email, password);
-            if (medic != null) {
-                LoginResponseDTO response = new LoginResponseDTO(
-                        medic.getId(),
-                        medic.getName(),
-                        "MEDIC"
-                );
-                return success("Login realizado com sucesso.", response);
-            }
+        var medic = authenticationService.authenticateMedic(email, password);
+        if (medic != null) {
+            LoginResponseDTO response = new LoginResponseDTO(
+                    medic.getId(),
+                    medic.getName(),
+                    "MEDIC"
+            );
+            return success("Login realizado com sucesso.", response);
+        }
 
-            var patient = authenticationService.authenticatePatient(email, password);
-            if (patient != null) {
-                LoginResponseDTO response = new LoginResponseDTO(
-                        patient.getId(),
-                        patient.getName(),
-                        "PATIENT"
-                );
-                return success("Login realizado com sucesso.", response);
-            }
+        var patient = authenticationService.authenticatePatient(email, password);
+        if (patient != null) {
+            LoginResponseDTO response = new LoginResponseDTO(
+                    patient.getId(),
+                    patient.getName(),
+                    "PATIENT"
+            );
+            return success("Login realizado com sucesso.", response);
+        }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse<>("Email ou senha incorretos."));
-        }, "login");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse<>("Email ou senha incorretos."));
     }
 
 
     //Solicita o envio de um código de verificação para redefinição de senha.
     @PostMapping("/request-password-reset")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
-        return executeWithErrorHandling(() -> {
-            boolean requestSuccess = authenticationService.sendVerificationCode(dto.getIdentifier());
+        boolean requestSuccess = authenticationService.sendVerificationCode(dto.getIdentifier());
 
-            if (!requestSuccess) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("Usuário não encontrado com esse e-mail ou CPF."));
-            }
+        if (!requestSuccess) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Usuário não encontrado com esse e-mail ou CPF."));
+        }
 
-            return success("Código de verificação enviado.");
-        }, "request-password-reset");
+        return success("Código de verificação enviado.");
     }
 
     //Redefine a senha do usuário com base no código de verificação recebido.
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
-        return executeWithErrorHandling(() -> {
-            boolean resetSuccess = authenticationService.resetPassword(dto);
+        boolean resetSuccess = authenticationService.resetPassword(dto);
 
-            if (!resetSuccess) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse<>("Código inválido ou expirado."));
-            }
+        if (!resetSuccess) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("Código inválido ou expirado."));
+        }
 
-            return success("Senha redefinida com sucesso.");
-        }, "reset-password");
+        return success("Senha redefinida com sucesso.");
     }
 }

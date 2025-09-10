@@ -38,43 +38,35 @@ public class PatientController extends BaseController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> getAllPatients() {
-        return executeWithErrorHandling(() -> {
-            List<Patient> patients = patientService.findAll();
-            List<PacienteResponseDto> response = patients.stream()
-                    .map(PacienteResponseDto::fromEntity)
-                    .toList();
-            return success("Pacientes listados com sucesso.", response);
-        }, "getAllPatients");
+        List<Patient> patients = patientService.findAll();
+        List<PacienteResponseDto> response = patients.stream()
+                .map(PacienteResponseDto::fromEntity)
+                .toList();
+        return success("Pacientes listados com sucesso.", response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> getPatientById(@PathVariable int id) {
-        ResponseEntity<ApiResponse<PacienteResponseDto>> validationError = validateId(id);
-        if (validationError != null) return validationError;
-
-        return executeWithErrorHandling(() -> {
-            Patient patient = patientService.findById(id);
-            if (patient == null) {
-                return notFound("Paciente");
-            }
-            return success("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient));
-        }, "getPatientById");
+        validateId(id);
+        
+        Patient patient = patientService.findById(id);
+        if (patient == null) {
+            return notFound("Paciente");
+        }
+        return success("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
-        ResponseEntity<ApiResponse<PacienteResponseDto>> validationError = validateId(id);
-        if (validationError != null) return validationError;
+        validateId(id);
+        
+        Patient existingPatient = patientService.findById(id);
+        if (existingPatient == null) {
+            return notFound("Paciente");
+        }
 
-        return executeWithErrorHandling(() -> {
-            Patient existingPatient = patientService.findById(id);
-            if (existingPatient == null) {
-                return notFound("Paciente");
-            }
-
-            Patient updatedPatient = patientService.update(id, patient);
-            return success("Paciente atualizado com sucesso.", PacienteResponseDto.fromEntity(updatedPatient));
-        }, "updatePatient");
+        Patient updatedPatient = patientService.update(id, patient);
+        return success("Paciente atualizado com sucesso.", PacienteResponseDto.fromEntity(updatedPatient));
     }
 
     // Endpoints para buscar dados médicos específicos do paciente
@@ -434,18 +426,14 @@ public class PatientController extends BaseController {
      */
     private <T> ResponseEntity<ApiResponse<T>> executePatientOperation(
             int patientId, 
-            java.util.function.Function<Patient, ResponseEntity<ApiResponse<T>>> operation,
-            String context) {
-        ResponseEntity<ApiResponse<T>> validationError = validateId(patientId);
-        if (validationError != null) return validationError;
-
-        return executeWithErrorHandling(() -> {
-            Patient patient = patientService.findById(patientId);
-            if (patient == null) {
-                return notFound("Paciente");
-            }
-            return operation.apply(patient);
-        }, context);
+            java.util.function.Function<Patient, ResponseEntity<ApiResponse<T>>> operation) {
+        validateId(patientId);
+        
+        Patient patient = patientService.findById(patientId);
+        if (patient == null) {
+            return notFound("Paciente");
+        }
+        return operation.apply(patient);
     }
 
     private RequisicaoAcesso findPendingRequestOrThrow(Patient patient, int medicId) {
@@ -585,7 +573,7 @@ public class PatientController extends BaseController {
         return executePatientOperation(id, patient -> {
             List<T> data = dataExtractor.apply(patient);
             return success(successMessage, data);
-        }, "getPatientMedicalData");
+        });
     }
 
     // Endpoint para listar médicos autorizados de um paciente
