@@ -60,31 +60,14 @@ public abstract class BaseController {
         return ResponseEntity.ok(new ApiResponse<>(message));
     }
 
-    /**
-     * Executa operação com tratamento de exceções padronizado
-     */
-    protected <T> ResponseEntity<ApiResponse<T>> executeWithErrorHandling(
-            java.util.function.Supplier<ResponseEntity<ApiResponse<T>>> operation,
-            String errorContext) {
-        try {
-            return operation.get();
-        } catch (IllegalArgumentException e) {
-            log.warn("Erro de validação em {}: {}", errorContext, LogSanitizer.sanitize(e.getMessage()));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("Dados inválidos: " + e.getMessage()));
-        } catch (Exception e) {
-            log.error("Erro em {}: {}", errorContext, LogSanitizer.sanitize(e.getMessage()), e);
-            return internalServerError();
-        }
-    }
+
 
     /**
-     * Valida ID e retorna erro se inválido
+     * Valida ID e lança exceção se inválido
      */
-    protected <T> ResponseEntity<ApiResponse<T>> validateId(int id) {
+    protected void validateId(int id) {
         if (!isValidId(id)) {
-            return badRequestInvalidId();
+            throw new IllegalArgumentException("ID deve ser maior que zero.");
         }
-        return null; // ID válido
     }
 }
