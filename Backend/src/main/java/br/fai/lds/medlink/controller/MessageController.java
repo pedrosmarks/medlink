@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.ApiResponse;
-import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.service.message.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -28,8 +28,8 @@ public class MessageController extends BaseController {
      * @return lista de mensagens
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Mensagem>>> getAllMessages() {
-        List<Mensagem> messages = messageService.findAll();
+    public ResponseEntity<ApiResponse<List<Message>>> getAllMessages() {
+        List<Message> messages = messageService.findAll();
         return success("Mensagens listadas com sucesso.", messages);
     }
 
@@ -40,10 +40,10 @@ public class MessageController extends BaseController {
      * @return lista de conversas
      */
     @GetMapping(params = {"senderId", "senderType"})
-    public ResponseEntity<ApiResponse<List<Mensagem>>> getConversations(
+    public ResponseEntity<ApiResponse<List<Message>>> getConversations(
             @RequestParam String senderId,
             @RequestParam String senderType) {
-        List<Mensagem> conversations = messageService.findConversationsByUser(senderId, senderType);
+        List<Message> conversations = messageService.findConversationsByUser(senderId, senderType);
         return success("Conversas listadas com sucesso.", conversations);
     }
 
@@ -53,7 +53,7 @@ public class MessageController extends BaseController {
      * @return confirmação do envio
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem message) {
+    public ResponseEntity<ApiResponse<Message>> sendMessage(@Valid @RequestBody Message message) {
         messageService.sendMessage(message);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Mensagem enviada com sucesso.", message));
     }
@@ -64,8 +64,8 @@ public class MessageController extends BaseController {
      * @return dados da mensagem atualizada
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<Mensagem>> markAsRead(@PathVariable String id) {
-        Mensagem message = messageService.markAsRead(id);
+    public ResponseEntity<ApiResponse<Message>> markAsRead(@PathVariable String id) {
+        Message message = messageService.markAsRead(id);
         return message != null ? 
             success("Mensagem marcada como lida.", message) : 
             notFound("Mensagem não encontrada.");
