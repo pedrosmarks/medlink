@@ -4,6 +4,7 @@ import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Mensagem;
 import br.fai.lds.medlink.port.service.message.MessageService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MessageController extends BaseController {
     @PostMapping
     public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem message) {
         messageService.sendMessage(message);
-        return created("Mensagem enviada com sucesso.", message);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Mensagem enviada com sucesso.", message));
     }
 
     @PatchMapping("/{id}")
