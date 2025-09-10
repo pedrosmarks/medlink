@@ -106,13 +106,6 @@ public class MedicController extends BaseController {
         List<Patient> patients = patientService.findByMedicId(medicId);
         log.debug("Encontrados {} pacientes para médico {}", patients.size(), LogSanitizer.sanitizeId(medicId));
         
-        for (Patient p : patients) {
-            log.debug("Paciente: {} (ID: {}), medicId: {}", LogSanitizer.sanitizeAndLimit(p.getName(), 30), LogSanitizer.sanitizeId(p.getId()), LogSanitizer.sanitizeId(p.getMedicId()));
-            if (p.getEspecialistasAutorizados() != null) {
-                log.debug("  Especialistas autorizados: {}", p.getEspecialistasAutorizados().size());
-            }
-        }
-        
         List<PatientResponseDto> dtos = patients.stream()
                 .map(PatientResponseDto::fromEntity)
                 .collect(Collectors.toList());

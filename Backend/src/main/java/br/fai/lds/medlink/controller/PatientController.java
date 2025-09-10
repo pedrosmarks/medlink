@@ -314,22 +314,16 @@ public class PatientController extends BaseController {
     // Endpoint para buscar pacientes por nome
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> searchPatients(@RequestParam String name) {
-        try {
-            List<Patient> allPatients = patientService.findAll();
-            List<Patient> filteredPatients = allPatients.stream()
-                    .filter(patient -> patient.getName() != null && patient.getName().toLowerCase().contains(name.toLowerCase()))
-                    .toList();
-            
-            List<PacienteResponseDto> response = filteredPatients.stream()
-                    .map(PacienteResponseDto::fromEntity)
-                    .toList();
-            
-            return ResponseEntity.ok(new ApiResponse<>("Pacientes encontrados.", response));
-        } catch (Exception e) {
-            log.error("Erro ao buscar pacientes por nome '{}': {}", LogSanitizer.sanitizeAndLimit(name, 30), LogSanitizer.sanitize(e.getMessage()), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Erro interno do servidor."));
-        }
+        // TODO: Implementar patientService.findByNameContaining(name) para filtro no banco
+        List<Patient> filteredPatients = patientService.findAll().stream()
+                .filter(patient -> patient.getName() != null && patient.getName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
+        
+        List<PacienteResponseDto> response = filteredPatients.stream()
+                .map(PacienteResponseDto::fromEntity)
+                .toList();
+        
+        return success("Pacientes encontrados.", response);
     }
 
     // Send access request to patient
@@ -357,9 +351,13 @@ public class PatientController extends BaseController {
                         .body(new ApiResponse<>("Paciente não encontrado."));
             }
             
-            // Collect all medic IDs first to avoid N+1 queries
-            List<Integer> medicIds = patient.getRequisicoesAcesso().stream()
+            // Filter pending requests once to avoid duplicate iterations
+            List<RequisicaoAcesso> pendingRequestsList = patient.getRequisicoesAcesso().stream()
                     .filter(req -> "PENDENTE".equals(req.getStatus()))
+                    .collect(Collectors.toList());
+            
+            // Collect medic IDs from filtered list
+            List<Integer> medicIds = pendingRequestsList.stream()
                     .map(RequisicaoAcesso::getMedicoId)
                     .distinct()
                     .collect(Collectors.toList());
@@ -367,8 +365,7 @@ public class PatientController extends BaseController {
             // Batch fetch all medics at once using optimized method
             Map<Integer, Medic> medicsMap = medicService.findByIds(medicIds);
             
-            List<AccessRequestResponseDto> pendingRequests = patient.getRequisicoesAcesso().stream()
-                    .filter(req -> "PENDENTE".equals(req.getStatus()))
+            List<AccessRequestResponseDto> pendingRequests = pendingRequestsList.stream()
                     .map(req -> {
                         Medic medic = medicsMap.get(req.getMedicoId());
                         return new AccessRequestResponseDto(

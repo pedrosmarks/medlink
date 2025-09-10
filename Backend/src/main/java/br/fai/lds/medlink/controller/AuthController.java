@@ -29,24 +29,19 @@ public class AuthController extends BaseController {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
 
+        // TODO: Implementar authenticationService.authenticateUser(email, password) 
+        // que retorna um objeto com tipo de usuário para evitar autenticação dupla
+        
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
-            LoginResponseDTO response = new LoginResponseDTO(
-                    medic.getId(),
-                    medic.getName(),
-                    "MEDIC"
-            );
-            return success("Login realizado com sucesso.", response);
+            return success("Login realizado com sucesso.", new LoginResponseDTO(
+                    medic.getId(), medic.getName(), "MEDIC"));
         }
 
         var patient = authenticationService.authenticatePatient(email, password);
         if (patient != null) {
-            LoginResponseDTO response = new LoginResponseDTO(
-                    patient.getId(),
-                    patient.getName(),
-                    "PATIENT"
-            );
-            return success("Login realizado com sucesso.", response);
+            return success("Login realizado com sucesso.", new LoginResponseDTO(
+                    patient.getId(), patient.getName(), "PATIENT"));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
