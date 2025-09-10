@@ -8,7 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/dashboard")
-public class DashboardController {
+public class DashboardController extends BaseController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Map<String, String>>>> getDashboard() {
@@ -21,9 +21,6 @@ public class DashboardController {
             Map.of("id", "6", "title", "Solicitações de receita", "text", "1 solicitação de receita pendente.", "size", "col-md-4")
         );
         
-        return ResponseEntity.ok(new ApiResponse<>(
-            "Dados do dashboard carregados com sucesso.",
-            dashboardData
-        ));
+        return success("Dados do dashboard carregados com sucesso.", dashboardData);
     }
 }
