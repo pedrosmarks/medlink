@@ -34,22 +34,23 @@ public class MedicCreateDto {
     private LocalDate birthDate;
 
     @NotNull(message = "O número de telefone não pode ser nulo")
+    @Pattern(regexp = "^\\(?\\d{2}\\)?[\\s-]?\\d{4,5}[\\s-]?\\d{4}$", message = "Formato de telefone inválido")
     private String phoneNumber;
 
     @NotNull(message = "O endereço não pode ser nulo")
     private Address address;
 
-    @NotNull(message = "O CRM não pode estar em branco")
+    @NotNull(message = "O CRM não pode ser nulo")
     private String crm;
 
-    @NotNull(message = "A especialidade médica não pode estar em branco")
+    @NotNull(message = "A especialidade médica não pode ser nula")
     private String specialty;
 
-    @NotNull(message = "O endereço de e-mail não pode estar em branco")
+    @NotNull(message = "O endereço de e-mail não pode ser nulo")
     @Email(message = "O e-mail deve ser válido")
     private String email;
 
-    @NotNull(message = "A senha não pode estar em branco")
+    @NotNull(message = "A senha não pode ser nula")
     @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
     private String password;
 

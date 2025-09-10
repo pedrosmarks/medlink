@@ -23,6 +23,9 @@ public class MedicResponseDto {
     private boolean active;
 
     public static MedicResponseDto fromEntity(Medic entity) {
+        if (entity == null) {
+            return null;
+        }
         MedicResponseDto dto = new MedicResponseDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
