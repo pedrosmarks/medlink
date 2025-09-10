@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 @Slf4j
 public abstract class BaseController {
 
-    protected static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseController.class);
-
     /**
      * Valida se ID é válido (maior que zero)
      */
