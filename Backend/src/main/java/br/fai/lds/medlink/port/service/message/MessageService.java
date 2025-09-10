@@ -1,15 +1,15 @@
 package br.fai.lds.medlink.port.service.message;
 
-import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.domain.Message;
 import java.util.List;
 
 public interface MessageService {
     
-    List<Mensagem> findAll();
+    List<Message> findAll();
     
-    void sendMessage(Mensagem message);
+    void sendMessage(Message message);
     
-    Mensagem markAsRead(String id);
+    Message markAsRead(String id);
     
-    List<Mensagem> findConversationsByUser(String senderId, String senderType);
+    List<Message> findConversationsByUser(String senderId, String senderType);
 }

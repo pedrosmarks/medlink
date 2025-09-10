@@ -1,6 +1,6 @@
 package br.fai.lds.medlink.implementation.service.message;
 
-import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.service.message.MessageService;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +16,15 @@ public class MessageServiceImpl implements MessageService {
     private javax.sql.DataSource dataSource;
 
     // Lista temporária em memória até implementar o DAO do banco
-    private final List<Mensagem> messages = new ArrayList<>();
+    private final List<Message> messages = new ArrayList<>();
 
-    public List<Mensagem> findAll() {
+    public List<Message> findAll() {
         return new ArrayList<>(messages);
     }
 
-    public void sendMessage(Mensagem message) {
+    public void sendMessage(Message message) {
         // Validação: só permite se médico e paciente estão autorizados
-        if (!isAuthorized(message.getRemetenteId(), message.getRemetenteTipo(), message.getDestinatarioId(), message.getDestinatarioTipo())) {
+        if (!isAuthorized(message.getSenderId(), message.getSenderType(), message.getRecipientId(), message.getRecipientType())) {
             throw new RuntimeException("Médico e paciente não estão autorizados para troca de mensagens.");
         }
         // Gera ID único se não estiver definido
@@ -33,20 +33,20 @@ public class MessageServiceImpl implements MessageService {
         }
         
         // Gera data/hora atual se não estiver definida
-        if (message.getData() == null || message.getData().isEmpty()) {
+        if (message.getDate() == null || message.getDate().isEmpty()) {
             LocalDateTime now = LocalDateTime.now();
-            message.setData(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+            message.setDate(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
         }
         
         // Define como não lida por padrão
-        message.setLida(false);
+        message.setRead(false);
         
         // Preenche nome do médico se necessário
-        if ("medico".equals(message.getRemetenteTipo()) && (message.getRemetenteNome() == null || message.getRemetenteNome().isEmpty())) {
-            message.setRemetenteNome(buscarNomeMedicoPorId(message.getRemetenteId()));
+        if ("medico".equals(message.getSenderType()) && (message.getSenderName() == null || message.getSenderName().isEmpty())) {
+            message.setSenderName(buscarNomeMedicoPorId(message.getSenderId()));
         }
-        if ("medico".equals(message.getDestinatarioTipo()) && (message.getDestinatarioNome() == null || message.getDestinatarioNome().isEmpty())) {
-            message.setDestinatarioNome(buscarNomeMedicoPorId(message.getDestinatarioId()));
+        if ("medico".equals(message.getRecipientType()) && (message.getRecipientName() == null || message.getRecipientName().isEmpty())) {
+            message.setRecipientName(buscarNomeMedicoPorId(message.getRecipientId()));
         }
         
         // Adiciona a mensagem à lista
@@ -93,19 +93,19 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    public Mensagem markAsRead(String id) {
-        for (Mensagem message : messages) {
+    public Message markAsRead(String id) {
+        for (Message message : messages) {
             if (message.getId().equals(id)) {
-                message.setLida(true);
+                message.setRead(true);
                 return message;
             }
         }
         return null;
     }
 
-    public List<Mensagem> findConversationsByUser(String senderId, String senderType) {
+    public List<Message> findConversationsByUser(String senderId, String senderType) {
         return messages.stream()
-                .filter(message -> message.getRemetenteId().equals(senderId) && message.getRemetenteTipo().equals(senderType))
+                .filter(message -> message.getSenderId().equals(senderId) && message.getSenderType().equals(senderType))
                 .toList();
     }
 }
