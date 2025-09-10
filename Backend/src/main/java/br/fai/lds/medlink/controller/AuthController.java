@@ -13,24 +13,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//Controlador responsável por gerenciar as operações de autenticação e recuperação de senha.
-
+/**
+ * Controlador responsável por gerenciar as operações de autenticação e recuperação de senha.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController extends BaseController {
 
-    // Serviço responsável pela lógica de autenticação e recuperação de senha.
     private final AuthenticationService authenticationService;
 
-    //Realiza o login do usuário (médico ou paciente).
+    /**
+     * Realiza o login do usuário (médico ou paciente).
+     * @param loginDTO dados de login contendo email e senha
+     * @return resposta com dados do usuário autenticado ou erro de autenticação
+     */
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
 
-        // TODO: Implementar authenticationService.authenticateUser(email, password) 
-        // que retorna um objeto com tipo de usuário para evitar autenticação dupla
+
+
         
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
@@ -49,7 +53,11 @@ public class AuthController extends BaseController {
     }
 
 
-    //Solicita o envio de um código de verificação para redefinição de senha.
+    /**
+     * Solicita o envio de um código de verificação para redefinição de senha.
+     * @param dto dados contendo identificador (email ou CPF) do usuário
+     * @return resposta de sucesso ou erro se usuário não encontrado
+     */
     @PostMapping("/request-password-reset")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
         boolean requestSuccess = authenticationService.sendVerificationCode(dto.getIdentifier());
@@ -62,7 +70,11 @@ public class AuthController extends BaseController {
         return success("Código de verificação enviado.");
     }
 
-    //Redefine a senha do usuário com base no código de verificação recebido.
+    /**
+     * Redefine a senha do usuário com base no código de verificação recebido.
+     * @param dto dados contendo código de verificação e nova senha
+     * @return resposta de sucesso ou erro se código inválido
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
         boolean resetSuccess = authenticationService.resetPassword(dto);

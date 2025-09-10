@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 
 import br.fai.lds.medlink.util.LogSanitizer;
 
-// Controlador REST consolidado para gerenciar os médicos da aplicação
+/**
+ * Controlador REST para gerenciar os médicos da aplicação.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/medic")
@@ -29,13 +31,16 @@ public class MedicController extends BaseController {
     private final MedicService medicService;
     private final PatientService patientService;
 
-    // Injeção de dependências via construtor
     public MedicController(MedicService medicService, PatientService patientService) {
         this.medicService = medicService;
         this.patientService = patientService;
     }
 
-    // Endpoint para criar um novo médico
+    /**
+     * Cria um novo médico.
+     * @param dto dados do médico a ser criado
+     * @return resposta com dados do médico criado
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<MedicResponseDto>> createMedic(@Valid @RequestBody MedicCreateDto dto) {
         Medic medic = dto.toEntity();
@@ -45,7 +50,10 @@ public class MedicController extends BaseController {
                 .body(new ApiResponse<>("Médico criado com sucesso!", MedicResponseDto.fromEntity(medic)));
     }
 
-    // Endpoint para listar todos os médicos cadastrados
+    /**
+     * Lista todos os médicos cadastrados.
+     * @return lista de médicos
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<MedicResponseDto>>> getAllMedics() {
         List<Medic> medics = medicService.findAll();
@@ -55,7 +63,11 @@ public class MedicController extends BaseController {
         return success("Lista de médicos recuperada com sucesso.", dtos);
     }
 
-    // Endpoint para buscar um médico pelo ID
+    /**
+     * Busca um médico pelo ID.
+     * @param id identificador do médico
+     * @return dados do médico encontrado
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicResponseDto>> getMedicById(@PathVariable int id) {
         validateId(id);
@@ -67,7 +79,12 @@ public class MedicController extends BaseController {
         return success("Médico encontrado.", MedicResponseDto.fromEntity(medic));
     }
 
-    // Endpoint para atualizar dados de um médico existente
+    /**
+     * Atualiza dados de um médico existente.
+     * @param id identificador do médico
+     * @param dto novos dados do médico
+     * @return dados do médico atualizado
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicResponseDto>> updateMedic(@PathVariable int id,
                                          @Valid @RequestBody MedicUpdateDto dto) {
@@ -83,7 +100,11 @@ public class MedicController extends BaseController {
         return success("Médico atualizado com sucesso!", MedicResponseDto.fromEntity(updated));
     }
 
-    // Endpoint para "desativar" ou excluir um médico pelo ID
+    /**
+     * Remove um médico pelo ID.
+     * @param id identificador do médico
+     * @return confirmação da remoção
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deactivateMedic(@PathVariable int id) {
         validateId(id);
@@ -95,7 +116,11 @@ public class MedicController extends BaseController {
         return success("Médico removido com sucesso.");
     }
 
-    // Listar pacientes vinculados ao médico
+    /**
+     * Lista pacientes vinculados ao médico.
+     * @param medicId identificador do médico
+     * @return lista de pacientes do médico
+     */
     @GetMapping("/{id}/patients")
     @CrossOrigin
     public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getPatientsByMedic(@PathVariable("id") int medicId) {
@@ -113,7 +138,12 @@ public class MedicController extends BaseController {
         return success("Lista de pacientes do médico recuperada com sucesso.", dtos);
     }
 
-    // Endpoint para autenticação de médico (compatibilidade com frontend)
+    /**
+     * Autentica médico (compatibilidade com frontend).
+     * @param usuario nome de usuário
+     * @param senha senha do usuário
+     * @return dados do médico autenticado
+     */
     @GetMapping("/auth")
     public ResponseEntity<ApiResponse<MedicResponseDto>> authenticateMedic(
             @RequestParam String usuario,

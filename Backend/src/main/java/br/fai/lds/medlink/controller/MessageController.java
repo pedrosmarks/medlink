@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * Controlador para gerenciamento de mensagens.
+ */
 @RestController
 @RequestMapping("/messages")
 @CrossOrigin
@@ -20,12 +23,22 @@ public class MessageController extends BaseController {
         this.messageService = messageService;
     }
 
+    /**
+     * Lista todas as mensagens.
+     * @return lista de mensagens
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<Mensagem>>> getAllMessages() {
         List<Mensagem> messages = messageService.findAll();
         return success("Mensagens listadas com sucesso.", messages);
     }
 
+    /**
+     * Busca conversas por usuário.
+     * @param senderId identificador do remetente
+     * @param senderType tipo do remetente
+     * @return lista de conversas
+     */
     @GetMapping(params = {"senderId", "senderType"})
     public ResponseEntity<ApiResponse<List<Mensagem>>> getConversations(
             @RequestParam String senderId,
@@ -34,12 +47,22 @@ public class MessageController extends BaseController {
         return success("Conversas listadas com sucesso.", conversations);
     }
 
+    /**
+     * Envia uma nova mensagem.
+     * @param message dados da mensagem
+     * @return confirmação do envio
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<Mensagem>> sendMessage(@Valid @RequestBody Mensagem message) {
         messageService.sendMessage(message);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Mensagem enviada com sucesso.", message));
     }
 
+    /**
+     * Marca mensagem como lida.
+     * @param id identificador da mensagem
+     * @return dados da mensagem atualizada
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Mensagem>> markAsRead(@PathVariable String id) {
         Mensagem message = messageService.markAsRead(id);

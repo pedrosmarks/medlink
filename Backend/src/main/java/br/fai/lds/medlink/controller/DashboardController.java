@@ -6,10 +6,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador para dados do dashboard.
+ */
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController extends BaseController {
 
+    /**
+     * Retorna dados do dashboard.
+     * @return dados estatísticos do dashboard
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<Map<String, String>>>> getDashboard() {
         List<Map<String, String>> dashboardData = List.of(

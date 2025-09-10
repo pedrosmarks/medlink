@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 
 import br.fai.lds.medlink.util.LogSanitizer;
 
+/**
+ * Controlador para gerenciamento de pacientes e seus dados médicos.
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("api/patients")
@@ -35,6 +38,10 @@ public class PatientController extends BaseController {
     @Autowired
     private MedicService medicService;
 
+    /**
+     * Lista todos os pacientes.
+     * @return lista de pacientes
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
@@ -44,6 +51,11 @@ public class PatientController extends BaseController {
         return success("Pacientes listados com sucesso.", response);
     }
 
+    /**
+     * Busca paciente por ID.
+     * @param id identificador do paciente
+     * @return dados do paciente
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> getPatientById(@PathVariable int id) {
         validateId(id);
@@ -55,6 +67,12 @@ public class PatientController extends BaseController {
         return success("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient));
     }
 
+    /**
+     * Atualiza dados do paciente.
+     * @param id identificador do paciente
+     * @param patient novos dados do paciente
+     * @return dados do paciente atualizado
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         validateId(id);
