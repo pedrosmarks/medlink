@@ -1,0 +1,64 @@
+package br.fai.lds.medlink.domain.dataTransferObject.Patient;
+
+import br.fai.lds.medlink.domain.Address;
+import br.fai.lds.medlink.domain.Gender;
+import br.fai.lds.medlink.domain.Patient;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PatientUpdateDto {
+    
+    @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
+    private String name;
+    
+    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})$", message = "O CPF deve estar no formato XXX.XXX.XXX-XX")
+    private String cpf;
+    
+    private Gender gender;
+    
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate birthDate;
+    
+    @Pattern(regexp = "^\\(?\\d{2}\\)?[\\s-]?\\d{4,5}[\\s-]?\\d{4}$", message = "Formato de telefone inválido")
+    private String phoneNumber;
+    
+    private Address address;
+    
+    @Email(message = "O e-mail deve ser válido")
+    private String email;
+    
+    private String avatar;
+    private String bloodType;
+    private String observations;
+    private String plan;
+    private String susCard;
+    private Boolean active;
+
+    public void updateEntity(Patient entity) {
+        if (this.name != null) entity.setName(this.name);
+        if (this.cpf != null) entity.setCpf(this.cpf);
+        if (this.gender != null) entity.setGender(this.gender);
+        if (this.birthDate != null) entity.setBirthDate(this.birthDate);
+        if (this.phoneNumber != null) entity.setPhoneNumber(this.phoneNumber);
+        if (this.address != null) entity.setAddress(this.address);
+        if (this.email != null) entity.setEmail(this.email);
+        if (this.avatar != null) entity.setAvatar(this.avatar);
+        if (this.bloodType != null) entity.setBloodType(this.bloodType);
+        if (this.observations != null) entity.setObservations(this.observations);
+        if (this.plan != null) entity.setPlan(this.plan);
+        if (this.susCard != null) entity.setSusCard(this.susCard);
+        if (this.active != null) entity.setActive(this.active);
+    }
+}

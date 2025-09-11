@@ -1,0 +1,27 @@
+package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Medication;
+
+import br.fai.lds.medlink.domain.Medication;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MedicationResponseDto {
+    private int id;
+    private String name;
+    private String dosage;
+    private String frequency;
+
+    public static MedicationResponseDto fromEntity(Medication entity) {
+        return MedicationResponseDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .dosage(entity.getDosage())
+                .frequency(entity.getFrequency())
+                .build();
+    }
+}
