@@ -14,6 +14,16 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * DTO para atualização de dados do paciente.
+ * 
+ * <p>Permite atualização parcial dos dados do paciente, onde apenas os campos
+ * não nulos serão atualizados na entidade existente.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -46,6 +56,14 @@ public class PatientUpdateDto {
     private String susCard;
     private Boolean active;
 
+    /**
+     * Atualiza uma entidade Patient existente com os dados deste DTO.
+     * 
+     * <p>Apenas os campos não nulos deste DTO serão aplicados à entidade,
+     * permitindo atualizações parciais.</p>
+     * 
+     * @param entity Entidade Patient a ser atualizada
+     */
     public void updateEntity(Patient entity) {
         if (this.name != null) entity.setName(this.name);
         if (this.cpf != null) entity.setCpf(this.cpf);

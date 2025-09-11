@@ -6,6 +6,16 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * DTO para atualização de dados do prontuário médico.
+ * 
+ * <p>Permite atualização parcial dos dados do prontuário médico, onde apenas
+ * os campos não nulos serão atualizados na entidade existente.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +38,11 @@ public class MedicalRecordUpdateDto {
     private List<Consultation> consultations;
     private Boolean medicalRecordActive;
 
+    /**
+     * Converte este DTO em uma entidade MedicalRecord.
+     * 
+     * @return Nova instância de MedicalRecord com os dados deste DTO
+     */
     public MedicalRecord toEntity() {
         return MedicalRecord.builder()
                 .bloodType(this.bloodType)

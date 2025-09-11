@@ -15,6 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * DTO para resposta com dados completos do prontuário médico.
+ * 
+ * <p>Utilizado para retornar informações detalhadas do prontuário médico,
+ * incluindo todos os dados clínicos e históricos do paciente.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Data
 @Builder
 public class MedicalRecordResponseDto {
@@ -33,6 +43,12 @@ public class MedicalRecordResponseDto {
     private List<VaccineCreateDto> vaccines;
     private List<ConsultationCreateDto> consultations;
 
+    /**
+     * Cria um DTO de resposta a partir de uma entidade MedicalRecord.
+     * 
+     * @param entity Entidade MedicalRecord a ser convertida
+     * @return DTO com os dados do prontuário médico formatados para resposta
+     */
     public static MedicalRecordResponseDto fromEntity(MedicalRecord entity) {
 
         List<AllergyCreateDto> allergies = List.of();

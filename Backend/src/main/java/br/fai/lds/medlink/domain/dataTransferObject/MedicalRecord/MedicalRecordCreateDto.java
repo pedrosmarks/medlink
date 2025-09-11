@@ -8,6 +8,16 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * DTO para criação de novos prontuários médicos.
+ * 
+ * <p>Contém todas as informações necessárias para criar um prontuário
+ * médico completo, incluindo dados clínicos e histórico do paciente.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,7 +53,12 @@ public class MedicalRecordCreateDto {
 
     private boolean medicalRecordActive = true;
 
-    // Converte entidade para DTO
+    /**
+     * Converte uma entidade MedicalRecord em DTO de criação.
+     * 
+     * @param entity Entidade MedicalRecord a ser convertida
+     * @return DTO com os dados do prontuário médico
+     */
     public static MedicalRecordCreateDto fromEntity(MedicalRecord entity) {
         return MedicalRecordCreateDto.builder()
                 .bloodType(entity.getBloodType())
@@ -57,7 +72,11 @@ public class MedicalRecordCreateDto {
                 .build();
     }
 
-    // Converte DTO para entidade
+    /**
+     * Converte este DTO em uma entidade MedicalRecord.
+     * 
+     * @return Nova instância de MedicalRecord com os dados deste DTO
+     */
     public MedicalRecord toEntity() {
         return MedicalRecord.builder()
                 .bloodType(this.bloodType)

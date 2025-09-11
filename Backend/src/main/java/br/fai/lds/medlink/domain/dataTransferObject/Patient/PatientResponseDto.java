@@ -7,6 +7,16 @@ import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * DTO para resposta com dados completos do paciente.
+ * 
+ * <p>Utilizado para retornar informações detalhadas do paciente, incluindo
+ * dados pessoais, médicos e relacionamentos com especialistas.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Data
 public class PatientResponseDto {
     private int id;
@@ -34,6 +44,12 @@ public class PatientResponseDto {
     private List<Diagnosis> diagnoses;
     private List<Allergy> allergies;
 
+    /**
+     * Cria um DTO de resposta a partir de uma entidade Patient.
+     * 
+     * @param entity Entidade Patient a ser convertida
+     * @return DTO com os dados do paciente formatados para resposta
+     */
     public static PatientResponseDto fromEntity(Patient entity) {
         PatientResponseDto dto = new PatientResponseDto();
 

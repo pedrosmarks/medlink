@@ -15,6 +15,16 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * DTO para criação de novos pacientes.
+ * 
+ * <p>Contém todas as validações necessárias para garantir a integridade dos dados
+ * durante o processo de cadastro de um novo paciente no sistema.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -58,6 +68,11 @@ public class PatientCreateDto {
     private String susCard;
     private boolean active = true;
 
+    /**
+     * Converte este DTO em uma entidade Patient.
+     * 
+     * @return Nova instância de Patient com os dados deste DTO
+     */
     public Patient toEntity() {
         Patient entity = new Patient();
         entity.setName(this.name);
