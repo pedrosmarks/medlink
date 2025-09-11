@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class DiagnosisResponseDto {
     private int id;
     private String description;
-    private String date;
+    private LocalDate date;
 
     public static DiagnosisResponseDto fromEntity(Diagnosis entity) {
         return DiagnosisResponseDto.builder()

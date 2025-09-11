@@ -6,6 +6,7 @@ import br.fai.lds.medlink.domain.Patient;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -44,10 +45,11 @@ public class PatientCreateDto {
     
     @NotNull(message = "A data de nascimento não pode ser nula")
     @JsonFormat(pattern = "dd/MM/yyyy")
+    @Past(message = "Data de nascimento deve ser no passado")
     private LocalDate birthDate;
     
     @NotNull(message = "O número de telefone não pode ser nulo")
-    @Pattern(regexp = "^\\(?\\d{2}\\)?[\\s-]?\\d{4,5}[\\s-]?\\d{4}$", message = "Formato de telefone inválido")
+    @Pattern(regexp = "^\\(?[1-9]{2}\\)?[\\s-]?9?[0-9]{4}[\\s-]?[0-9]{4}$", message = "Telefone deve estar no formato (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX")
     private String phoneNumber;
     
     @NotNull(message = "O endereço não pode ser nulo")

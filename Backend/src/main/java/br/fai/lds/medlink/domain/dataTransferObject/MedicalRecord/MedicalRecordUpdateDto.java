@@ -16,11 +16,10 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MedicalRecordUpdateDto {
     private BloodType bloodType;
     private OrganDonorStatus organDonor;

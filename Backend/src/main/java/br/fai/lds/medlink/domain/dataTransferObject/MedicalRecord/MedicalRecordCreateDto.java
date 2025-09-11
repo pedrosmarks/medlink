@@ -18,11 +18,10 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MedicalRecordCreateDto {
 
     @NotNull(message = "O tipo sanguíneo é obrigatório")
