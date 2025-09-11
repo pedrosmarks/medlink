@@ -1,14 +1,14 @@
 export interface Medico {
   id: string;
-  nome: string;
+  name: string;
   avatar: string;
-  especialidade: string;
+  specialty: string;
   crm: string;
-  descricao: string;
+  description: string;
   cpf: string;
-  idade: number;
-  tipoSanguineo: string;
-  telefone: string;
+  age: number;
+  bloodType: string;
+  phoneNumber: string;
   email: string;
-  observacoes: string;
+  observations: string;
 }
