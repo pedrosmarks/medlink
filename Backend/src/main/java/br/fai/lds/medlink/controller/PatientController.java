@@ -1,13 +1,13 @@
 package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.*;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestResponseDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.AuthorizedDoctorDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Access.AccessRequestResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Access.AuthorizedDoctorDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Diagnosis.DiagnosisCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.SurgeryCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Access.AccessRequestDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
