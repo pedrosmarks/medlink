@@ -9,73 +9,82 @@ import java.util.stream.Collectors;
 
 @Data
 public class PatientResponseDto {
-    private Long id;
+    private int id;
     private String name;
     private String avatar;
     private String cpf;
     private Gender gender;
     private LocalDate birthDate;
-    private Integer idade;
-    private String tipoSanguineo;
-    private String telefone;
+    private Integer age;
+    private String bloodType;
+    private String phoneNumber;
     private String email;
     private Address address;
-    private String observacoes;
+    private String observations;
     private String plan;
     private String susCard;
     private Integer medicId;
     private boolean active;
-    private List<Long> especialistasAutorizados;
-    private List<RequisicaoAcesso> requisicoesAcesso;
+    private List<Integer> authorizedSpecialists;
+    private List<RequisicaoAcesso> accessRequests;
     private List<Consultation> consultations;
-    private List<Vaccine> vacinas;
+    private List<Vaccine> vaccines;
     private List<Medication> medications;
-    private List<Surgery> cirurgias;
-    private List<Diagnosis> diagnosticos;
-    private List<Allergy> alergias;
+    private List<Surgery> surgeries;
+    private List<Diagnosis> diagnoses;
+    private List<Allergy> allergies;
 
     public static PatientResponseDto fromEntity(Patient entity) {
         PatientResponseDto dto = new PatientResponseDto();
 
-        dto.setId((long) entity.getId());
+        dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setAvatar(entity.getAvatar());
         dto.setCpf(entity.getCpf());
         dto.setGender(entity.getGender());
         dto.setBirthDate(entity.getBirthDate());
 
-        Integer idade = null;
-        if (entity.getBirthDate() != null) {
-            idade = Period.between(entity.getBirthDate(), LocalDate.now()).getYears();
-        }
-        dto.setIdade(idade);
+        dto.setAge(calculateAge(entity.getBirthDate()));
 
-        dto.setTipoSanguineo(entity.getBloodType());
-        dto.setTelefone(entity.getPhoneNumber());
+        dto.setBloodType(entity.getBloodType());
+        dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setEmail(entity.getEmail());
         dto.setAddress(entity.getAddress());
-        dto.setObservacoes(entity.getObservations());
+        dto.setObservations(entity.getObservations());
         dto.setPlan(entity.getPlan());
         dto.setSusCard(entity.getSusCard());
         dto.setMedicId(entity.getMedicId());
         dto.setActive(entity.isActive());
 
         // Mapear diretamente das entidades
-        dto.setEspecialistasAutorizados(
+        dto.setAuthorizedSpecialists(
                 entity.getEspecialistasAutorizados() != null ?
                         entity.getEspecialistasAutorizados().stream()
-                                .map(EspecialistaAutorizado::getMedicoId)
+                                .map(esp -> esp.getMedicoId().intValue())
                                 .collect(Collectors.toList()) : List.of()
         );
 
-        dto.setRequisicoesAcesso(entity.getRequisicoesAcesso() != null ? entity.getRequisicoesAcesso() : List.of());
+        dto.setAccessRequests(entity.getRequisicoesAcesso() != null ? entity.getRequisicoesAcesso() : List.of());
         dto.setConsultations(entity.getConsultations() != null ? entity.getConsultations() : List.of());
-        dto.setVacinas(entity.getVacinas() != null ? entity.getVacinas() : List.of());
+        dto.setVaccines(entity.getVacinas() != null ? entity.getVacinas() : List.of());
         dto.setMedications(entity.getMedications() != null ? entity.getMedications() : List.of());
-        dto.setCirurgias(entity.getCirurgias() != null ? entity.getCirurgias() : List.of());
-        dto.setDiagnosticos(entity.getDiagnosticos() != null ? entity.getDiagnosticos() : List.of());
-        dto.setAlergias(entity.getAlergias() != null ? entity.getAlergias() : List.of());
+        dto.setSurgeries(entity.getCirurgias() != null ? entity.getCirurgias() : List.of());
+        dto.setDiagnoses(entity.getDiagnosticos() != null ? entity.getDiagnosticos() : List.of());
+        dto.setAllergies(entity.getAlergias() != null ? entity.getAlergias() : List.of());
 
         return dto;
+    }
+
+    /**
+     * Calcula a idade com base na data de nascimento.
+     * 
+     * @param birthDate Data de nascimento
+     * @return Idade em anos ou null se birthDate for null
+     */
+    private static Integer calculateAge(LocalDate birthDate) {
+        if (birthDate == null) {
+            return null;
+        }
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }
