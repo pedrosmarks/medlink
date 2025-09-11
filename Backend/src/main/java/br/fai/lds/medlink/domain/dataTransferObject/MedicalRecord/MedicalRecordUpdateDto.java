@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 
 import br.fai.lds.medlink.domain.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -13,8 +14,13 @@ import java.util.List;
 public class MedicalRecordUpdateDto {
     private BloodType bloodType;
     private OrganDonorStatus organDonor;
+    
+    @Size(min = 5, max = 500, message = "Diagnóstico deve ter entre 5 e 500 caracteres")
     private String diagnosis;
+    
+    @Size(min = 5, max = 500, message = "Histórico familiar deve ter entre 5 e 500 caracteres")
     private String familyHistory;
+    
     private List<Allergy> allergies;
     private List<Vaccine> vaccines;
     private List<Surgery> surgeries;
