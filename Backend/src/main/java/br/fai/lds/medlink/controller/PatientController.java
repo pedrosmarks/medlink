@@ -3,11 +3,11 @@ package br.fai.lds.medlink.controller;
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.AuthorizedDoctorDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.DiagnosisCreateDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.PacienteResponseDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.RequisicaoAcessoDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.SurgeryCreateDto;
-import br.fai.lds.medlink.domain.dataTransferObject.Patient.VaccineCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Diagnosis.DiagnosisCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.SurgeryCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.AccessRequestDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
@@ -46,10 +46,10 @@ public class PatientController extends BaseController {
      * @return lista de pacientes
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> getAllPatients() {
+    public ResponseEntity<ApiResponse<List<PatientResponseDto>>> getAllPatients() {
         List<Patient> patients = patientService.findAll();
-        List<PacienteResponseDto> response = patients.stream()
-                .map(PacienteResponseDto::fromEntity)
+        List<PatientResponseDto> response = patients.stream()
+                .map(PatientResponseDto::fromEntity)
                 .toList();
         return success("Pacientes listados com sucesso.", response);
     }
@@ -60,14 +60,14 @@ public class PatientController extends BaseController {
      * @return dados do paciente
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PacienteResponseDto>> getPatientById(@PathVariable int id) {
+    public ResponseEntity<ApiResponse<PatientResponseDto>> getPatientById(@PathVariable int id) {
         validateId(id);
         
         Patient patient = patientService.findById(id);
         if (patient == null) {
             return notFound("Paciente");
         }
-        return success("Paciente encontrado com sucesso.", PacienteResponseDto.fromEntity(patient));
+        return success("Paciente encontrado com sucesso.", PatientResponseDto.fromEntity(patient));
     }
 
     /**
@@ -77,7 +77,7 @@ public class PatientController extends BaseController {
      * @return dados do paciente atualizado
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<PacienteResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
+    public ResponseEntity<ApiResponse<PatientResponseDto>> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         validateId(id);
         
         Patient existingPatient = patientService.findById(id);
@@ -86,7 +86,7 @@ public class PatientController extends BaseController {
         }
 
         Patient updatedPatient = patientService.update(id, patient);
-        return success("Paciente atualizado com sucesso.", PacienteResponseDto.fromEntity(updatedPatient));
+        return success("Paciente atualizado com sucesso.", PatientResponseDto.fromEntity(updatedPatient));
     }
 
     // Endpoints para buscar dados médicos específicos do paciente
@@ -227,14 +227,14 @@ public class PatientController extends BaseController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<PacienteResponseDto>>> searchPatients(@RequestParam String name) {
+    public ResponseEntity<ApiResponse<List<PatientResponseDto>>> searchPatients(@RequestParam String name) {
         // TODO: Implementar patientService.findByNameContaining(name) para filtro no banco
         List<Patient> filteredPatients = patientService.findAll().stream()
                 .filter(patient -> patient.getName() != null && patient.getName().toLowerCase().contains(name.toLowerCase()))
                 .toList();
         
-        List<PacienteResponseDto> response = filteredPatients.stream()
-                .map(PacienteResponseDto::fromEntity)
+        List<PatientResponseDto> response = filteredPatients.stream()
+                .map(PatientResponseDto::fromEntity)
                 .toList();
         
         return success("Pacientes encontrados.", response);
@@ -243,7 +243,7 @@ public class PatientController extends BaseController {
     @PostMapping("/{patientId}/access-request")
     public ResponseEntity<ApiResponse<String>> sendAccessRequest(
             @PathVariable int patientId, 
-            @Valid @RequestBody RequisicaoAcessoDto request) {
+            @Valid @RequestBody AccessRequestDto request) {
         patientService.sendAccessRequest(patientId, request.getMedicoId());
         return success("Requisição de acesso enviada com sucesso.", null);
     }
