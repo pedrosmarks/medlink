@@ -6,34 +6,35 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
-@Getter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 
 //Representa o endereço de um paciente ou médico no sistema.
 public class Address {
 
     @NotBlank(message = "Nome da rua não pode estar em branco")
-    private final String street;
+    private String street;
 
-    @Size(min = 8, message = "Numero deve ter pelo menos 1 caractere")
-    private final String number;
+    @Size(min = 1, message = "Numero deve ter pelo menos 1 caractere")
+    private String number;
 
-    private final String complement;
+    private String complement;
 
     @NotBlank(message = "Bairro não pode estar em branco")
-    private final String neighborhood;
+    private String neighborhood;
 
     @NotBlank(message = "Cidade não pode estar em branco")
-    private final String city;
+    private String city;
 
     @NotBlank(message = "Estado não pode estar em branco")
-    private final String state;
+    private String state;
 
     @Pattern(regexp = "^\\d{5}-\\d{3}$", message = "CEP deve estar no formato XXXXX-XXX")
-    private final String zipCode;
+    private String zipCode;
 
 }
