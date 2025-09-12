@@ -22,36 +22,19 @@ export class PerfilComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-  console.log('=== INICIANDO CARREGAMENTO DO PERFIL ===');
-  const medicoId = localStorage.getItem('userId');
-  console.log('ID do médico:', medicoId);
- 
-  if (medicoId) {
-    console.log('Fazendo chamada para:', `http://localhost:8080/medic/${medicoId}`);
-    this.perfilReadService.getPerfilById(medicoId).subscribe({
-      next: (response) => {
-        console.log('=== SUCESSO NA CHAMADA ===');
-        console.log('Response completo:', response);
-        console.log('response.data:', response.data);
-        console.log('response.data.data:', response.data?.data);
-        console.log('Tipo do response:', typeof response);
-        
-        // Novo formato ApiResponse: response.data.data
-        this.perfil = response.data?.data || response.data || response;
-        console.log('Perfil final:', this.perfil);
-      },
-      error: (error) => {
-        console.log('=== ERRO NA CHAMADA ===');
-        console.log('Erro completo:', error);
-        console.log('Status:', error.status);
-        console.log('Mensagem:', error.message);
-        console.log('URL chamada:', error.url);
-      }
-    });
-  } else {
-    console.log('ERRO: ID do médico não encontrado no localStorage!');
+    const medicoId = localStorage.getItem('userId');
+    if (medicoId) {
+      this.perfilReadService.getPerfilById(medicoId).subscribe({
+        next: (response) => {
+          this.perfil = response.data?.data || response.data || response;
+          console.log('Perfil carregado:', this.perfil);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar perfil:', error);
+        }
+      });
+    }
   }
-}
 
   editar() {
     this.editando = true;

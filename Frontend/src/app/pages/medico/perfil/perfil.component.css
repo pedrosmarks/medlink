@@ -185,6 +185,11 @@
   margin: 0;
 }
 
+/* Espaçamento extra para o campo Complemento */
+.complement-field {
+  margin-top: 1rem !important;
+}
+
 .info-row:hover {
   background: rgba(40, 167, 69, 0.02);
   transform: translateX(5px);
@@ -398,3 +403,4 @@
     padding: 1rem;
   }
 }
+
