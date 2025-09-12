@@ -28,15 +28,14 @@ public class PatientPostgresDaoImpl implements PatientDao {
     }
     @Override
     public void updateAccessRequestStatus(int patientId, int medicoId, String status) {
-        // Mapeia os valores para garantir compatibilidade com o ENUM
         String enumStatus = mapStatusToEnum(status);
-        String sql = "UPDATE solicitacao_acesso_prontuario SET status = ?::status_solicitacao WHERE paciente_id = ? AND medico_id = ?";
+        String sql = "UPDATE solicitacao_acesso_prontuario SET status = ?::status_solicitacao, data_resposta = CURRENT_TIMESTAMP WHERE paciente_id = ? AND medico_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, enumStatus);
             ps.setInt(2, patientId);
             ps.setInt(3, medicoId);
             int rows = ps.executeUpdate();
-            logger.info("Atualização de status: " + rows + " linha(s) afetada(s) para paciente_id=" + patientId + ", medico_id=" + medicoId + ", novo status=" + enumStatus);
+            logger.info("Status atualizado: " + rows + " linha(s) para paciente_id=" + patientId + ", medico_id=" + medicoId + ", status=" + enumStatus);
             connection.commit();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Erro ao atualizar status da requisição de acesso", e);
@@ -80,12 +79,37 @@ public class PatientPostgresDaoImpl implements PatientDao {
     }
     @Override
     public void createAccessRequest(int patientId, int medicoId) {
-        String sql = "INSERT INTO solicitacao_acesso_prontuario (medico_id, paciente_id, status) VALUES (?, ?, 'PENDENTE'::status_solicitacao) ON CONFLICT (medico_id, paciente_id) DO NOTHING";
+        String sql = "INSERT INTO solicitacao_acesso_prontuario (medico_id, paciente_id, status, data_solicitacao) " +
+                    "VALUES (?, ?, 'PENDENTE'::status_solicitacao, CURRENT_TIMESTAMP) " +
+                    "ON CONFLICT (medico_id, paciente_id) " +
+                    "DO UPDATE SET status = 'PENDENTE'::status_solicitacao, data_solicitacao = CURRENT_TIMESTAMP";
+        
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, medicoId);
             ps.setInt(2, patientId);
-            ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                logger.info("Solicitação criada/atualizada: medico_id=" + medicoId + ", paciente_id=" + patientId);
+                connection.commit();
+            }
+            
         } catch (SQLException e) {
+            if (e.getMessage() != null && e.getMessage().contains("duplicar valor da chave")) {
+                try {
+                    connection.commit();
+                } catch (SQLException commitEx) {
+                    logger.warning("Erro no commit: " + commitEx.getMessage());
+                }
+                return;
+            }
+            
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                logger.severe("Erro no rollback: " + rollbackEx.getMessage());
+            }
+            logger.severe("Erro ao criar solicitação de acesso: " + e.getMessage());
             throw new RuntimeException("Erro ao criar requisição de acesso", e);
         }
     }
@@ -699,6 +723,9 @@ public class PatientPostgresDaoImpl implements PatientDao {
         java.sql.Date birthDateSql = resultSet.getDate("data_nascimento");
         String bloodType = resultSet.getString("tipo_sanguineo");
         String observations = resultSet.getString("observacoes");
+        List<RequisicaoAcesso> requisicoes = getRequisicoesAcesso(patientId);
+        logger.info("Construindo paciente " + patientId + " com " + requisicoes.size() + " requisições pendentes");
+        
         return Patient.builder()
                 .id(patientId)
                 .name(resultSet.getString("nome"))
@@ -721,7 +748,7 @@ public class PatientPostgresDaoImpl implements PatientDao {
                 .consultations(safeGetConsultasByProntuarioId(prontuarioId))
                 // Popula especialistas autorizados
                 .especialistasAutorizados(getEspecialistasAutorizados(prontuarioId))
-                .requisicoesAcesso(getRequisicoesAcesso(patientId))
+                .requisicoesAcesso(requisicoes)
                 .build();
     }
 
@@ -729,7 +756,7 @@ public class PatientPostgresDaoImpl implements PatientDao {
         List<RequisicaoAcesso> requisicoes = new ArrayList<>();
         if (patientId <= 0) return requisicoes;
         
-        // Busca todas as solicitações (não apenas pendentes) para debug
+        // Busca TODAS as solicitações (PENDENTE e ACEITA)
         String sql = "SELECT medico_id, status FROM solicitacao_acesso_prontuario WHERE paciente_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, patientId);
@@ -738,8 +765,11 @@ public class PatientPostgresDaoImpl implements PatientDao {
                 String status = rs.getString("status");
                 int medicoId = rs.getInt("medico_id");
                 requisicoes.add(new RequisicaoAcesso(medicoId, status));
-                logger.info("Solicitação encontrada: medico_id=" + medicoId + ", status=" + status + " para paciente_id=" + patientId);
+                logger.info("Requisição encontrada: medico_id=" + medicoId + ", status=" + status + " para paciente_id=" + patientId);
             }
+            
+            logger.info("Total de requisições para paciente " + patientId + ": " + requisicoes.size());
+            
         } catch (SQLException e) {
             logger.warning("Erro ao buscar requisições de acesso: " + e.getMessage());
         }

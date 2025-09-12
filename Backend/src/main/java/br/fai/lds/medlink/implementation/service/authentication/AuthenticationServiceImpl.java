@@ -47,9 +47,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Medic authenticateMedic(String email, String password) {
+        log.info("=== AUTENTICANDO MÉDICO ===");
+        log.info("Email: {}", email);
+        
         Medic medic = medicDao.findByEmail(email);
-        if (medic != null && medic.getPassword().equals(password)) {
-            return medic;
+        if (medic != null) {
+            log.info("Médico encontrado: ID={}, Nome={}", medic.getId(), medic.getName());
+            if (medic.getPassword().equals(password)) {
+                log.info("✅ Autenticação bem-sucedida para médico ID: {}", medic.getId());
+                return medic;
+            } else {
+                log.warn("❌ Senha incorreta para médico: {}", email);
+            }
+        } else {
+            log.warn("❌ Médico não encontrado com email: {}", email);
         }
         return null;
     }

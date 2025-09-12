@@ -133,17 +133,24 @@ public class MedicServiceImpl implements MedicService {
             return new HashMap<>();
         }
         
+        log.info("=== BUSCANDO MÉDICOS POR IDs ===");
+        log.info("IDs solicitados: {}", ids);
+        
         try {
             Map<Integer, Medic> medicsMap = new HashMap<>();
             for (Integer id : ids) {
                 if (id != null && id > 0) {
+                    log.info("Buscando médico com ID: {}", id);
                     Medic medic = medicDao.readById(id);
                     if (medic != null) {
+                        log.info("Médico encontrado: ID={}, Nome={}", medic.getId(), medic.getName());
                         medicsMap.put(id, medic);
+                    } else {
+                        log.warn("Médico não encontrado para ID: {}", id);
                     }
                 }
             }
-            log.debug("Encontrados {} médicos de {} IDs solicitados", medicsMap.size(), ids.size());
+            log.info("Total de médicos encontrados: {}", medicsMap.size());
             return medicsMap;
         } catch (Exception e) {
             log.error("Erro ao buscar médicos por IDs {}: {}", ids.toString(), LogSanitizer.sanitize(e.getMessage()), e);

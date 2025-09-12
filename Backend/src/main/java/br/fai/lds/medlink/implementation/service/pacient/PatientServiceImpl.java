@@ -190,6 +190,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void sendAccessRequest(int patientId, int medicoId) {
+        log.info("=== SERVICE SEND ACCESS REQUEST ===");
+        log.info("Parâmetros: patientId={}, medicoId={}", patientId, medicoId);
         patientDao.createAccessRequest(patientId, medicoId);
     }
 }

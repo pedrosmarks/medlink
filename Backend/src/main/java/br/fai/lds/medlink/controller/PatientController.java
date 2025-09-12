@@ -32,8 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
            methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-@RequestMapping("api/patients")
+@RequestMapping("/api/patients")
 public class PatientController extends BaseController {
+    
+    public PatientController() {
+        log.info("✓ PatientController inicializado - Endpoint /api/patients/{patientId}/access-requests disponível");
+    }
 
     @Autowired
     private PatientService patientService;
@@ -288,12 +292,32 @@ public class PatientController extends BaseController {
         return success("Pacientes encontrados.", response);
     }
 
-    @PostMapping("/{patientId}/access-request")
+    @PostMapping("/{patientId}/access-requests")
     public ResponseEntity<ApiResponse<String>> sendAccessRequest(
             @PathVariable int patientId, 
             @Valid @RequestBody AccessRequestDto request) {
-        patientService.sendAccessRequest(patientId, request.getMedicoId());
-        return success("Requisição de acesso enviada com sucesso.", null);
+        log.info("=== ENDPOINT ACCESS REQUEST CHAMADO ===");
+        log.info("URL: POST /api/patients/{}/access-requests", patientId);
+        log.info("PathVariable patientId: {}", patientId);
+        log.info("RequestBody: {}", request);
+        log.info("MedicoId do request: {}", request.getMedicoId());
+        log.info("Status do request: {}", request.getStatus());
+        
+        try {
+            patientService.sendAccessRequest(patientId, request.getMedicoId());
+            log.info("✓ Solicitação processada com sucesso");
+            return success("Requisição de acesso enviada com sucesso.", null);
+        } catch (Exception e) {
+            log.error("❌ Erro ao processar solicitação: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+    
+    // Endpoint de teste para verificar se a rota está funcionando
+    @GetMapping("/{patientId}/access-requests/test")
+    public ResponseEntity<String> testAccessRequestEndpoint(@PathVariable int patientId) {
+        log.info("✓ Endpoint de teste chamado para paciente: {}", patientId);
+        return ResponseEntity.ok("Endpoint funcionando para paciente " + patientId);
     }
 
     @GetMapping("/{patientId}/pending-requests")
@@ -351,17 +375,35 @@ public class PatientController extends BaseController {
     @GetMapping("/{id}/authorized-doctors")
     public ResponseEntity<ApiResponse<List<AuthorizedDoctorDto>>> getAuthorizedDoctors(@PathVariable int id) {
         return executePatientOperation(id, patient -> {
+            log.info("=== BUSCANDO MÉDICOS AUTORIZADOS ===");
+            log.info("Paciente ID: {}", id);
+            
             List<RequisicaoAcesso> accessRequests = patient.getRequisicoesAcesso();
+            log.info("Total de requisições de acesso: {}", accessRequests != null ? accessRequests.size() : 0);
+            
+            if (accessRequests != null) {
+                accessRequests.forEach(req -> {
+                    log.info("Requisição: medicoId={}, status={}", req.getMedicoId(), req.getStatus());
+                });
+            }
+            
             if (accessRequests == null || accessRequests.isEmpty()) {
+                log.info("Nenhuma requisição de acesso encontrada");
                 return success("Médicos autorizados recuperados com sucesso.", new ArrayList<>());
             }
             
             // Collect all authorized medic IDs to avoid N+1 queries
             List<Integer> authorizedMedicIds = accessRequests.stream()
-                    .filter(req -> "ACEITA".equals(req.getStatus()))
+                    .filter(req -> {
+                        boolean isAccepted = "ACEITA".equals(req.getStatus());
+                        log.info("Requisição medicoId={}, status={}, aceita={}", req.getMedicoId(), req.getStatus(), isAccepted);
+                        return isAccepted;
+                    })
                     .map(RequisicaoAcesso::getMedicoId)
                     .distinct()
                     .collect(Collectors.toList());
+            
+            log.info("Médicos autorizados (IDs): {}", authorizedMedicIds);
             
             // Batch fetch all authorized medics at once using optimized method
             Map<Integer, Medic> medicsMap = medicService.findByIds(authorizedMedicIds);
@@ -370,9 +412,13 @@ public class PatientController extends BaseController {
             List<AuthorizedDoctorDto> authorizedDoctors = authorizedMedicIds.stream()
                     .map(medicsMap::get)
                     .filter(Objects::nonNull)
-                    .map(medic -> new AuthorizedDoctorDto(medic.getId(), medic.getName(), medic.getSpecialty(), medic.getCrm()))
+                    .map(medic -> {
+                        log.info("Médico autorizado: ID={}, Nome={}", medic.getId(), medic.getName());
+                        return new AuthorizedDoctorDto(medic.getId(), medic.getName(), medic.getSpecialty(), medic.getCrm());
+                    })
                     .collect(Collectors.toList());
             
+            log.info("Total de médicos autorizados retornados: {}", authorizedDoctors.size());
             return success("Médicos autorizados recuperados com sucesso.", authorizedDoctors);
         });
     }

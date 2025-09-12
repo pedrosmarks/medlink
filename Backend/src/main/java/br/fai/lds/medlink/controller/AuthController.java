@@ -38,6 +38,10 @@ public class AuthController extends BaseController {
         
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
+            System.out.println("=== LOGIN CONTROLLER - MÉDICO ===");
+            System.out.println("Médico autenticado: ID=" + medic.getId() + ", Nome=" + medic.getName());
+            System.out.println("Retornando LoginResponseDTO com ID: " + medic.getId());
+            
             return success("Login realizado com sucesso.", new LoginResponseDTO(
                     medic.getId(), medic.getName(), "MEDIC"));
         }

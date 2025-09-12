@@ -23,9 +23,11 @@ public class MedlinkApplication {
 
 			@Override
 			public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-				// Evita erro de "No static resource" para rotas que não existem
-				registry.addResourceHandler("/messages/**")
+				// Configuração de recursos estáticos
+				registry.addResourceHandler("/static/**")
 						.addResourceLocations("classpath:/static/");
+				// Não interceptar rotas da API
+				registry.setOrder(1);
 			}
 		};
 	}

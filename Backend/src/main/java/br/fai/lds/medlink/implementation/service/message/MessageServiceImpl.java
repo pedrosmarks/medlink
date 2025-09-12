@@ -135,7 +135,15 @@ public class MessageServiceImpl implements MessageService {
 
     public List<Message> findAll() {
         List<Message> messages = new ArrayList<>();
+        
+        // Verifica se o DataSource está disponível
+        if (dataSource == null) {
+            System.out.println("DataSource é null - retornando lista vazia");
+            return messages;
+        }
+        
         try (java.sql.Connection conn = dataSource.getConnection()) {
+            System.out.println("Conexão obtida com sucesso");
             
             // Tenta buscar com as novas colunas
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(
@@ -214,7 +222,11 @@ public class MessageServiceImpl implements MessageService {
             
         } catch (Exception e) {
             System.out.println("Erro ao buscar mensagens: " + e.getMessage());
+            System.out.println("Tipo do erro: " + e.getClass().getSimpleName());
             e.printStackTrace();
+            
+            // Retorna lista vazia em caso de erro para evitar 500
+            System.out.println("Retornando lista vazia devido ao erro");
         }
         System.out.println("findAll chamado - total de mensagens: " + messages.size());
         return messages;

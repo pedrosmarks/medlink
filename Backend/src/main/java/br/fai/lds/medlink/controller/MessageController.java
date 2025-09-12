@@ -13,7 +13,7 @@ import java.util.List;
  * Controlador para gerenciamento de mensagens.
  */
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/messages")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
            methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH})
 public class MessageController extends BaseController {
@@ -30,8 +30,15 @@ public class MessageController extends BaseController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<Message>>> getAllMessages() {
-        List<Message> messages = messageService.findAll();
-        return success("Mensagens listadas com sucesso.", messages);
+        try {
+            List<Message> messages = messageService.findAll();
+            return success("Mensagens listadas com sucesso.", messages);
+        } catch (Exception e) {
+            System.out.println("Erro no controller de mensagens: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse<>("Erro ao carregar mensagens: " + e.getMessage()));
+        }
     }
 
     /**

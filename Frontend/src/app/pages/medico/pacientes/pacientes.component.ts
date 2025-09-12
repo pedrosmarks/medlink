@@ -32,8 +32,13 @@ export class PacientesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.medicoId = parseInt(localStorage.getItem('userId') || '1');
+    // Corrigido: usar medicoId específico para médicos
+    this.medicoId = parseInt(localStorage.getItem('medicoId') || localStorage.getItem('userId') || '1');
     console.log('🚀 CARREGANDO PACIENTES REAIS - Médico ID:', this.medicoId);
+    console.log('🔍 DEBUG localStorage medicoId:', localStorage.getItem('medicoId'));
+    console.log('🔍 DEBUG localStorage userId:', localStorage.getItem('userId'));
+    console.log('🔍 DEBUG userProfile:', localStorage.getItem('userProfile'));
+    console.log('🔍 DEBUG userType:', localStorage.getItem('userType'));
     
     this.carregarPacientes();
     
@@ -46,6 +51,11 @@ export class PacientesComponent implements OnInit {
   carregarPacientes(): void {
     console.log('🔄 RECARREGANDO PACIENTES - Médico ID:', this.medicoId);
     console.log('🌐 URL da requisição:', `http://localhost:8080/api/medic/${this.medicoId}/patients`);
+    console.log('🔍 localStorage completo:', {
+      userId: localStorage.getItem('userId'),
+      userProfile: localStorage.getItem('userProfile'),
+      medicoNome: localStorage.getItem('medicoNome')
+    });
     
     this.pacientesReadService.getPacientes().subscribe({
       next: (response: any) => {
