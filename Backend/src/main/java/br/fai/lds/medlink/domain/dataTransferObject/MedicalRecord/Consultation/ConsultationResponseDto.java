@@ -13,14 +13,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConsultationResponseDto {
-    private int id;
     private LocalDate date;
     private String reason;
     private String notes;
 
     public static ConsultationResponseDto fromEntity(Consultation entity) {
         return ConsultationResponseDto.builder()
-                .id(entity.getId())
                 .date(entity.getDate())
                 .reason(entity.getReason())
                 .notes(entity.getNotes())

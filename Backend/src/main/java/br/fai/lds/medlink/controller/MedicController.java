@@ -25,6 +25,8 @@ import br.fai.lds.medlink.util.LogSanitizer;
  */
 @Slf4j
 @RestController
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
+           methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("/api/medic")
 public class MedicController extends BaseController {
 
@@ -88,16 +90,33 @@ public class MedicController extends BaseController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicResponseDto>> updateMedic(@PathVariable int id,
                                          @Valid @RequestBody MedicUpdateDto dto) {
-        validateId(id);
+        log.info("Iniciando atualização do médico ID: {}", LogSanitizer.sanitizeId(id));
+        log.debug("DTO recebido: {}", dto);
         
-        Medic medic = medicService.findById(id);
-        if (medic == null) {
-            return notFound("Médico");
+        try {
+            validateId(id);
+            
+            Medic medic = medicService.findById(id);
+            if (medic == null) {
+                log.warn("Médico não encontrado para ID: {}", LogSanitizer.sanitizeId(id));
+                return notFound("Médico");
+            }
+            
+            log.debug("Médico encontrado: {}", medic.getName());
+            log.debug("Aplicando atualizações do DTO...");
+            
+            dto.updateEntity(medic);
+            
+            log.debug("Salvando médico atualizado...");
+            Medic updated = medicService.update(id, medic);
+            
+            log.info("Médico ID {} atualizado com sucesso", LogSanitizer.sanitizeId(id));
+            return success("Médico atualizado com sucesso!", MedicResponseDto.fromEntity(updated));
+            
+        } catch (Exception e) {
+            log.error("Erro ao atualizar médico ID {}: {}", LogSanitizer.sanitizeId(id), e.getMessage(), e);
+            throw e;
         }
-
-        dto.updateEntity(medic);
-        Medic updated = medicService.update(id, medic);
-        return success("Médico atualizado com sucesso!", MedicResponseDto.fromEntity(updated));
     }
 
     /**

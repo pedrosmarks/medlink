@@ -3,7 +3,7 @@ package br.fai.lds.medlink.domain.dataTransferObject.Medic;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -26,6 +26,7 @@ import java.time.LocalDate;
  * @see MedicCreateDto
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MedicUpdateDto {
 
     /**
@@ -56,10 +57,9 @@ public class MedicUpdateDto {
     /**
      * Data de nascimento do médico (opcional).
      * <p>
-     * Se fornecida, deve estar no formato dd/MM/yyyy.
+     * Aceita formatos: dd/MM/yyyy ou yyyy-MM-dd.
      * </p>
      */
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
 
     /**
@@ -125,10 +125,18 @@ public class MedicUpdateDto {
      * @see Medic
      */
     public void updateEntity(Medic entity) {
-        updateBasicInfo(entity);
-        updateContactInfo(entity);
-        updateProfessionalInfo(entity);
-        updateStatus(entity);
+        if (entity == null) {
+            throw new IllegalArgumentException("Entidade Medic não pode ser null");
+        }
+        
+        try {
+            updateBasicInfo(entity);
+            updateContactInfo(entity);
+            updateProfessionalInfo(entity);
+            updateStatus(entity);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar entidade Medic: " + e.getMessage(), e);
+        }
     }
 
     /**
