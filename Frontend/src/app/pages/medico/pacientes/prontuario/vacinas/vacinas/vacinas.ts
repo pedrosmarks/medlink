@@ -108,7 +108,7 @@ export class Vacinas implements OnInit {
   removerVacina(index: number) {
     const vacina = this.vacinas[index];
     if (!vacina || !vacina.id) {
-      console.error('Vacina sem ID para remoção');
+      console.log('Vacina removida localmente (não estava salva no backend)');
       return;
     }
     

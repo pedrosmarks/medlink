@@ -88,12 +88,14 @@ export class Medicamentos implements OnInit {
 
   removerMedicamento(index: number) {
     const medicamento = this.medicamentos[index];
-    if (!medicamento || !medicamento.name) {
-      console.error('Medicamento não encontrado ou sem nome');
+    if (!medicamento || !medicamento.id) {
+      console.log('Medicamento removido localmente (não estava salvo no backend)');
+      // Remove localmente se não tem ID
+      this.medicamentos.splice(index, 1);
       return;
     }
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications/${encodeURIComponent(medicamento.name)}`;
+    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications/${medicamento.id}`;
     console.log('Removendo medicamento:', url);
     
     this.http.delete<any>(url).subscribe({
