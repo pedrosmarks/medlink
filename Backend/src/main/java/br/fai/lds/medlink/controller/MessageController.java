@@ -13,7 +13,7 @@ import java.util.List;
  * Controlador para gerenciamento de mensagens.
  */
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/messages")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}, 
            methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH})
 public class MessageController extends BaseController {
