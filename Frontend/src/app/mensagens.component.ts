@@ -7,11 +7,13 @@ export interface MensagemBackend {
   id?: string;
   senderId: string;
   senderType: string;
-  receiverId: string;
-  receiverType: string;
-  conteudo: string;
-  lida?: boolean;
-  dataEnvio?: string;
+  recipientId: string;
+  recipientType: string;
+  text: string;
+  read?: boolean;
+  date?: string;
+  senderName?: string;
+  recipientName?: string;
 }
 
 @Component({
@@ -48,9 +50,9 @@ export class MensagemComponent implements OnInit {
       const msg: MensagemBackend = {
         senderId: this.senderId,
         senderType: this.senderType,
-        receiverId: this.receiverId,
-        receiverType: this.receiverType,
-        conteudo: this.novaMensagemConteudo
+        recipientId: this.receiverId,
+        recipientType: this.receiverType,
+        text: this.novaMensagemConteudo
       };
       this.mensagemService.sendMessage(msg).subscribe(() => {
         this.novaMensagemConteudo = '';

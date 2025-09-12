@@ -12,15 +12,16 @@
       <div *ngIf="!loading && (!medicosComMensagens || medicosComMensagens.length === 0)" class="empty-state">
         <p>Nenhum médico autorizado encontrado.</p>
         <small>Você precisa ter pelo menos um médico com acesso liberado ao seu prontuário para iniciar conversas.</small>
+        <p>Debug: {{ medicosComMensagens?.length || 0 }} médicos carregados</p>
       </div>
 
       <button *ngFor="let conv of medicosComMensagens" class="sidebar-item" (click)="selecionarConversa(conv)" [class.active]="conversaSelecionada?.medico?.id === conv.medico.id">
         <div class="avatar-mini">{{ conv.medico.name ? conv.medico.name.charAt(0) : 'M' }}</div>
         <div class="info">
           <div class="title">{{ conv.medico.name || 'Médico' }}</div>
-          <div class="preview">{{ conv.ultimaMensagem?.texto || conv.ultimaMensagem?.conteudo || 'Sem mensagens' }}</div>
+          <div class="preview">{{ conv.ultimaMensagem?.text || 'Sem mensagens' }}</div>
         </div>
-        <div class="meta"> <small>{{ conv.ultimaMensagem?.data ? (conv.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
+        <div class="meta"> <small>{{ conv.ultimaMensagem?.date ? (conv.ultimaMensagem?.date | date:'dd/MM') : '' }}</small></div>
         <div class="unread" *ngIf="contarMensagensNaoLidas(conv) > 0">{{ contarMensagensNaoLidas(conv) }}</div>
       </button>
     </div>
@@ -37,10 +38,12 @@
       </header>
 
       <div class="panel-messages" #messagesContainer>
-        <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.remetenteId === senderId">
+        <p *ngIf="conversaSelecionada.mensagens.length === 0">Debug: Nenhuma mensagem encontrada</p>
+        <p *ngIf="conversaSelecionada.mensagens.length > 0">Debug: {{ conversaSelecionada.mensagens.length }} mensagens</p>
+        <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.senderId === senderId">
           <div class="msg-bubble">
-            <div class="msg-text">{{ m.texto || m.conteudo }}</div>
-            <div class="msg-meta"><small>{{ (m.data || m.dataEnvio) | date:'dd/MM HH:mm' }}</small></div>
+            <div class="msg-text">{{ m.text }}</div>
+            <div class="msg-meta"><small>{{ m.date | date:'dd/MM HH:mm' }}</small></div>
           </div>
         </div>
       </div>

@@ -67,30 +67,35 @@ export class Mensagem implements OnInit, AfterViewChecked {
   const medicosAutorizados: Medico[] = (await this.medicosService.getMedicosAutorizadosCompletos(this.senderId).toPromise().catch(() => [])) || [];
 
       // 2. Buscar todas as mensagens
-      const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();
-      const todasMensagens: any[] = mensagensResponse.data || mensagensResponse || [];
+      const mensagensResponse = await this.http.get<any>('http://localhost:8080/api/messages', { headers: { 'Content-Type': 'application/json' } }).toPromise();
+      console.log('Response completa:', mensagensResponse);
+      console.log('Mensagens:', mensagensResponse.data);
+      const todasMensagens: any[] = mensagensResponse.data || [];
 
       // Filtra apenas mensagens onde o paciente logado está envolvido
       const idPaciente = this.senderId;
       const mensagensDoPaciente = todasMensagens.filter(msg =>
-        (msg.remetenteId === idPaciente && msg.remetenteTipo === 'paciente') ||
-        (msg.destinatarioId === idPaciente && msg.destinatarioTipo === 'paciente')
+        (msg.senderId === idPaciente && msg.senderType === 'PATIENT') ||
+        (msg.recipientId === idPaciente && msg.recipientType === 'PATIENT')
       );
 
       // 3. Agrupar mensagens por médico autorizado
       this.medicosComMensagens = medicosAutorizados.map(medico => {
-        const idMedico = `medico_${medico.id}`;
+        const idMedico = `${medico.id}`;
         const msgsMedico = mensagensDoPaciente.filter(msg =>
-          (msg.remetenteId === idMedico && msg.remetenteTipo === 'medico') ||
-          (msg.destinatarioId === idMedico && msg.destinatarioTipo === 'medico')
+          (msg.senderId === idMedico && msg.senderType === 'MEDIC') ||
+          (msg.recipientId === idMedico && msg.recipientType === 'MEDIC')
         );
-        msgsMedico.sort((a, b) => new Date(a.data || a.dataEnvio).getTime() - new Date(b.data || b.dataEnvio).getTime());
+        msgsMedico.sort((a, b) => new Date(a.date || a.dataEnvio).getTime() - new Date(b.date || b.dataEnvio).getTime());
         return {
           medico,
           mensagens: msgsMedico,
           ultimaMensagem: msgsMedico[msgsMedico.length - 1]
         };
       });
+      
+      console.log('Estado atualizado - medicosComMensagens:', this.medicosComMensagens);
+      console.log('Total de médicos com mensagens:', this.medicosComMensagens.length);
 
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -102,18 +107,18 @@ export class Mensagem implements OnInit, AfterViewChecked {
   selecionarConversa(conv: ConversaComMedico) {
     this.conversaSelecionada = conv;
     // Preenche receiverId/receiverType para envio
-    this.receiverId = `medico_${conv.medico.id}`;
-    this.receiverType = 'medico';
+    this.receiverId = `${conv.medico.id}`;
+    this.receiverType = 'MEDIC';
     
     // Marcar todas as mensagens não lidas como lidas IMEDIATAMENTE
     const mensagensNaoLidas = conv.mensagens.filter(m => {
-      const naoLida = !m.lida;
-      const ehDestinatario = m.destinatarioId === this.senderId || m.receiverId === this.senderId;
+      const naoLida = !m.read;
+      const ehDestinatario = m.recipientId === this.senderId && m.recipientType === 'PATIENT';
       return naoLida && ehDestinatario;
     });
     
     // Marcar localmente para UI imediata
-    mensagensNaoLidas.forEach(m => m.lida = true);
+    mensagensNaoLidas.forEach(m => m.read = true);
     
     // Forçar atualização da UI
     this.medicosComMensagens = [...this.medicosComMensagens];
@@ -157,13 +162,13 @@ export class Mensagem implements OnInit, AfterViewChecked {
   private async marcarMensagensComoLidas(conv: ConversaComMedico) {
     // Encontrar mensagens que já foram marcadas como lidas localmente mas precisam ser sincronizadas
     const mensagensParaSincronizar = conv.mensagens.filter(m => {
-      return m.lida && (m.destinatarioId === this.senderId || m.receiverId === this.senderId);
+      return m.read && m.recipientId === this.senderId && m.recipientType === 'PATIENT';
     });
     
     // Sincronizar com o backend
     for (const mensagem of mensagensParaSincronizar) {
       try {
-        await this.http.patch(`http://localhost:8080/messages/${mensagem.id}`, {}).toPromise();
+        await this.http.patch(`http://localhost:8080/api/messages/${mensagem.id}`, {}, { headers: { 'Content-Type': 'application/json' } }).toPromise();
       } catch (error) {
         console.error('Erro ao sincronizar mensagem com backend:', error);
       }
@@ -179,19 +184,20 @@ export class Mensagem implements OnInit, AfterViewChecked {
     const nomePaciente = localStorage.getItem('pacienteNome') || this.senderId;
     
     const msg = {
-      remetenteId: this.senderId,
-      remetenteTipo: this.senderType,
-      remetenteNome: nomePaciente,
-      destinatarioId: this.receiverId,
-      destinatarioTipo: this.receiverType,
-      destinatarioNome: nomeMedico,
-      texto: this.novaMensagemConteudo.trim(),
-      data: new Date().toISOString(),
-      lida: false
+      senderId: this.senderId,
+      senderType: 'PATIENT',
+      senderName: nomePaciente,
+      recipientId: this.receiverId,
+      recipientType: 'MEDIC',
+      recipientName: nomeMedico,
+      text: this.novaMensagemConteudo.trim(),
+      date: new Date().toISOString(),
+      read: false
     };
     
     try {
-      await this.http.post('http://localhost:8080/messages', msg).toPromise();
+      const result = await this.http.post('http://localhost:8080/api/messages', msg, { headers: { 'Content-Type': 'application/json' } }).toPromise();
+      console.log('Mensagem enviada:', result);
       this.novaMensagemConteudo = '';
       
       // Recarregar mensagens
@@ -215,7 +221,7 @@ export class Mensagem implements OnInit, AfterViewChecked {
 
   async marcarComoLida(id: string) {
     try {
-      await this.http.patch(`http://localhost:8080/messages/${id}`, {}).toPromise();
+      await this.http.patch(`http://localhost:8080/api/messages/${id}`, {}, { headers: { 'Content-Type': 'application/json' } }).toPromise();
       await this.carregarMedicosEMensagens();
     } catch (error) {
       console.error('Erro ao marcar como lida:', error);
@@ -228,16 +234,16 @@ export class Mensagem implements OnInit, AfterViewChecked {
 
   temMensagensNaoLidas(conv: ConversaComMedico): boolean {
     return conv.mensagens.some(m => {
-      const naoLida = !m.lida;
-      const ehDestinatario = m.destinatarioId === this.senderId || m.receiverId === this.senderId;
+      const naoLida = !m.read;
+      const ehDestinatario = m.recipientId === this.senderId && m.recipientType === 'PATIENT';
       return naoLida && ehDestinatario;
     });
   }
 
   contarMensagensNaoLidas(conv: ConversaComMedico): number {
     const count = conv.mensagens.filter(m => {
-      const naoLida = !m.lida;
-      const ehDestinatario = m.destinatarioId === this.senderId || m.receiverId === this.senderId;
+      const naoLida = !m.read;
+      const ehDestinatario = m.recipientId === this.senderId && m.recipientType === 'PATIENT';
       return naoLida && ehDestinatario;
     }).length;
     return count;

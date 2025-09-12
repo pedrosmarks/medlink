@@ -7,39 +7,51 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root'
 })
 export class MensagensReadService {
-  private apiUrl = 'http://localhost:8080';
+  private apiUrl = 'http://localhost:8080/api';
+  private headers = { 'Content-Type': 'application/json' };
 
   constructor(private http: HttpClient) {}
 
   // Buscar todas as mensagens
   getMensagens(): Observable<any[]> {
-    return this.http.get<any>(`${this.apiUrl}/messages`).pipe(
-      map((response: any) => response.data || response)
+    return this.http.get<any>(`${this.apiUrl}/messages`, { headers: this.headers }).pipe(
+      map((response: any) => {
+        console.log('Response completa:', response);
+        console.log('Mensagens:', response.data);
+        return response.data || [];
+      })
     );
   }
 
   // Buscar conversas de um usuário específico
   getConversas(senderId: string, senderType: string): Observable<any[]> {
     return this.http.get<any>(`${this.apiUrl}/messages`, {
+      headers: this.headers,
       params: {
         senderId: senderId,
         senderType: senderType
       }
     }).pipe(
-      map((response: any) => response.data || response)
+      map((response: any) => {
+        console.log('Response conversas:', response);
+        return response.data || [];
+      })
     );
   }
 
   // Enviar nova mensagem
   enviarMensagem(mensagem: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/messages`, mensagem).pipe(
-      map((response: any) => response.data || response)
+    return this.http.post<any>(`${this.apiUrl}/messages`, mensagem, { headers: this.headers }).pipe(
+      map((response: any) => {
+        console.log('Mensagem enviada:', response);
+        return response.data || response;
+      })
     );
   }
 
   // Marcar mensagem como lida
   marcarComoLida(mensagemId: string): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/messages/${mensagemId}`, {}).pipe(
+    return this.http.patch<any>(`${this.apiUrl}/messages/${mensagemId}`, {}, { headers: this.headers }).pipe(
       map((response: any) => response.data || response)
     );
   }

@@ -12,15 +12,16 @@
       <div *ngIf="!loading && (!pacientesComMensagens || pacientesComMensagens.length === 0)" class="empty-state">
         <p>Nenhum paciente autorizado encontrado.</p>
         <small>Você só pode conversar com pacientes que liberaram acesso ao prontuário.</small>
+
       </div>
 
       <button *ngFor="let item of pacientesComMensagens" class="sidebar-item" (click)="selecionarPaciente(item)" [class.active]="pacienteSelecionado?.paciente?.id === item.paciente.id">
         <div class="avatar-mini">{{ item.paciente.name.charAt(0) }}</div>
         <div class="info">
           <div class="title">{{ item.paciente.name }}</div>
-          <div class="preview">{{ item.ultimaMensagem?.texto || 'Sem mensagens' }}</div>
+          <div class="preview">{{ item.ultimaMensagem?.text || 'Sem mensagens' }}</div>
         </div>
-        <div class="meta"> <small>{{ item.ultimaMensagem?.data ? (item.ultimaMensagem?.data | date:'dd/MM') : '' }}</small></div>
+        <div class="meta"> <small>{{ item.ultimaMensagem?.date ? (item.ultimaMensagem?.date | date:'dd/MM') : '' }}</small></div>
         <div class="unread" *ngIf="contarMensagensNaoLidas(item) > 0">{{ contarMensagensNaoLidas(item) }}</div>
       </button>
     </div>
@@ -37,10 +38,10 @@
       </header>
 
       <div class="panel-messages" #messagesContainer>
-        <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.remetenteId === getMedicoId()">
+        <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.recipientId === pacienteSelecionado.paciente.id.toString()">
           <div class="msg-bubble">
-            <div class="msg-text">{{ m.texto }}</div>
-            <div class="msg-meta"><small>{{ m.data | date:'dd/MM HH:mm' }}</small></div>
+            <div class="msg-text">{{ m.text }}</div>
+            <div class="msg-meta"><small>{{ m.date | date:'dd/MM HH:mm' }}</small></div>
           </div>
         </div>
       </div>

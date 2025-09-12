@@ -3,15 +3,15 @@
   <div class="form-group">
     <input [(ngModel)]="senderId" placeholder="Seu ID">
     <input [(ngModel)]="senderType" placeholder="Seu Tipo (ex: medico, paciente)">
-    <input [(ngModel)]="receiverId" placeholder="Destinatário ID">
-    <input [(ngModel)]="receiverType" placeholder="Destinatário Tipo">
+    <input [(ngModel)]="receiverId" placeholder="Recipient ID">
+    <input [(ngModel)]="receiverType" placeholder="Recipient Type">
     <button (click)="listarConversas()">Listar Conversas</button>
   </div>
 
   <div class="mensagens-lista">
     <div *ngFor="let msg of mensagens" class="mensagem-item">
-      <span><b>{{msg.senderType}}:</b> {{msg.conteudo}}</span>
-      <span *ngIf="!msg.lida">
+      <span><b>{{msg.senderType}}:</b> {{msg.text}}</span>
+      <span *ngIf="!msg.read">
         <button (click)="marcarComoLida(msg.id!)">Marcar como lida</button>
       </span>
     </div>

@@ -4,8 +4,10 @@ export interface Mensagem {
   senderType: 'MEDICO' | 'PACIENTE';
   recipientId: string;
   recipientType: 'MEDICO' | 'PACIENTE';
-  content: string;
-  timestamp?: string;
+  text: string;
+  senderName?: string;
+  recipientName?: string;
+  date?: string;
   read?: boolean;
 }
 
