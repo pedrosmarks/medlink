@@ -79,23 +79,23 @@
       <div class="card-content">
         <div *ngIf="!editando">
           <div class="info-row">
-            <label>Rua:</label>
+            <label>Rua: </label>
             <span>{{ perfil.address?.street }}, {{ perfil.address?.number }}</span>
           </div>
-          <div class="info-row" *ngIf="perfil.address?.complement">
-            <label>Complemento:</label>
-            <span>{{ perfil.address?.complement }}</span>
+          <div class="info-row complement-field">
+            <label>Complemento: </label>
+            <span>{{ perfil.address?.complement || '' }}</span>
           </div>
           <div class="info-row">
-            <label>Bairro:</label>
+            <label>Bairro: </label>
             <span>{{ perfil.address?.neighborhood }}</span>
           </div>
           <div class="info-row">
-            <label>Cidade:</label>
+            <label>Cidade: </label>
             <span>{{ perfil.address?.city }} - {{ perfil.address?.state }}</span>
           </div>
           <div class="info-row">
-            <label>CEP:</label>
+            <label>CEP: </label>
             <span>{{ perfil.address?.zipCode }}</span>
           </div>
         </div>
@@ -108,8 +108,8 @@
             <label>Número:</label>
             <input type="text" [(ngModel)]="addressNumber" name="number" placeholder="Número" />
           </div>
-          <div class="info-row">
-            <label>Complemento:</label>
+          <div class="info-row complement-field">
+            <label>Complemento: </label>
             <input type="text" [(ngModel)]="addressComplement" name="complement" placeholder="Complemento" />
           </div>
           <div class="info-row">

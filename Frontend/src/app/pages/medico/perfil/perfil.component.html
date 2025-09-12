@@ -8,7 +8,8 @@
     </div>
     <div class="perfil-info-header">
       <h2 *ngIf="!editando">{{ perfil.name }}</h2>
-      <input *ngIf="editando" type="text" [(ngModel)]="perfil.name" name="name" class="header-input" placeholder="Nome completo" />
+      <input *ngIf="editando" type="text" [(ngModel)]="perfil.name" name="name" class="header-input"
+        placeholder="Nome completo" />
       <p class="specialty" *ngIf="!editando">{{ perfil.specialty }}</p>
       <div class="personal-info" *ngIf="!editando">
         <span class="info-item">CRM: {{ perfil.crm }}</span>
@@ -34,7 +35,8 @@
         <div class="info-row">
           <label>Especialidade:</label>
           <span *ngIf="!editando">{{ perfil.specialty }}</span>
-          <input *ngIf="editando" type="text" [(ngModel)]="perfil.specialty" name="specialty" placeholder="Especialidade" />
+          <input *ngIf="editando" type="text" [(ngModel)]="perfil.specialty" name="specialty"
+            placeholder="Especialidade" />
         </div>
       </div>
     </div>
@@ -79,12 +81,14 @@
         <div class="info-row">
           <label>Telefone:</label>
           <span *ngIf="!editando">{{ perfil.phoneNumber }}</span>
-          <input *ngIf="editando" type="tel" [(ngModel)]="perfil.phoneNumber" name="phoneNumber" placeholder="(00) 00000-0000" />
+          <input *ngIf="editando" type="tel" [(ngModel)]="perfil.phoneNumber" name="phoneNumber"
+            placeholder="(00) 00000-0000" />
         </div>
         <div class="info-row">
           <label>Email:</label>
           <span *ngIf="!editando">{{ perfil.email }}</span>
-          <input *ngIf="editando" type="email" [(ngModel)]="perfil.email" name="email" placeholder="email@exemplo.com" />
+          <input *ngIf="editando" type="email" [(ngModel)]="perfil.email" name="email"
+            placeholder="email@exemplo.com" />
         </div>
       </div>
     </div>
@@ -98,23 +102,23 @@
       <div class="card-content">
         <div *ngIf="!editando">
           <div class="info-row">
-            <label>Rua:</label>
+            <label>Rua: </label>
             <span>{{ perfil.address?.street }}, {{ perfil.address?.number }}</span>
           </div>
-          <div class="info-row" *ngIf="perfil.address?.complement">
-            <label>Complemento:</label>
-            <span>{{ perfil.address?.complement }}</span>
+          <div class="info-row complement-field">
+            <label>Complemento: </label>
+            <span>{{ perfil.address?.complement || '' }}</span>
           </div>
           <div class="info-row">
-            <label>Bairro:</label>
+            <label>Bairro: </label>
             <span>{{ perfil.address?.neighborhood }}</span>
           </div>
           <div class="info-row">
-            <label>Cidade:</label>
+            <label>Cidade: </label>
             <span>{{ perfil.address?.city }} - {{ perfil.address?.state }}</span>
           </div>
           <div class="info-row">
-            <label>CEP:</label>
+            <label>CEP: </label>
             <span>{{ perfil.address?.zipCode }}</span>
           </div>
         </div>
@@ -127,8 +131,8 @@
             <label>Número:</label>
             <input type="text" [(ngModel)]="addressNumber" name="number" placeholder="Número" />
           </div>
-          <div class="info-row">
-            <label>Complemento:</label>
+          <div class="info-row complement-field">
+            <label>Complemento: </label>
             <input type="text" [(ngModel)]="addressComplement" name="complement" placeholder="Complemento" />
           </div>
           <div class="info-row">
@@ -161,7 +165,8 @@
         <div class="info-row">
           <span *ngIf="!editando && perfil.observations">{{ perfil.observations }}</span>
           <span *ngIf="!editando && !perfil.observations" class="no-data">Nenhuma observação registrada</span>
-          <textarea *ngIf="editando" [(ngModel)]="perfil.observations" name="observations" placeholder="Observações profissionais importantes..." rows="4"></textarea>
+          <textarea *ngIf="editando" [(ngModel)]="perfil.observations" name="observations"
+            placeholder="Observações profissionais importantes..." rows="4"></textarea>
         </div>
       </div>
     </div>
