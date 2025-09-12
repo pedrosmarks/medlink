@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Patient {
     private int id;
     private String name;
@@ -14,6 +16,7 @@ public class Patient {
     private String password;
     private Gender gender;
     private LocalDate birthDate;
+    private Integer age; // Campo idade calculado ou informado
     private String phoneNumber;
     private String avatar;
     private String bloodType;
@@ -36,7 +39,7 @@ public class Patient {
     public Patient() {}
 
     public Patient(int id, String name, String cpf, String password, Gender gender,
-                   LocalDate birthDate, String phoneNumber, String avatar, String bloodType,
+                   LocalDate birthDate, Integer age, String phoneNumber, String avatar, String bloodType,
                    String observations, Address address, String email, String plan,
                    String susCard, Integer medicId, boolean active,
                    List<EspecialistaAutorizado> especialistasAutorizados,
@@ -50,6 +53,7 @@ public class Patient {
         this.password = password;
         this.gender = gender;
         this.birthDate = birthDate;
+        this.age = age;
         this.phoneNumber = phoneNumber;
         this.avatar = avatar;
         this.bloodType = bloodType;

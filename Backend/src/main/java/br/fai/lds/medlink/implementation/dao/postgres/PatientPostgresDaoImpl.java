@@ -343,11 +343,13 @@ public class PatientPostgresDaoImpl implements PatientDao {
 
     @Override
     public void updateInformation(int id, Patient entity) {
-        // Atualiza informações específicas do paciente
-        entity.setId(id);
-        update(entity);
-        
         try {
+            connection.setAutoCommit(false);
+            
+            // Atualiza informações específicas do paciente
+            entity.setId(id);
+            update(entity);
+            
             int prontuarioId = getProntuarioIdByPatientId(id);
             // Atualiza todas as listas médicas no banco
             updateVacinas(id, entity.getVacinas());
@@ -356,8 +358,24 @@ public class PatientPostgresDaoImpl implements PatientDao {
             updateMedicamentos(prontuarioId, entity.getMedications());
             updateCirurgias(prontuarioId, entity.getCirurgias());
             updateConsultas(prontuarioId, entity.getConsultations());
-        } catch (SQLException e) {
+            
+            connection.commit();
+            logger.info("Informações do paciente " + id + " atualizadas com sucesso");
+            
+        } catch (Exception e) {
+            try {
+                connection.rollback();
+                logger.severe("Rollback realizado devido ao erro: " + e.getMessage());
+            } catch (SQLException rollbackEx) {
+                logger.severe("Erro no rollback: " + rollbackEx.getMessage());
+            }
             throw new RuntimeException("Erro ao atualizar dados médicos", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.warning("Erro ao restaurar autoCommit: " + e.getMessage());
+            }
         }
     }
     
@@ -538,20 +556,41 @@ public class PatientPostgresDaoImpl implements PatientDao {
             }
             
             if (consultas != null && !consultas.isEmpty()) {
-                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id) VALUES (?, ?, ?)";
+                // Busca um medico_clinica_especialidade_id válido ou usa 1 como padrão
+                int medicoClinicaEspecialidadeId = getDefaultMedicoClinicaEspecialidadeId();
+                
+                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id, medico_clinica_especialidade_id) VALUES (?, ?, ?, ?)";
                 try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
                     for (Consultation consulta : consultas) {
                         ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
                         ps.setString(2, consulta.getNotes());
                         ps.setInt(3, prontuarioId);
+                        ps.setInt(4, medicoClinicaEspecialidadeId);
                         ps.addBatch();
                     }
                     ps.executeBatch();
                 }
             }
         } catch (SQLException e) {
+            logger.severe("Erro ao atualizar consultas: " + e.getMessage());
             throw new RuntimeException("Erro ao atualizar consultas", e);
         }
+    }
+    
+    private int getDefaultMedicoClinicaEspecialidadeId() {
+        try {
+            String sql = "SELECT id FROM medico_clinica_especialidade LIMIT 1";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            logger.warning("Erro ao buscar medico_clinica_especialidade_id padrão: " + e.getMessage());
+        }
+        // Se não encontrar nenhum, retorna 1 (assumindo que existe)
+        return 1;
     }
 
     @Override
@@ -689,15 +728,20 @@ public class PatientPostgresDaoImpl implements PatientDao {
     private List<RequisicaoAcesso> getRequisicoesAcesso(int patientId) {
         List<RequisicaoAcesso> requisicoes = new ArrayList<>();
         if (patientId <= 0) return requisicoes;
-        String sql = "SELECT medico_id, status FROM solicitacao_acesso_prontuario WHERE paciente_id = ? AND status = 'PENDENTE'";
+        
+        // Busca todas as solicitações (não apenas pendentes) para debug
+        String sql = "SELECT medico_id, status FROM solicitacao_acesso_prontuario WHERE paciente_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                requisicoes.add(new RequisicaoAcesso(rs.getInt("medico_id"), rs.getString("status")));
+                String status = rs.getString("status");
+                int medicoId = rs.getInt("medico_id");
+                requisicoes.add(new RequisicaoAcesso(medicoId, status));
+                logger.info("Solicitação encontrada: medico_id=" + medicoId + ", status=" + status + " para paciente_id=" + patientId);
             }
         } catch (SQLException e) {
-            // Log or ignore, return empty list
+            logger.warning("Erro ao buscar requisições de acesso: " + e.getMessage());
         }
         return requisicoes;
     }
@@ -705,15 +749,27 @@ public class PatientPostgresDaoImpl implements PatientDao {
     private List<EspecialistaAutorizado> getEspecialistasAutorizados(int prontuarioId) {
         List<EspecialistaAutorizado> especialistas = new ArrayList<>();
         if (prontuarioId <= 0) return especialistas;
-        String sql = "SELECT medico_id FROM medico_acesso_prontuario WHERE prontuario_id = ?";
+        
+        // Busca médicos autorizados através da solicitação aceita
+        String sql = """
+            SELECT DISTINCT sap.medico_id 
+            FROM solicitacao_acesso_prontuario sap
+            JOIN prontuario pr ON pr.paciente_id = sap.paciente_id
+            WHERE pr.id = ? AND sap.status = 'ACEITA'::status_solicitacao
+            UNION
+            SELECT medico_id FROM medico_acesso_prontuario WHERE prontuario_id = ?
+        """;
+        
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, prontuarioId);
+            ps.setInt(2, prontuarioId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 especialistas.add(new EspecialistaAutorizado(rs.getLong("medico_id")));
             }
+            logger.info("Especialistas autorizados encontrados: " + especialistas.size() + " para prontuario_id=" + prontuarioId);
         } catch (SQLException e) {
-            // Log or ignore, return empty list
+            logger.warning("Erro ao buscar especialistas autorizados: " + e.getMessage());
         }
         return especialistas;
     }
