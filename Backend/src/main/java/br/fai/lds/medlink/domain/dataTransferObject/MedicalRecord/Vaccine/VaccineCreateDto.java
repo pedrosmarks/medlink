@@ -27,6 +27,8 @@ public class VaccineCreateDto {
     @NotNull(message = "Date is required")
     private LocalDate date;
 
+    private String status;
+
     /**
      * Converte este DTO em uma entidade Vaccine.
      * 

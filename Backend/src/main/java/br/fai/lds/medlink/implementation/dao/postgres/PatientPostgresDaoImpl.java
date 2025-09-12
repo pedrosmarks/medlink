@@ -346,6 +346,212 @@ public class PatientPostgresDaoImpl implements PatientDao {
         // Atualiza informações específicas do paciente
         entity.setId(id);
         update(entity);
+        
+        try {
+            int prontuarioId = getProntuarioIdByPatientId(id);
+            // Atualiza todas as listas médicas no banco
+            updateVacinas(id, entity.getVacinas());
+            updateAlergias(prontuarioId, entity.getAlergias());
+            updateDiagnosticos(prontuarioId, entity.getDiagnosticos());
+            updateMedicamentos(prontuarioId, entity.getMedications());
+            updateCirurgias(prontuarioId, entity.getCirurgias());
+            updateConsultas(prontuarioId, entity.getConsultations());
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar dados médicos", e);
+        }
+    }
+    
+    private void updateVacinas(int patientId, List<Vaccine> vacinas) {
+        try {
+            // Remove todas as vacinas existentes
+            String deleteSql = "DELETE FROM vacina WHERE paciente_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, patientId);
+                ps.executeUpdate();
+            }
+            
+            // Insere as vacinas atualizadas
+            if (vacinas != null && !vacinas.isEmpty()) {
+                String insertSql = "INSERT INTO vacina (id, name, date, paciente_id) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                    for (Vaccine vacina : vacinas) {
+                        ps.setInt(1, vacina.getId());
+                        ps.setString(2, vacina.getName());
+                        ps.setDate(3, java.sql.Date.valueOf(vacina.getDate()));
+                        ps.setInt(4, patientId);
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                }
+            }
+            
+            connection.commit();
+            logger.info("Vacinas atualizadas com sucesso para paciente " + patientId);
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                logger.severe("Erro no rollback: " + ex.getMessage());
+            }
+            logger.severe("Erro ao atualizar vacinas: " + e.getMessage());
+            throw new RuntimeException("Erro ao atualizar vacinas", e);
+        }
+    }
+    
+    private void updateAlergias(int prontuarioId, List<Allergy> alergias) {
+        try {
+            String deleteSql = "DELETE FROM alergia WHERE prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, prontuarioId);
+                ps.executeUpdate();
+            }
+            
+            if (alergias != null && !alergias.isEmpty()) {
+                String insertSql = "INSERT INTO alergia (id, name, substance, reaction, severity, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                    for (Allergy alergia : alergias) {
+                        ps.setInt(1, alergia.getId());
+                        ps.setString(2, alergia.getName());
+                        ps.setString(3, alergia.getSubstance());
+                        ps.setString(4, alergia.getReaction());
+                        ps.setString(5, alergia.getSeverity());
+                        ps.setInt(6, prontuarioId);
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar alergias", e);
+        }
+    }
+    
+    private void updateDiagnosticos(int prontuarioId, List<Diagnosis> diagnosticos) {
+        try {
+            String deleteSql = "DELETE FROM diagnostico WHERE prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, prontuarioId);
+                int deleted = ps.executeUpdate();
+                logger.info("Diagnósticos deletados: " + deleted + " para prontuario_id=" + prontuarioId);
+            }
+            
+            if (diagnosticos != null && !diagnosticos.isEmpty()) {
+                String insertSql = "INSERT INTO diagnostico (description, date, prontuario_id) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    for (Diagnosis diagnostico : diagnosticos) {
+                        ps.setString(1, diagnostico.getDescription());
+                        ps.setDate(2, java.sql.Date.valueOf(diagnostico.getDate()));
+                        ps.setInt(3, prontuarioId);
+                        ps.addBatch();
+                    }
+                    int[] results = ps.executeBatch();
+                    
+                    // Recuperar IDs gerados
+                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                    int index = 0;
+                    while (generatedKeys.next() && index < diagnosticos.size()) {
+                        diagnosticos.get(index).setId(generatedKeys.getInt(1));
+                        index++;
+                    }
+                    generatedKeys.close();
+                    
+                    logger.info("Diagnósticos inseridos: " + results.length + " para prontuario_id=" + prontuarioId);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Erro ao atualizar diagnósticos: " + e.getMessage());
+            throw new RuntimeException("Erro ao atualizar diagnósticos", e);
+        }
+    }
+    
+    private void updateMedicamentos(int prontuarioId, List<Medication> medicamentos) {
+        try {
+            String deleteSql = "DELETE FROM medicamento WHERE prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, prontuarioId);
+                int deleted = ps.executeUpdate();
+                logger.info("Medicamentos deletados: " + deleted + " para prontuario_id=" + prontuarioId);
+            }
+            
+            if (medicamentos != null && !medicamentos.isEmpty()) {
+                String insertSql = "INSERT INTO medicamento (name, dosage, frequency, prontuario_id) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    for (Medication medicamento : medicamentos) {
+                        ps.setString(1, medicamento.getName());
+                        ps.setString(2, medicamento.getDosage());
+                        ps.setString(3, medicamento.getFrequency());
+                        ps.setInt(4, prontuarioId);
+                        ps.addBatch();
+                    }
+                    int[] results = ps.executeBatch();
+                    
+                    // Recuperar IDs gerados
+                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                    int index = 0;
+                    while (generatedKeys.next() && index < medicamentos.size()) {
+                        medicamentos.get(index).setId(generatedKeys.getInt(1));
+                        index++;
+                    }
+                    generatedKeys.close();
+                    
+                    logger.info("Medicamentos inseridos: " + results.length + " para prontuario_id=" + prontuarioId);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Erro ao atualizar medicamentos: " + e.getMessage());
+            throw new RuntimeException("Erro ao atualizar medicamentos", e);
+        }
+    }
+    
+    private void updateCirurgias(int prontuarioId, List<Surgery> cirurgias) {
+        try {
+            String deleteSql = "DELETE FROM historico_cirurgico WHERE prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, prontuarioId);
+                ps.executeUpdate();
+            }
+            
+            if (cirurgias != null && !cirurgias.isEmpty()) {
+                String insertSql = "INSERT INTO historico_cirurgico (id, descricao_cirurgica, data_cirurgia, prontuario_id) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                    for (Surgery cirurgia : cirurgias) {
+                        ps.setInt(1, cirurgia.getId());
+                        ps.setString(2, cirurgia.getName());
+                        ps.setDate(3, cirurgia.getDate() != null ? java.sql.Date.valueOf(cirurgia.getDate()) : null);
+                        ps.setInt(4, prontuarioId);
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar cirurgias", e);
+        }
+    }
+    
+    private void updateConsultas(int prontuarioId, List<Consultation> consultas) {
+        try {
+            String deleteSql = "DELETE FROM consulta WHERE prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+                ps.setInt(1, prontuarioId);
+                ps.executeUpdate();
+            }
+            
+            if (consultas != null && !consultas.isEmpty()) {
+                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                    for (Consultation consulta : consultas) {
+                        ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
+                        ps.setString(2, consulta.getNotes());
+                        ps.setInt(3, prontuarioId);
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar consultas", e);
+        }
     }
 
     @Override
@@ -599,12 +805,13 @@ public class PatientPostgresDaoImpl implements PatientDao {
 
     private List<Medication> getMedicamentosByProntuarioId(int prontuarioId) throws SQLException {
         List<Medication> medicamentos = new ArrayList<>();
-        String sql = "SELECT name, dosage, frequency FROM medicamento WHERE prontuario_id = ?";
+        String sql = "SELECT id, name, dosage, frequency FROM medicamento WHERE prontuario_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, prontuarioId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 medicamentos.add(Medication.builder()
+                        .id(rs.getInt("id"))
                         .name(rs.getString("name"))
                         .dosage(rs.getString("dosage"))
                         .frequency(rs.getString("frequency"))

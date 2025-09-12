@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Medication {
+    private Integer id;
     private String name;
     private String dosage;
     private String frequency;

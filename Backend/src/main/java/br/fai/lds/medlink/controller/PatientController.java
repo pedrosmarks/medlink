@@ -105,21 +105,46 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addVaccine(
             @PathVariable int patientId,
             @Valid @RequestBody VaccineCreateDto vaccineDto) {
-        return addMedicalItem(patientId, "vacina", (patient) -> {
-            int newId = generateNextId(patient.getVacinas(), Vaccine::getId);
-            Vaccine newVaccine = new Vaccine(newId, vaccineDto.getName(), vaccineDto.getDate());
-            patient.getVacinas().add(newVaccine);
-            return patient;
-        });
+        log.info("Iniciando adição de vacina para paciente ID: {}", LogSanitizer.sanitizeId(patientId));
+        log.debug("Dados da vacina recebidos: {}", vaccineDto);
+        
+        try {
+            return addMedicalItem(patientId, "vacina", (patient) -> {
+                log.debug("Paciente encontrado: {}", patient.getName());
+                log.debug("Vacinas atuais: {}", patient.getVacinas().size());
+                
+                int newId = generateNextId(patient.getVacinas(), Vaccine::getId);
+                log.debug("Novo ID gerado para vacina: {}", newId);
+                
+                Vaccine newVaccine = Vaccine.builder()
+                    .id(newId)
+                    .name(vaccineDto.getName())
+                    .date(vaccineDto.getDate())
+                    .build();
+                log.debug("Nova vacina criada: {}", newVaccine);
+                
+                patient.getVacinas().add(newVaccine);
+                log.debug("Vacina adicionada. Total de vacinas: {}", patient.getVacinas().size());
+                
+                return patient;
+            });
+        } catch (Exception e) {
+            log.error("Erro ao adicionar vacina para paciente {}: {}", LogSanitizer.sanitizeId(patientId), e.getMessage(), e);
+            throw e;
+        }
     }
 
     @DeleteMapping("/{patientId}/vaccines/{vaccineId}")
     public ResponseEntity<ApiResponse<String>> deleteVaccine(
             @PathVariable int patientId,
             @PathVariable int vaccineId) {
-        return removeMedicalItem(patientId, vaccineId, "vacina", patient -> 
-            patient.getVacinas().removeIf(vaccine -> vaccine.getId() == vaccineId)
-        );
+        log.info("Iniciando remoção de vacina ID {} do paciente {}", vaccineId, patientId);
+        return removeMedicalItem(patientId, vaccineId, "vacina", patient -> {
+            log.debug("Vacinas antes da remoção: {}", patient.getVacinas().size());
+            boolean removed = patient.getVacinas().removeIf(vaccine -> vaccine.getId() == vaccineId);
+            log.debug("Vacina removida: {}, Vacinas após remoção: {}", removed, patient.getVacinas().size());
+            return removed;
+        });
     }
 
     @GetMapping("/{id}/medications")
@@ -131,20 +156,32 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addMedication(
             @PathVariable int patientId,
             @Valid @RequestBody Medication medicationDto) {
+        log.info("Iniciando adição de medicamento para paciente ID: {}", patientId);
+        log.debug("Dados do medicamento recebidos: {}", medicationDto);
+        
         return addMedicalItem(patientId, "medicamento", (patient) -> {
+            log.debug("Medicamentos atuais: {}", patient.getMedications().size());
+            
+            // ID será gerado automaticamente pelo banco
             patient.getMedications().add(medicationDto);
+            
+            log.debug("Medicamento adicionado. Total de medicamentos: {}", patient.getMedications().size());
             return patient;
         });
     }
 
-    @DeleteMapping("/{patientId}/medications/{medicationName}")
+    @DeleteMapping("/{patientId}/medications/{medicationId}")
     public ResponseEntity<ApiResponse<String>> deleteMedication(
             @PathVariable int patientId,
-            @PathVariable String medicationName) {
-        return removeMedicalItemByName(patientId, medicationName, "medicamento", patient -> 
-            patient.getMedications().removeIf(medication -> 
-                medication.getName() != null && medication.getName().equals(medicationName))
-        );
+            @PathVariable int medicationId) {
+        log.info("Iniciando remoção de medicamento ID {} do paciente {}", medicationId, patientId);
+        return removeMedicalItem(patientId, medicationId, "medicamento", patient -> {
+            log.debug("Medicamentos antes da remoção: {}", patient.getMedications().size());
+            boolean removed = patient.getMedications().removeIf(medication -> 
+                medication.getId() != null && medication.getId() == medicationId);
+            log.debug("Medicamento removido: {}, Medicamentos após remoção: {}", removed, patient.getMedications().size());
+            return removed;
+        });
     }
 
     @GetMapping("/{id}/surgeries")
@@ -183,10 +220,17 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addDiagnosis(
             @PathVariable int patientId,
             @Valid @RequestBody DiagnosisCreateDto diagnosisDto) {
+        log.info("Iniciando adição de diagnóstico para paciente ID: {}", patientId);
+        log.debug("Dados do diagnóstico recebidos: {}", diagnosisDto);
+        
         return addMedicalItem(patientId, "diagnóstico", (patient) -> {
-            int newId = generateNextId(patient.getDiagnosticos(), Diagnosis::getId);
-            Diagnosis newDiagnosis = new Diagnosis(newId, diagnosisDto.getDescription(), diagnosisDto.getDate());
+            log.debug("Diagnósticos atuais: {}", patient.getDiagnosticos().size());
+            
+            // ID será gerado automaticamente pelo banco
+            Diagnosis newDiagnosis = new Diagnosis(0, diagnosisDto.getDescription(), diagnosisDto.getDate());
             patient.getDiagnosticos().add(newDiagnosis);
+            
+            log.debug("Diagnóstico adicionado. Total de diagnósticos: {}", patient.getDiagnosticos().size());
             return patient;
         });
     }
@@ -195,9 +239,13 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteDiagnosis(
             @PathVariable int patientId,
             @PathVariable int diagnosisId) {
-        return removeMedicalItem(patientId, diagnosisId, "diagnóstico", patient -> 
-            patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId)
-        );
+        log.info("Iniciando remoção de diagnóstico ID {} do paciente {}", diagnosisId, patientId);
+        return removeMedicalItem(patientId, diagnosisId, "diagnóstico", patient -> {
+            log.debug("Diagnósticos antes da remoção: {}", patient.getDiagnosticos().size());
+            boolean removed = patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId);
+            log.debug("Diagnóstico removido: {}, Diagnósticos após remoção: {}", removed, patient.getDiagnosticos().size());
+            return removed;
+        });
     }
 
     @GetMapping("/{id}/allergies")
@@ -374,10 +422,23 @@ public class PatientController extends BaseController {
 
     private ResponseEntity<ApiResponse<String>> addMedicalItem(int patientId, String itemType, 
             java.util.function.Function<Patient, Patient> addOperation) {
-        Patient patient = findPatientOrThrow(patientId);
-        Patient updatedPatient = addOperation.apply(patient);
-        patientService.update(patientId, updatedPatient);
-        return success(itemType + " adicionada com sucesso.", null);
+        log.debug("Executando addMedicalItem para {} no paciente {}", itemType, LogSanitizer.sanitizeId(patientId));
+        
+        try {
+            Patient patient = findPatientOrThrow(patientId);
+            log.debug("Paciente encontrado para adição de {}: {}", itemType, patient.getName());
+            
+            Patient updatedPatient = addOperation.apply(patient);
+            log.debug("Operação de adição de {} executada com sucesso", itemType);
+            
+            patientService.update(patientId, updatedPatient);
+            log.info("{} adicionada com sucesso para paciente {}", itemType, LogSanitizer.sanitizeId(patientId));
+            
+            return success(itemType + " adicionada com sucesso.", null);
+        } catch (Exception e) {
+            log.error("Erro em addMedicalItem para {} no paciente {}: {}", itemType, LogSanitizer.sanitizeId(patientId), e.getMessage(), e);
+            throw e;
+        }
     }
 
     private ResponseEntity<ApiResponse<String>> removeMedicalItem(int patientId, int itemId, 
