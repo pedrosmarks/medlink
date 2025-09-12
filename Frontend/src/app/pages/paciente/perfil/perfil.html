@@ -102,31 +102,31 @@
         <div *ngIf="editando">
           <div class="info-row">
             <label>Rua:</label>
-            <input type="text" [(ngModel)]="perfil.address.street" name="street" placeholder="Rua" />
+            <input type="text" [(ngModel)]="addressStreet" name="street" placeholder="Rua" />
           </div>
           <div class="info-row">
             <label>Número:</label>
-            <input type="text" [(ngModel)]="perfil.address.number" name="number" placeholder="Número" />
+            <input type="text" [(ngModel)]="addressNumber" name="number" placeholder="Número" />
           </div>
           <div class="info-row">
             <label>Complemento:</label>
-            <input type="text" [(ngModel)]="perfil.address.complement" name="complement" placeholder="Complemento" />
+            <input type="text" [(ngModel)]="addressComplement" name="complement" placeholder="Complemento" />
           </div>
           <div class="info-row">
             <label>Bairro:</label>
-            <input type="text" [(ngModel)]="perfil.address.neighborhood" name="neighborhood" placeholder="Bairro" />
+            <input type="text" [(ngModel)]="addressNeighborhood" name="neighborhood" placeholder="Bairro" />
           </div>
           <div class="info-row">
             <label>Cidade:</label>
-            <input type="text" [(ngModel)]="perfil.address.city" name="city" placeholder="Cidade" />
+            <input type="text" [(ngModel)]="addressCity" name="city" placeholder="Cidade" />
           </div>
           <div class="info-row">
             <label>Estado:</label>
-            <input type="text" [(ngModel)]="perfil.address.state" name="state" placeholder="UF" />
+            <input type="text" [(ngModel)]="addressState" name="state" placeholder="UF" />
           </div>
           <div class="info-row">
             <label>CEP:</label>
-            <input type="text" [(ngModel)]="perfil.address.zipCode" name="zipCode" placeholder="CEP" />
+            <input type="text" [(ngModel)]="addressZipCode" name="zipCode" placeholder="CEP" />
           </div>
         </div>
       </div>

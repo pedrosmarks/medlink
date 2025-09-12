@@ -70,7 +70,7 @@
                   <p class="mb-1"><strong>Plano:</strong> {{ paciente.plan }}</p>
                   <p class="mb-1"><strong>Cartão SUS:</strong> {{ paciente.susCard }}</p>
                   <p class="mb-1" *ngIf="paciente.address"><strong>Endereço:</strong> 
-                    {{ paciente.address.street }}, {{ paciente.address.number }} - 
+                    {{ paciente.address?.street }}, {{ paciente.address?.number }} - 
                     {{ paciente.address.city }}, {{ paciente.address.state }}
                   </p>
                 </div>
