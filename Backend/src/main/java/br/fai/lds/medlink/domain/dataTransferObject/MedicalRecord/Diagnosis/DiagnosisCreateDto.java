@@ -21,13 +21,15 @@ import java.time.LocalDate;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DiagnosisCreateDto {
 
     @NotBlank(message = "Description is required")
     private String description;
 
     @NotNull(message = "Date is required")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Data do diagnóstico não pode ser futura")
     private LocalDate date;
 

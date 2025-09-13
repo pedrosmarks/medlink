@@ -20,4 +20,6 @@ public interface PatientService extends CrudService<Patient> {
     List<PatientResponseDto> getPatientsByMedicId(int medicId);
     List<Patient> findByMedicId(int medicId);
     void sendAccessRequest(int patientId, int medicoId);
+
+    void revokeDoctorAccess(int patientId, int medicoId);
 }

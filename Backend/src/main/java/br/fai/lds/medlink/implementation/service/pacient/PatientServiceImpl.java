@@ -194,4 +194,18 @@ public class PatientServiceImpl implements PatientService {
         log.info("Parâmetros: patientId={}, medicoId={}", patientId, medicoId);
         patientDao.createAccessRequest(patientId, medicoId);
     }
+
+    @Override
+    public void revokeDoctorAccess(int patientId, int medicoId) {
+        if (patientId <= 0 || medicoId <= 0) {
+            throw new IllegalArgumentException("IDs devem ser maiores que zero");
+        }
+        try {
+            patientDao.revokeAccess(patientId, medicoId);
+            log.info("Acesso do médico {} ao paciente {} revogado com sucesso.", medicoId, patientId);
+        } catch (Exception e) {
+            log.error("Erro ao revogar acesso do médico {} ao paciente {}: {}", medicoId, patientId, e.getMessage(), e);
+            throw new RuntimeException("Erro ao revogar acesso", e);
+        }
+    }
 }

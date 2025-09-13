@@ -105,6 +105,7 @@ public class MedicServiceImpl implements MedicService {
             }
 
             existingMedic.setName(entity.getName());
+            existingMedic.setCpf(entity.getCpf()); // Adicionado para permitir atualização do CPF
             existingMedic.setGender(entity.getGender());
             existingMedic.setBirthDate(entity.getBirthDate());
             existingMedic.setPhoneNumber(entity.getPhoneNumber());

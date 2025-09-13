@@ -128,8 +128,12 @@ public class MedicUpdateDto {
         if (entity == null) {
             throw new IllegalArgumentException("Entidade Medic não pode ser null");
         }
-        
         try {
+            // Normaliza o CPF para apenas números antes de atualizar a entidade
+            if (this.cpf != null) {
+                String cpfNumeros = this.cpf.replaceAll("\\D", "");
+                entity.setCpf(cpfNumeros);
+            }
             updateBasicInfo(entity);
             updateContactInfo(entity);
             updateProfessionalInfo(entity);
@@ -146,7 +150,6 @@ public class MedicUpdateDto {
      */
     private void updateBasicInfo(Medic entity) {
         if (this.name != null) entity.setName(this.name);
-        if (this.cpf != null) entity.setCpf(this.cpf);
         if (this.gender != null) entity.setGender(this.gender);
         if (this.birthDate != null) entity.setBirthDate(this.birthDate);
     }

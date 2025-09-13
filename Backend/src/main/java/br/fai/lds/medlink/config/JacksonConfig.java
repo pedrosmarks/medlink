@@ -22,15 +22,15 @@ public class JacksonConfig {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         
         // Deserializer customizado para aceitar múltiplos formatos
-        LocalDateDeserializer customDeserializer = new LocalDateDeserializer(DateTimeFormatter.ofPattern("dd/MM/yyyy")) {
+        LocalDateDeserializer customDeserializer = new LocalDateDeserializer(DateTimeFormatter.ISO_LOCAL_DATE) {
             @Override
             protected LocalDate _fromString(com.fasterxml.jackson.core.JsonParser p, 
                     com.fasterxml.jackson.databind.DeserializationContext ctxt, String string0) throws java.io.IOException {
                 try {
-                    return LocalDate.parse(string0, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    return LocalDate.parse(string0, DateTimeFormatter.ISO_LOCAL_DATE);
                 } catch (Exception e1) {
                     try {
-                        return LocalDate.parse(string0, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        return LocalDate.parse(string0, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     } catch (Exception e2) {
                         return super._fromString(p, ctxt, string0);
                     }
@@ -39,8 +39,8 @@ public class JacksonConfig {
         };
         
         javaTimeModule.addDeserializer(LocalDate.class, customDeserializer);
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
         mapper.registerModule(javaTimeModule);
         return mapper;
     }

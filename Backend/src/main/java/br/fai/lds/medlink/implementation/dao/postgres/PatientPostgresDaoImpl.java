@@ -83,32 +83,14 @@ public class PatientPostgresDaoImpl implements PatientDao {
                     "VALUES (?, ?, 'PENDENTE'::status_solicitacao, CURRENT_TIMESTAMP) " +
                     "ON CONFLICT (medico_id, paciente_id) " +
                     "DO UPDATE SET status = 'PENDENTE'::status_solicitacao, data_solicitacao = CURRENT_TIMESTAMP";
-        
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, medicoId);
             ps.setInt(2, patientId);
             int rowsAffected = ps.executeUpdate();
-            
             if (rowsAffected > 0) {
                 logger.info("Solicitação criada/atualizada: medico_id=" + medicoId + ", paciente_id=" + patientId);
-                connection.commit();
             }
-            
         } catch (SQLException e) {
-            if (e.getMessage() != null && e.getMessage().contains("duplicar valor da chave")) {
-                try {
-                    connection.commit();
-                } catch (SQLException commitEx) {
-                    logger.warning("Erro no commit: " + commitEx.getMessage());
-                }
-                return;
-            }
-            
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                logger.severe("Erro no rollback: " + rollbackEx.getMessage());
-            }
             logger.severe("Erro ao criar solicitação de acesso: " + e.getMessage());
             throw new RuntimeException("Erro ao criar requisição de acesso", e);
         }
@@ -414,13 +396,12 @@ public class PatientPostgresDaoImpl implements PatientDao {
             
             // Insere as vacinas atualizadas
             if (vacinas != null && !vacinas.isEmpty()) {
-                String insertSql = "INSERT INTO vacina (id, name, date, paciente_id) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO vacina (name, date, paciente_id) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
                     for (Vaccine vacina : vacinas) {
-                        ps.setInt(1, vacina.getId());
-                        ps.setString(2, vacina.getName());
-                        ps.setDate(3, java.sql.Date.valueOf(vacina.getDate()));
-                        ps.setInt(4, patientId);
+                        ps.setString(1, vacina.getName());
+                        ps.setDate(2, java.sql.Date.valueOf(vacina.getDate()));
+                        ps.setInt(3, patientId);
                         ps.addBatch();
                     }
                     ps.executeBatch();
@@ -942,4 +923,31 @@ public class PatientPostgresDaoImpl implements PatientDao {
         }
         return consultas;
     }
+
+    // Revoga o acesso de um médico ao prontuário do paciente
+    public void revokeAccess(int patientId, int medicoId) {
+        try {
+            // Atualiza o status da solicitação para REVOGADA
+            String sqlUpdate = "UPDATE solicitacao_acesso_prontuario SET status = 'REVOGADA'::status_solicitacao, data_resposta = CURRENT_TIMESTAMP WHERE paciente_id = ? AND medico_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
+                ps.setInt(1, patientId);
+                ps.setInt(2, medicoId);
+                ps.executeUpdate();
+            }
+            // Remove o vínculo do médico com o prontuário
+            int prontuarioId = getProntuarioIdByPatientId(patientId);
+            if (prontuarioId > 0) {
+                String sqlDelete = "DELETE FROM medico_acesso_prontuario WHERE prontuario_id = ? AND medico_id = ?";
+                try (PreparedStatement ps = connection.prepareStatement(sqlDelete)) {
+                    ps.setInt(1, prontuarioId);
+                    ps.setInt(2, medicoId);
+                    ps.executeUpdate();
+                }
+            }
+            logger.info("Acesso revogado: paciente_id=" + patientId + ", medico_id=" + medicoId);
+        } catch (SQLException e) {
+            logger.severe("Erro ao revogar acesso: " + e.getMessage());
+            throw new RuntimeException("Erro ao revogar acesso", e);
+        }
     }
+}

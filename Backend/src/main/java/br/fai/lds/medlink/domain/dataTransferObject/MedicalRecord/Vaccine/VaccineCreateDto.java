@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine;
 
 import br.fai.lds.medlink.domain.Vaccine;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -19,11 +20,14 @@ import java.time.LocalDate;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class VaccineCreateDto {
 
     @NotBlank(message = "Name is required")
     private String name;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull(message = "Date is required")
     private LocalDate date;
 
@@ -55,4 +59,3 @@ public class VaccineCreateDto {
                 .build();
     }
 }
-

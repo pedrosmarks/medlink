@@ -58,7 +58,13 @@ public abstract class BaseController {
         return ResponseEntity.ok(new ApiResponse<>(message));
     }
 
-
+    /**
+     * Cria resposta de erro customizada
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> error(String message) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse<>(message));
+    }
 
     /**
      * Valida ID e lança exceção se inválido

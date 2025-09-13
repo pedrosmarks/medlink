@@ -6,6 +6,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Access.AuthorizedDoctorDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Diagnosis.DiagnosisCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.SurgeryCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Access.AccessRequestDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
@@ -34,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
            methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("/api/patients")
 public class PatientController extends BaseController {
-    
+
     public PatientController() {
         log.info("✓ PatientController inicializado - Endpoint /api/patients/{patientId}/access-requests disponível");
     }
@@ -197,13 +198,30 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> addSurgery(
             @PathVariable int patientId,
             @Valid @RequestBody SurgeryCreateDto surgeryDto) {
-        return addMedicalItem(patientId, "cirurgia", (patient) -> {
-            int newId = generateNextId(patient.getCirurgias(), Surgery::getId);
-            Surgery newSurgery = new Surgery(newId, surgeryDto.getName(), 
-                surgeryDto.getDate(), surgeryDto.getLocation(), surgeryDto.getNotes());
-            patient.getCirurgias().add(newSurgery);
-            return patient;
-        });
+        log.info("Iniciando adição de cirurgia para paciente ID: {}", LogSanitizer.sanitizeId(patientId));
+        log.debug("Dados da cirurgia recebidos: {}", surgeryDto);
+        try {
+            return addMedicalItem(patientId, "cirurgia", (patient) -> {
+                if (patient.getCirurgias() == null) {
+                    log.warn("Lista de cirurgias estava nula, inicializando nova lista.");
+                    patient.setCirurgias(new ArrayList<>());
+                }
+                // Não gerar ID manualmente, deixar o banco gerar
+                Surgery newSurgery = Surgery.builder()
+                    .name(surgeryDto.getName())
+                    .date(surgeryDto.getDate())
+                    .location(surgeryDto.getLocation())
+                    .notes(surgeryDto.getNotes())
+                    .build();
+                log.debug("Nova cirurgia criada: {}", newSurgery);
+                patient.getCirurgias().add(newSurgery);
+                log.debug("Cirurgia adicionada. Total de cirurgias: {}", patient.getCirurgias().size());
+                return patient;
+            });
+        } catch (Exception e) {
+            log.error("Erro ao adicionar cirurgia para paciente {}: {}", LogSanitizer.sanitizeId(patientId), e.getMessage(), e);
+            throw e;
+        }
     }
 
     @DeleteMapping("/{patientId}/surgeries/{surgeryId}")
@@ -358,17 +376,24 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int medicId,
             @RequestParam String action) {
-        // Atualiza status da requisição
-        String newStatus = "approve".equals(action) ? "ACEITA" : "RECUSADA";
-        patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
-
-        // Se for aprovação, vincula o médico ao paciente
-        if ("approve".equals(action)) {
+        // Aceita tanto ACCEPTED/ACEITA quanto REJECTED/RECUSADA (case-insensitive)
+        String actionUpper = action.trim().toUpperCase();
+        String newStatus;
+        String message;
+        if ("ACCEPTED".equals(actionUpper) || "ACEITA".equals(actionUpper)) {
+            newStatus = "ACEITA";
+            message = "Acesso aceito com sucesso.";
+            patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
             Patient patient = findPatientOrThrow(patientId);
             authorizeSpecialist(patient, medicId, patientId);
             patientService.update(patientId, patient);
+        } else if ("REJECTED".equals(actionUpper) || "RECUSADA".equals(actionUpper)) {
+            newStatus = "RECUSADA";
+            message = "Acesso rejeitado com sucesso.";
+            patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
+        } else {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("Ação inválida. Use ACCEPTED/ACEITA ou REJECTED/RECUSADA.", null));
         }
-        String message = getSuccessMessage(action);
         return success(message, null);
     }
 
@@ -424,6 +449,23 @@ public class PatientController extends BaseController {
     }
 
 
+
+    /**
+     * Revoga o acesso de um médico ao prontuário do paciente.
+     */
+    @DeleteMapping("/{patientId}/doctors/{medicoId}/access")
+    public ResponseEntity<ApiResponse<String>> revokeDoctorAccess(
+            @PathVariable int patientId,
+            @PathVariable int medicoId) {
+        log.info("Revogando acesso do médico {} ao paciente {}", medicoId, patientId);
+        try {
+            patientService.revokeDoctorAccess(patientId, medicoId);
+            return success("Acesso do médico revogado com sucesso.", null);
+        } catch (Exception e) {
+            log.error("Erro ao revogar acesso: {}", e.getMessage(), e);
+            return error("Erro ao revogar acesso: " + e.getMessage());
+        }
+    }
 
     // Helper methods
     private Patient findPatientOrThrow(int patientId) {
@@ -526,3 +568,4 @@ public class PatientController extends BaseController {
         });
     }
 }
+
