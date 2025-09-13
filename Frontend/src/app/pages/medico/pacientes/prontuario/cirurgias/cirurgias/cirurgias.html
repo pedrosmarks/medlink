@@ -21,9 +21,8 @@
     <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
     <div>
       <strong>{{ cirurgia.name }}</strong><br>
-      <strong>Data:</strong> {{ cirurgia.date | date:'dd/MM/yyyy' }}<br>
-      <strong>Local:</strong> {{ cirurgia.location }}<br>
-      <strong>Observações:</strong> {{ cirurgia.notes }}
+      <strong>Data:</strong> {{ cirurgia.date }}<br>
+      
     </div>
   </div>
   <div *ngIf="cirurgias.length === 0" class="text-muted">

@@ -38,24 +38,20 @@ export class Cirurgias implements OnInit {
       id = this.route.parent.parent.snapshot.paramMap.get('id');
     }
     
-    console.log('🔪 ID capturado (cirurgias):', id);
-    
     if (id && id !== 'undefined') {
       this.pacienteId = id;
       this.carregarCirurgias();
       this.carregarDadosPaciente();
     } else {
-      console.error('❌ ID do paciente não encontrado para cirurgias');
+      console.error('ID do paciente não encontrado para cirurgias');
     }
   }
 
   carregarCirurgias() {
     const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries`;
-    console.log('Carregando cirurgias de:', url);
     
     this.http.get<any>(url).subscribe({
       next: (response) => {
-        console.log('Cirurgias recebidas:', response);
         this.cirurgias = response.data || response;
       },
       error: (error) => {
@@ -78,13 +74,13 @@ export class Cirurgias implements OnInit {
   }
 
   adicionarCirurgia() {
-    if (!this.novaCirurgiaNome.trim() || !this.novaCirurgiaData || !this.novaCirurgiaDescricao.trim()) return;
+    if (!this.novaCirurgiaNome.trim() || !this.novaCirurgiaData) return;
     
     const novaCirurgia = {
       name: this.novaCirurgiaNome.trim(),
       date: this.novaCirurgiaData,
-      description: this.novaCirurgiaDescricao.trim(),
-      status: 'Realizada'
+      notes: this.novaCirurgiaDescricao.trim(),
+      location: ""
     };
     
     const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries`;

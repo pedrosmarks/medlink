@@ -66,4 +66,9 @@ export class MedicosService {
   getPerfilMedico(medicoId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/api/medic/${medicoId}/profile`);
   }
+
+  // Revogar acesso de um médico aos dados do paciente
+  revogarAcesso(pacienteId: string, medicoId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/api/patients/${pacienteId}/doctors/${medicoId}/access`);
+  }
 }

@@ -64,13 +64,23 @@ export class PerfilComponent implements OnInit {
     this.perfilUpdateService.updatePerfil(medicData).subscribe(response => {
       console.log('Update response:', response);
       console.log('Update response.data:', response.data);
-      console.log('Update response.data.data:', response.data?.data);
       
-      // Novo formato ApiResponse: response.data.data
-      if (response.data?.data) {
-        this.perfil = response.data.data;
-      } else if (response.data) {
-        this.perfil = response.data;
+      // Mapear resposta do backend para formato do frontend
+      if (response.data) {
+        const backendData = response.data;
+        this.perfil = {
+          id: backendData.id,
+          nome: backendData.name,
+          cpf: backendData.cpf,
+          gender: backendData.gender,
+          birthdate: backendData.birthDate,
+          telefone: backendData.phoneNumber,
+          address: backendData.address,
+          crm: backendData.crm,
+          especialidade: backendData.specialty,
+          email: backendData.email,
+          active: backendData.active
+        };
       }
       this.editando = false;
     });

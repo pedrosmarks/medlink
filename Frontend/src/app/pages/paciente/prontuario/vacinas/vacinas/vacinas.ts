@@ -22,6 +22,7 @@ export class Vacinas implements OnInit {
     this.pacienteId = localStorage.getItem('userId') || '';
     this.pacienteNome = localStorage.getItem('userName') || 'Paciente';
     this.carregarVacinas();
+    
   }
 
   carregarVacinas(): void {
@@ -32,6 +33,7 @@ export class Vacinas implements OnInit {
           console.log('Vacinas carregadas:', response);
           this.vacinas = response.data || [];
           this.carregando = false;
+        
         },
         error: (error) => {
           console.error('Erro ao carregar vacinas:', error);

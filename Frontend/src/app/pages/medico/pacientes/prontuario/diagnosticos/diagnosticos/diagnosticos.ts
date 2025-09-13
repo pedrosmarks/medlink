@@ -80,9 +80,8 @@ export class Diagnosticos implements OnInit {
     if (!this.novoDiagnosticoNome.trim() || !this.novoDiagnosticoData) return;
     
     const novoDiagnostico = {
-      name: this.novoDiagnosticoNome.trim(),
-      date: this.novoDiagnosticoData,
-      status: 'Confirmado'
+      description: this.novoDiagnosticoNome.trim(),
+      date: this.novoDiagnosticoData
     };
     
     const url = `http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`;

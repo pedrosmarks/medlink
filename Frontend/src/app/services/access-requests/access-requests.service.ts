@@ -18,9 +18,9 @@ export class AccessRequestsService {
 
   // Enviar requisição de acesso
   sendAccessRequest(patientId: number, medicoId: number): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-request`, {
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-requests`, {
       medicoId,
-      status: 'pendente'
+      status: 'PENDENTE'
     });
   }
 
@@ -33,11 +33,11 @@ export class AccessRequestsService {
 
   // Aprovar requisição
   approveRequest(patientId: number, medicId: number): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-request/${medicId}?action=approve`, {});
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-request/${medicId}?action=ACCEPTED`, {});
   }
 
   // Rejeitar requisição
   rejectRequest(patientId: number, medicId: number): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-request/${medicId}?action=reject`, {});
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/patients/${patientId}/access-request/${medicId}?action=REJECTED`, {});
   }
 }

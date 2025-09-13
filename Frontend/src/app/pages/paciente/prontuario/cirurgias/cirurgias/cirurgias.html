@@ -12,8 +12,8 @@
   <div class="cirurgia-card" *ngFor="let cirurgia of cirurgias; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
     <div>
-      <strong>Tipo:</strong> {{ cirurgia.tipo }}<br>
-      <strong>Data:</strong> {{ cirurgia.data | date:'dd/MM/yyyy' }}
+      <strong>Tipo:</strong> {{ cirurgia.name }}<br>
+      <strong>Data:</strong> {{ cirurgia.date }}
     </div>
   </div>
   <div *ngIf="!carregando && cirurgias.length === 0" class="text-muted">

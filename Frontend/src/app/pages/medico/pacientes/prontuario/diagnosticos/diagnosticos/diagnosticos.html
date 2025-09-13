@@ -20,7 +20,7 @@
     <img src="https://cdn-icons-png.flaticon.com/512/4320/4320498.png" width="36" alt="Diagnóstico" />
     <div>
       <strong>{{ diag.description }}</strong><br>
-      <strong>Data:</strong> {{ diag.date | date:'dd/MM/yyyy' }}
+      <strong>Data:</strong> {{ diag.date }}
     </div>
   </div>
   <div *ngIf="diagnosticos.length === 0" class="text-muted">

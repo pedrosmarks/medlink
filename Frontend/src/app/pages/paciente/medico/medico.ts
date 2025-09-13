@@ -81,8 +81,59 @@ export class Medico implements OnInit {
     this.carregarMedicosAutorizados();
   }
 
-  verDetalhes(medicoId: string) {
-    // Implementar modal ou página de detalhes do médico
-    console.log('Ver detalhes do médico:', medicoId);
+  revokeAcess(medicoId: string) {
+    const pacienteId = localStorage.getItem('userId');
+    
+    if (!pacienteId) {
+      alert('Erro: ID do paciente não encontrado');
+      return;
+    }
+
+    // Confirmar ação com o usuário
+    if (!confirm('Tem certeza que deseja revogar o acesso deste médico aos seus dados?')) {
+      return;
+    }
+
+    console.log('🚫 Revogando acesso:', {
+      pacienteId,
+      medicoId,
+      endpoint: `DELETE /api/patients/${pacienteId}/doctors/${medicoId}/access`
+    });
+
+    this.medicosService.revogarAcesso(pacienteId, medicoId).subscribe({
+      next: (response) => {
+        console.log('✅ Acesso revogado com sucesso:', response);
+        alert('Acesso revogado com sucesso! O médico não poderá mais acessar seus dados.');
+        
+        // Remove o médico da lista local imediatamente para melhor UX
+        this.medicosAutorizados = this.medicosAutorizados.filter(medico => medico.id !== parseInt(medicoId));
+        
+        // Recarrega a lista para garantir sincronização com o backend
+        this.carregarMedicosAutorizados();
+      },
+      error: (error) => {
+        console.error('❌ Erro ao revogar acesso:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          url: error.url
+        });
+        
+        let errorMessage = 'Erro ao revogar acesso. ';
+        if (error.status === 404) {
+          errorMessage += 'Médico ou paciente não encontrado.';
+        } else if (error.status === 401) {
+          errorMessage += 'Não autorizado a realizar esta ação.';
+        } else if (error.status === 500) {
+          errorMessage += 'Erro interno do servidor.';
+        } else if (error.status === 0) {
+          errorMessage += 'Não foi possível conectar ao servidor.';
+        } else {
+          errorMessage += `${error.status} - ${error.statusText}`;
+        }
+        
+        alert(errorMessage);
+      }
+    });
   }
 }

@@ -9,12 +9,28 @@ export class PerfilUpdateService {
   constructor(private http: HttpClient) {}
 
   updatePerfil(perfil: any): Observable<any> {
-    // Converter data para formato brasileiro dd/MM/yyyy
-    const perfilFormatado = { ...perfil };
-    if (perfilFormatado.birthdate && perfilFormatado.birthdate.includes('-')) {
-      const [year, month, day] = perfilFormatado.birthdate.split('-');
-      perfilFormatado.birthdate = `${day}/${month}/${year}`;
+    // Mapear campos do frontend para o formato esperado pelo backend
+    const perfilFormatado = {
+      id: perfil.id,
+      name: perfil.nome,
+      cpf: perfil.cpf,
+      gender: perfil.gender,
+      birthDate: perfil.birthdate, 
+      phoneNumber: perfil.telefone,
+      address: perfil.address,
+      crm: perfil.crm,
+      specialty: perfil.especialidade,
+      email: perfil.email,
+      active: perfil.active
+    };
+
+    // Converter data para formato brasileiro dd/MM/yyyy se necessário
+    if (perfilFormatado.birthDate && perfilFormatado.birthDate.includes('-')) {
+      const [year, month, day] = perfilFormatado.birthDate.split('-');
+      perfilFormatado.birthDate = `${day}/${month}/${year}`;
     }
+
+    console.log('Perfil formatado para envio:', perfilFormatado);
     
     return this.http.put(`${this.apiUrl}/${perfil.id}`, perfilFormatado);
   }

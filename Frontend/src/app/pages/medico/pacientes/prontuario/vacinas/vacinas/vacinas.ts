@@ -81,8 +81,7 @@ export class Vacinas implements OnInit {
     
     const novaVacina = {
       name: this.novaVacinaNome.trim(),
-      date: this.novaVacinaData,
-      status: 'Aplicada'
+      date: this.novaVacinaData
     };
     
     const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;

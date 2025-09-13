@@ -25,11 +25,9 @@ export class Cirurgias implements OnInit {
   }
 
   carregarCirurgias(): void {
-    console.log('Carregando cirurgias para paciente ID:', this.pacienteId);
     this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/surgeries`)
       .subscribe({
         next: (response) => {
-          console.log('Cirurgias carregadas:', response);
           this.cirurgias = response.data || [];
           this.carregando = false;
         },
