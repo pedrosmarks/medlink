@@ -3,6 +3,7 @@ package br.fai.lds.medlink.implementation.dao.postgres;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import br.fai.lds.medlink.util.CpfUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,15 +31,37 @@ public class MedicPostgresDaoImpl implements MedicDao {
         try {
             connection.setAutoCommit(false);
             int pessoaId = insertPessoa(entity);
+
+            // Corrigir sequência da tabela medico antes da inserção
+            try {
+                String fixMedicoSeqSql = "SELECT setval('medico_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM medico), false)";
+                PreparedStatement fixMedicoStmt = connection.prepareStatement(fixMedicoSeqSql);
+                fixMedicoStmt.execute();
+                fixMedicoStmt.close();
+                logger.log(Level.INFO, "Sequência medico_id_seq verificada e corrigida se necessário");
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Não foi possível corrigir a sequência medico_id_seq: " + e.getMessage());
+            }
+
             String sql = "INSERT INTO medico(pessoa_id, email, senha, crm, ativo) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, pessoaId);
             preparedStatement.setString(2, entity.getEmail());
             preparedStatement.setString(3, entity.getPassword());
             preparedStatement.setString(4, entity.getCrm());
             preparedStatement.setBoolean(5, entity.isActive());
             preparedStatement.execute();
+
+            // Obter o ID gerado para o médico
+            ResultSet medicoKeys = preparedStatement.getGeneratedKeys();
+            if (medicoKeys.next()) {
+                int medicoId = medicoKeys.getInt(1);
+                entity.setId(medicoId);
+                logger.log(Level.INFO, "Médico inserido com ID gerado automaticamente: " + medicoId);
+            }
+            medicoKeys.close();
             preparedStatement.close();
+
             connection.commit();
             logger.log(Level.INFO, "Médico adicionado com sucesso.");
         } catch (SQLException e) {
@@ -53,12 +76,26 @@ public class MedicPostgresDaoImpl implements MedicDao {
     }
 
     private int insertPessoa(Medic entity) throws SQLException {
-        String sql = "INSERT INTO pessoa(nome, cpf, sexo, data_nascimento) ";
-        sql += " VALUES (?, ?, ?, ?)";
+        // Primeiro, garantir que a sequência esteja correta
+        try {
+            String fixSequenceSql = "SELECT setval('pessoa_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM pessoa), false)";
+            PreparedStatement fixStmt = connection.prepareStatement(fixSequenceSql);
+            fixStmt.execute();
+            fixStmt.close();
+            logger.log(Level.INFO, "Sequência pessoa_id_seq verificada e corrigida se necessário");
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "Não foi possível corrigir a sequência, tentando inserção normal: " + e.getMessage());
+        }
+
+        String sql = "INSERT INTO pessoa(nome, cpf, sexo, data_nascimento) VALUES (?, ?, ?, ?)";
 
         PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, entity.getName());
-        preparedStatement.setString(2, entity.getCpf());
+
+        // Remove formatação do CPF antes de inserir no banco
+        String cpfSemFormatacao = CpfUtil.removeFormatacao(entity.getCpf());
+        preparedStatement.setString(2, cpfSemFormatacao);
+
         preparedStatement.setString(3, entity.getGender() == Gender.MASCULINO ? "M" : "F");
         preparedStatement.setDate(4, java.sql.Date.valueOf(entity.getBirthDate()));
 
@@ -68,6 +105,7 @@ public class MedicPostgresDaoImpl implements MedicDao {
         int id = 0;
         if(resultSet.next()){
             id = resultSet.getInt(1);
+            logger.log(Level.INFO, "Pessoa inserida com ID gerado automaticamente: " + id);
         }
 
         resultSet.close();

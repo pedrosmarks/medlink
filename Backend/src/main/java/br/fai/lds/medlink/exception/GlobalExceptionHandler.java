@@ -6,7 +6,9 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +38,48 @@ public class GlobalExceptionHandler {
         log.warn("Erro de validação: {}", LogSanitizer.sanitize(errors.toString()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponse<>("Dados inválidos.", errors));
+    }
+
+    // Trata erros de Content-Type não suportado
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleHttpMediaTypeNotSupported(
+            HttpMediaTypeNotSupportedException ex, WebRequest request) {
+
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("contentType", "O Content-Type deve ser 'application/json'");
+        errorDetails.put("receivedContentType", ex.getContentType() != null ? ex.getContentType().toString() : "indefinido");
+        errorDetails.put("supportedTypes", ex.getSupportedMediaTypes().toString());
+
+        log.warn("Content-Type não suportado: {} - Tipos suportados: {}",
+                LogSanitizer.sanitize(ex.getContentType() != null ? ex.getContentType().toString() : "indefinido"),
+                LogSanitizer.sanitize(ex.getSupportedMediaTypes().toString()));
+
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(new ApiResponse<>("Content-Type não suportado. Certifique-se de enviar 'Content-Type: application/json' no cabeçalho da requisição.", errorDetails));
+    }
+
+    // Trata erros de JSON inválido ou problemas de deserialização
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, WebRequest request) {
+
+        Map<String, String> errorDetails = new HashMap<>();
+        String message = ex.getMessage();
+
+        if (message.contains("Gender") && message.contains("FEMALE")) {
+            errorDetails.put("gender", "Use 'FEMININO' ou 'FEMALE' para feminino, 'MASCULINO' ou 'MALE' para masculino, 'OUTRO' ou 'OTHER' para outro");
+            errorDetails.put("valoresAceitos", "FEMININO/FEMALE, MASCULINO/MALE, OUTRO/OTHER");
+        } else if (message.contains("JSON parse error")) {
+            errorDetails.put("formato", "Verifique se o JSON está bem formatado");
+            errorDetails.put("contentType", "Certifique-se de usar Content-Type: application/json");
+        } else {
+            errorDetails.put("erro", "Formato de dados inválido");
+        }
+
+        log.warn("Erro de deserialização JSON: {}", LogSanitizer.sanitize(message));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>("Erro no formato dos dados JSON.", errorDetails));
     }
 
     // Trata violações de restrições

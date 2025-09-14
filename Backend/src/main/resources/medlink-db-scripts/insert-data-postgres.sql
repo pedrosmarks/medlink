@@ -135,8 +135,6 @@ INSERT INTO usuario (pessoa_id, email, senha, perfil) VALUES
 (4, 'maria@exemplo.com.br', '123', 'PACIENTE'),
 (5, 'carlos@exemplo.com.br', '123', 'PACIENTE');
 
-COMMIT;
-
 -- Dados detalhados para pacientes do db.json
 -- Paciente 1: João da Silva
 INSERT INTO vacina (paciente_id, name, date) VALUES (1, 'COVID-19', '2023-01-15');
@@ -172,3 +170,13 @@ INSERT INTO solicitacao_acesso_prontuario (medico_id, paciente_id, status) VALUE
 (1, 3, 'ACEITA'),    -- Dr. Pedro tem acesso ao Carlos (aprovado)
 (2, 1, 'PENDENTE'),  -- Dr. José solicitou acesso ao João (pendente)
 (1, 1, 'RECUSADA');  -- Dr. Pedro solicitou acesso ao João (rejeitado)
+
+-- =====================================================
+-- MENSAGENS DE EXEMPLO ENTRE MÉDICO E PACIENTE (ID 1)
+-- =====================================================
+INSERT INTO mensagem (sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES
+(1, 'MEDIC', 'Dr. Pedro Almeida', 1, 'PATIENT', 'João da Silva', 'Olá, tudo bem? Aqui é o Dr. Pedro.', NOW(), false),
+(1, 'PATIENT', 'João da Silva', 1, 'MEDIC', 'Dr. Pedro Almeida', 'Olá doutor, estou bem sim. Obrigado!', NOW(), false),
+(1, 'MEDIC', 'Dr. Pedro Almeida', 1, 'PATIENT', 'João da Silva', 'Ótimo! Se precisar de algo, me avise.', NOW(), false);
+
+COMMIT;

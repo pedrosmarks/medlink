@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUser, faLock, faSignInAlt, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { CadastroModalComponent } from '../cadastro-modal/cadastro-modal.component';
 
 @Component({
   selector: 'app-login-base',
   standalone: true,
-  imports: [CommonModule, FormsModule, FontAwesomeModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, CadastroModalComponent],
   templateUrl: './login-base.component.html',
   styleUrls: ['./login-base.component.css']
 })
@@ -18,6 +19,9 @@ export class LoginBaseComponent {
   usuario = '';
   senha = '';
   erro = '';
+  
+  // Controle do modal de cadastro
+  mostrarModalCadastro = false;
   
   // FontAwesome icons
   faUser = faUser;
@@ -86,5 +90,14 @@ export class LoginBaseComponent {
       }
     }
   });
+  }
+
+  irParaCadastro(event: Event) {
+    event.preventDefault();
+    this.mostrarModalCadastro = true;
+  }
+
+  fecharModalCadastro() {
+    this.mostrarModalCadastro = false;
   }
 }

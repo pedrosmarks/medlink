@@ -8,6 +8,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.Surger
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
+import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Access.AccessRequestDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
@@ -45,6 +46,20 @@ public class PatientController extends BaseController {
     
     @Autowired
     private MedicService medicService;
+
+    /**
+     * Cria um novo paciente.
+     * @param dto dados do paciente a ser criado
+     * @return resposta com dados do paciente criado
+     */
+    @PostMapping
+    public ResponseEntity<ApiResponse<PatientResponseDto>> createPatient(@Valid @RequestBody PatientCreateDto dto) {
+        Patient patient = dto.toEntity();
+        int id = patientService.create(patient);
+        patient.setId(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Paciente criado com sucesso!", PatientResponseDto.fromEntity(patient)));
+    }
 
     /**
      * Lista todos os pacientes.
@@ -280,8 +295,6 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @Valid @RequestBody Allergy allergyDto) {
         return addMedicalItem(patientId, "alergia", (patient) -> {
-            int newId = generateNextId(patient.getAlergias(), Allergy::getId);
-            allergyDto.setId(newId);
             patient.getAlergias().add(allergyDto);
             return patient;
         });

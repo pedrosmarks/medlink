@@ -1,17 +1,17 @@
 package br.fai.lds.medlink.port.dao.message;
 
-import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.dao.crud.CrudDao;
 
 import java.util.List;
 
-public interface MessageDao extends CrudDao<Mensagem> {
+public interface MessageDao extends CrudDao<Message> {
 
-    List<Mensagem> findByUserId(String userId, String userType);
+    List<Message> findByUserId(String userId, String userType);
 
-    List<Mensagem> findConversationBetweenUsers(String user1Id, String user1Type, String user2Id, String user2Type);
+    List<Message> findConversationBetweenUsers(String user1Id, String user1Type, String user2Id, String user2Type);
 
     void markAsRead(String messageId);
 
-    List<Mensagem> findUnreadMessages(String userId, String userType);
+    List<Message> findUnreadMessages(String userId, String userType);
 }

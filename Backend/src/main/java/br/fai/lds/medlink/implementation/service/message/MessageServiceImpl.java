@@ -27,15 +27,30 @@ public class MessageServiceImpl implements MessageService {
     
     private void createTablesIfNotExist() {
         try (java.sql.Connection conn = dataSource.getConnection()) {
+            // FORÇA A RECRIAÇÃO da tabela mensagem se ela tiver estrutura incorreta
+            if (tableExists(conn, "mensagem")) {
+                System.out.println("Verificando estrutura da tabela mensagem...");
+                if (!hasCorrectMessageStructure(conn)) {
+                    System.out.println("Tabela mensagem tem estrutura incorreta. Recriando...");
+                    dropTable(conn, "mensagem");
+                }
+            }
+
             // Verifica se a tabela mensagem existe
+            boolean tabelaMensagemCriada = false;
             if (!tableExists(conn, "mensagem")) {
                 System.out.println("Criando tabela mensagem...");
                 createMensagemTable(conn);
+                tabelaMensagemCriada = true;
             } else {
-                // Atualiza tabela existente com novas colunas
-                updateMensagemTable(conn);
+                System.out.println("Tabela mensagem já existe com estrutura correta");
             }
             
+            // Se a tabela foi criada agora OU está vazia, insere dados de exemplo
+            if (tabelaMensagemCriada || isTableEmpty(conn, "mensagem")) {
+                insertSampleMessages(conn);
+            }
+
             // Verifica se a tabela solicitacao_acesso_prontuario existe
             if (!tableExists(conn, "solicitacao_acesso_prontuario")) {
                 System.out.println("Criando tabela solicitacao_acesso_prontuario...");
@@ -48,6 +63,40 @@ public class MessageServiceImpl implements MessageService {
         }
     }
     
+    private boolean hasCorrectMessageStructure(java.sql.Connection conn) {
+        try (java.sql.PreparedStatement stmt = conn.prepareStatement(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'mensagem' AND column_name IN ('sender_name', 'recipient_type', 'recipient_name', 'text', 'read')")) {
+
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                int correctColumns = 0;
+                System.out.println("Verificando colunas da tabela mensagem:");
+                while (rs.next()) {
+                    String columnName = rs.getString("column_name");
+                    System.out.println("  - Coluna encontrada: " + columnName);
+                    correctColumns++;
+                }
+                System.out.println("Total de colunas essenciais encontradas: " + correctColumns + "/5");
+
+                // Se tem as 5 colunas essenciais, estrutura está correta
+                boolean hasCorrectStructure = correctColumns >= 5;
+                System.out.println("Estrutura correta: " + hasCorrectStructure);
+                return hasCorrectStructure;
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao verificar estrutura da tabela: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private void dropTable(java.sql.Connection conn, String tableName) {
+        try (java.sql.PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + tableName + " CASCADE")) {
+            stmt.executeUpdate();
+            System.out.println("Tabela " + tableName + " removida com sucesso");
+        } catch (Exception e) {
+            System.out.println("Erro ao remover tabela " + tableName + ": " + e.getMessage());
+        }
+    }
+
     private void updateMensagemTable(java.sql.Connection conn) {
         try {
             // Adiciona colunas se não existirem
@@ -92,20 +141,39 @@ public class MessageServiceImpl implements MessageService {
         }
     }
     
+    private boolean isTableEmpty(java.sql.Connection conn, String tableName) {
+        try (java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM " + tableName)) {
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    System.out.println("Tabela " + tableName + " tem " + count + " registros");
+                    return count == 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao verificar se tabela " + tableName + " está vazia: " + e.getMessage());
+            return true;
+        }
+        return true;
+    }
+
     private void createMensagemTable(java.sql.Connection conn) throws Exception {
         String sql = "CREATE TABLE mensagem (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "paciente_id INT NOT NULL, " +
-                    "medico_id INT NOT NULL, " +
-                    "conteudo TEXT NOT NULL, " +
-                    "data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                    "respondida BOOLEAN DEFAULT FALSE, " +
-                    "sender_type VARCHAR(10), " +
-                    "sender_id VARCHAR(10), " +
-                    "recipient_id VARCHAR(10)" +
+                    "sender_id INTEGER NOT NULL, " +
+                    "sender_type VARCHAR(20) NOT NULL, " +
+                    "sender_name VARCHAR(100), " +
+                    "recipient_id INTEGER NOT NULL, " +
+                    "recipient_type VARCHAR(20) NOT NULL, " +
+                    "recipient_name VARCHAR(100), " +
+                    "text TEXT NOT NULL, " +
+                    "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                    "read BOOLEAN NOT NULL DEFAULT FALSE" +
                     ")";
+        System.out.println("Criando tabela mensagem com SQL: " + sql);
         try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
+            System.out.println("Tabela mensagem criada com sucesso com estrutura em inglês");
         }
     }
     
@@ -133,100 +201,55 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    private void insertSampleMessages(java.sql.Connection conn) {
+        try {
+            System.out.println("Inserindo mensagens de exemplo...");
+
+            String sql = "INSERT INTO mensagem (sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES " +
+                        "(1, 'MEDIC', 'Dr. Pedro Almeida', 1, 'PATIENT', 'João da Silva', 'Olá, tudo bem? Aqui é o Dr. Pedro.', CURRENT_TIMESTAMP, false), " +
+                        "(1, 'PATIENT', 'João da Silva', 1, 'MEDIC', 'Dr. Pedro Almeida', 'Olá doutor, estou bem sim. Obrigado!', CURRENT_TIMESTAMP, false), " +
+                        "(1, 'MEDIC', 'Dr. Pedro Almeida', 1, 'PATIENT', 'João da Silva', 'Ótimo! Se precisar de algo, me avise.', CURRENT_TIMESTAMP, false)";
+
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                int rowsInserted = stmt.executeUpdate();
+                System.out.println("Inseridas " + rowsInserted + " mensagens de exemplo com sucesso");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erro ao inserir mensagens de exemplo: " + e.getMessage());
+        }
+    }
+
     public List<Message> findAll() {
         List<Message> messages = new ArrayList<>();
-        
-        // Verifica se o DataSource está disponível
         if (dataSource == null) {
             System.out.println("DataSource é null - retornando lista vazia");
             return messages;
         }
-        
         try (java.sql.Connection conn = dataSource.getConnection()) {
             System.out.println("Conexão obtida com sucesso");
-            
-            // Tenta buscar com as novas colunas
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(
-                "SELECT id, paciente_id, medico_id, conteudo, data_envio, respondida, sender_type, sender_id, recipient_id FROM mensagem ORDER BY data_envio DESC")) {
-                
+                "SELECT id, sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read FROM mensagem ORDER BY date DESC")) {
                 try (java.sql.ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         Message message = new Message();
                         message.setId(String.valueOf(rs.getInt("id")));
-                        
-                        // Usar os dados salvos corretamente
-                        String senderType = rs.getString("sender_type");
-                        String senderId = rs.getString("sender_id");
-                        String recipientId = rs.getString("recipient_id");
-                        
-                        if (senderType != null && senderId != null && recipientId != null) {
-                            // Usar dados salvos
-                            message.setSenderType(senderType);
-                            message.setSenderId(senderId);
-                            message.setRecipientId(recipientId);
-                            message.setRecipientType("MEDIC".equals(senderType) ? "PATIENT" : "MEDIC");
-                        } else {
-                            // Fallback para mensagens antigas
-                            message.setSenderId(String.valueOf(rs.getInt("paciente_id")));
-                            message.setSenderType("PATIENT");
-                            message.setRecipientId(String.valueOf(rs.getInt("medico_id")));
-                            message.setRecipientType("MEDIC");
-                        }
-                        
-                        message.setText(rs.getString("conteudo"));
-                        message.setDate(rs.getTimestamp("data_envio").toString());
-                        message.setRead(rs.getBoolean("respondida"));
-                        
-                        // Buscar nomes baseado no tipo
-                        if ("MEDIC".equals(message.getSenderType())) {
-                            message.setSenderName("Dr. Médico " + message.getSenderId());
-                            message.setRecipientName("Paciente " + message.getRecipientId());
-                        } else {
-                            message.setSenderName("Paciente " + message.getSenderId());
-                            message.setRecipientName("Dr. Médico " + message.getRecipientId());
-                        }
-                        
+                        message.setSenderId(rs.getString("sender_id"));
+                        message.setSenderType(rs.getString("sender_type"));
+                        message.setSenderName(rs.getString("sender_name"));
+                        message.setRecipientId(rs.getString("recipient_id"));
+                        message.setRecipientType(rs.getString("recipient_type"));
+                        message.setRecipientName(rs.getString("recipient_name"));
+                        message.setText(rs.getString("text"));
+                        message.setDate(rs.getTimestamp("date").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+                        message.setRead(rs.getBoolean("read"));
                         messages.add(message);
                     }
                 }
-                
-            } catch (Exception e1) {
-                // Fallback: busca sem as novas colunas
-                System.out.println("Buscando sem novas colunas: " + e1.getMessage());
-                try (java.sql.PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT id, paciente_id, medico_id, conteudo, data_envio, respondida FROM mensagem ORDER BY data_envio DESC")) {
-                    
-                    try (java.sql.ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            Message message = new Message();
-                            message.setId(String.valueOf(rs.getInt("id")));
-                            
-                            // Fallback para mensagens antigas
-                            message.setSenderId(String.valueOf(rs.getInt("paciente_id")));
-                            message.setSenderType("PATIENT");
-                            message.setRecipientId(String.valueOf(rs.getInt("medico_id")));
-                            message.setRecipientType("MEDIC");
-                            
-                            message.setText(rs.getString("conteudo"));
-                            message.setDate(rs.getTimestamp("data_envio").toString());
-                            message.setRead(rs.getBoolean("respondida"));
-                            
-                            message.setSenderName("Paciente " + message.getSenderId());
-                            message.setRecipientName("Dr. Médico " + message.getRecipientId());
-                            
-                            messages.add(message);
-                        }
-                    }
-                }
             }
-            
         } catch (Exception e) {
             System.out.println("Erro ao buscar mensagens: " + e.getMessage());
-            System.out.println("Tipo do erro: " + e.getClass().getSimpleName());
             e.printStackTrace();
-            
-            // Retorna lista vazia em caso de erro para evitar 500
-            System.out.println("Retornando lista vazia devido ao erro");
         }
         System.out.println("findAll chamado - total de mensagens: " + messages.size());
         return messages;
@@ -264,46 +287,23 @@ public class MessageServiceImpl implements MessageService {
             message.setRecipientName(buscarNomeMedicoPorId(message.getRecipientId()));
         }
         
-        // Salva a mensagem no banco
+        // Salva a mensagem no banco usando as colunas corretas
         try (java.sql.Connection conn = dataSource.getConnection()) {
             
-            // Determinar IDs baseado no tipo
-            int pacienteId, medicoId;
-            if ("PATIENT".equals(message.getSenderType())) {
-                pacienteId = Integer.parseInt(message.getSenderId());
-                medicoId = Integer.parseInt(message.getRecipientId());
-            } else {
-                pacienteId = Integer.parseInt(message.getRecipientId());
-                medicoId = Integer.parseInt(message.getSenderId());
-            }
-            
-            // Tenta inserir com as novas colunas
-            try (java.sql.PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO mensagem (paciente_id, medico_id, conteudo, data_envio, respondida, sender_type, sender_id, recipient_id) VALUES (?, ?, ?, CURRENT_TIMESTAMP, false, ?, ?, ?)")) {
-                
-                stmt.setInt(1, pacienteId);
-                stmt.setInt(2, medicoId);
-                stmt.setString(3, message.getText());
-                stmt.setString(4, message.getSenderType());
-                stmt.setString(5, message.getSenderId());
-                stmt.setString(6, message.getRecipientId());
-                
+            String sql = "INSERT INTO mensagem (sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
+
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, Integer.parseInt(message.getSenderId()));
+                stmt.setString(2, message.getSenderType());
+                stmt.setString(3, message.getSenderName());
+                stmt.setInt(4, Integer.parseInt(message.getRecipientId()));
+                stmt.setString(5, message.getRecipientType());
+                stmt.setString(6, message.getRecipientName());
+                stmt.setString(7, message.getText());
+                stmt.setBoolean(8, message.isRead());
+
                 stmt.executeUpdate();
-                System.out.println("Mensagem salva no banco com sucesso (com novas colunas)");
-                
-            } catch (Exception e1) {
-                // Fallback: tenta inserir sem as novas colunas (para tabelas antigas)
-                System.out.println("Tentando inserir sem novas colunas: " + e1.getMessage());
-                try (java.sql.PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO mensagem (paciente_id, medico_id, conteudo, data_envio, respondida) VALUES (?, ?, ?, CURRENT_TIMESTAMP, false)")) {
-                    
-                    stmt.setInt(1, pacienteId);
-                    stmt.setInt(2, medicoId);
-                    stmt.setString(3, message.getText());
-                    
-                    stmt.executeUpdate();
-                    System.out.println("Mensagem salva no banco com sucesso (sem novas colunas)");
-                }
+                System.out.println("Mensagem salva no banco com sucesso");
             }
             
         } catch (Exception e) {

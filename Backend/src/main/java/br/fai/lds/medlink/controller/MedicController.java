@@ -7,6 +7,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicUpdateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Medic.MedicResponseDto;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
+import br.fai.lds.medlink.domain.PatientAuthorizedDto;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
@@ -156,6 +157,17 @@ public class MedicController extends BaseController {
                 .collect(Collectors.toList());
 
         return success("Lista de pacientes do médico recuperada com sucesso.", dtos);
+    }
+
+    /**
+     * Lista os pacientes autorizados para um médico específico.
+     * @param id ID do médico
+     * @return lista de pacientes autorizados
+     */
+    @GetMapping("/{id}/authorized-patients")
+    public ResponseEntity<ApiResponse<List<PatientAuthorizedDto>>> getAuthorizedPatients(@PathVariable int id) {
+        List<PatientAuthorizedDto> patients = medicService.findAuthorizedPatients(id);
+        return success("Pacientes autorizados recuperados com sucesso.", patients);
     }
 
     /**

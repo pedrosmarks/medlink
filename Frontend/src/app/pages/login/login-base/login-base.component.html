@@ -43,9 +43,20 @@
       <div class="button-ripple"></div>
     </button>
     
+    <div class="signup-link">
+      <p>Ainda não tem conta? <a href="#" (click)="irParaCadastro($event)" class="signup-text">Clique aqui</a></p>
+    </div>
+    
     <div *ngIf="erro" class="error-message">
       <fa-icon [icon]="faExclamationTriangle" class="error-icon"></fa-icon>
       {{ erro }}
     </div>
   </form>
+
+  <!-- Modal de Cadastro -->
+  <app-cadastro-modal 
+    [isOpen]="mostrarModalCadastro"
+    [perfil]="perfil"
+    (close)="fecharModalCadastro()">
+  </app-cadastro-modal>
 </div>

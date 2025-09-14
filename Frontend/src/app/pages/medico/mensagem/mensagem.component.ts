@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, ChangeDetec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MensagensService } from '../../../services/mensagens/mensagem.service';
+import { Message, Conversation } from '../../../models/message.interface';
 
 interface Paciente {
   id: number;
@@ -9,23 +11,10 @@ interface Paciente {
   avatar?: string;
 }
 
-interface Mensagem {
-  id: string;
-  senderId: string;
-  senderType: string;
-  senderName: string;
-  recipientId: string;
-  recipientType: string;
-  recipientName: string;
-  text: string;
-  date: string;
-  read: boolean;
-}
-
 interface PacienteComMensagens {
   paciente: Paciente;
-  mensagens: Mensagem[];
-  ultimaMensagem?: Mensagem;
+  mensagens: Message[];
+  ultimaMensagem?: Message;
 }
 
 @Component({
@@ -40,18 +29,24 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
   
   medicoId = 1; // ID do médico logado
   pacientesComMensagens: PacienteComMensagens[] = [];
+  conversas: Conversation[] = [];
   pacienteSelecionado: PacienteComMensagens | null = null;
   novaMensagem = '';
   loading = false;
   shouldScrollToBottom = false;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient, 
+    private cdr: ChangeDetectorRef,
+    private mensagensService: MensagensService
+  ) {}
 
   ngOnInit() {
-  // Busca id do médico logado do localStorage
-  const medicoLogado = localStorage.getItem('medicoId');
-  this.medicoId = medicoLogado ? Number(medicoLogado) : 1;
-  this.carregarPacientesEMensagens();
+    // Busca id do médico logado do localStorage
+    const medicoLogado = localStorage.getItem('medicoId') || localStorage.getItem('userId');
+    this.medicoId = medicoLogado ? Number(medicoLogado) : 1;
+    
+    this.carregarPacientesEMensagens();
   }
 
   async carregarPacientesEMensagens() {
@@ -59,47 +54,88 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
     
     try {
       // 1. Buscar pacientes autorizados para este médico
-      const pacientesResponse = await this.http.get<any>(`http://localhost:8080/api/medic/${this.medicoId}/patients`).toPromise();
-      const pacientesAutorizados: Paciente[] = pacientesResponse.data || pacientesResponse || [];
-
-      // 2. Buscar todas as mensagens
-      const mensagensResponse = await this.http.get<any>('http://localhost:8080/api/messages', { headers: { 'Content-Type': 'application/json' } }).toPromise();
-
-      const todasMensagens: Mensagem[] = mensagensResponse.data || [];
-
-      // Filtra apenas mensagens onde o médico logado está envolvido
-      const idMedico = `${this.medicoId}`;
-      const mensagensDoMedico = todasMensagens.filter(msg =>
-        (msg.senderId === idMedico && msg.senderType === 'MEDIC') ||
-        (msg.recipientId === idMedico && msg.recipientType === 'MEDIC')
-      );
-
-      // 3. Agrupar mensagens por paciente autorizado
-      this.pacientesComMensagens = pacientesAutorizados.map(paciente => {
-        const idPaciente = paciente.id.toString();
-        const msgsPaciente = mensagensDoMedico.filter(msg =>
-          (msg.senderId === idPaciente && msg.senderType === 'PATIENT') ||
-          (msg.recipientId === idPaciente && msg.recipientType === 'PATIENT')
-        );
-        msgsPaciente.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        return {
-          paciente,
-          mensagens: msgsPaciente,
-          ultimaMensagem: msgsPaciente[msgsPaciente.length - 1]
-        };
-      });
+      const pacientesResponse = await this.http.get<any>(`http://localhost:8080/api/medic/${this.medicoId}/authorized-patients`).toPromise();
+      const pacientesAutorizados: Paciente[] = pacientesResponse.data || [];
       
+      // 2. Buscar conversas do médico usando o novo service
+      this.mensagensService.getConversationsForUser(`${this.medicoId}`, 'MEDIC').subscribe({
+        next: (conversas) => {
+          this.conversas = conversas;
+          
+          // 3. Criar lista combinada: pacientes autorizados com suas conversas
+          this.pacientesComMensagens = pacientesAutorizados.map(paciente => {
+            const conversa = conversas.find(c => 
+              c.participantId === `${paciente.id}` && c.participantType === 'PATIENT'
+            );
+            
+            return {
+              paciente: {
+                id: paciente.id,
+                name: paciente.name,
+                avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
+              },
+              mensagens: conversa ? conversa.messages : [],
+              ultimaMensagem: conversa ? conversa.lastMessage : undefined
+            };
+          });
 
+          // 4. Adicionar conversas que não estão na lista de pacientes autorizados (caso existam)
+          conversas.forEach(conversa => {
+            const jaExiste = this.pacientesComMensagens.some(p => 
+              p.paciente.id === parseInt(conversa.participantId)
+            );
+            
+            if (!jaExiste && conversa.participantType === 'PATIENT') {
+              this.pacientesComMensagens.push({
+                paciente: {
+                  id: parseInt(conversa.participantId),
+                  name: conversa.participantName,
+                  avatar: 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
+                },
+                mensagens: conversa.messages,
+                ultimaMensagem: conversa.lastMessage
+              });
+            }
+          });
 
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    } finally {
+          // 5. Ordenar por última mensagem (mais recente primeiro)
+          this.pacientesComMensagens.sort((a, b) => {
+            const dateA = a.ultimaMensagem ? new Date(a.ultimaMensagem.date).getTime() : 0;
+            const dateB = b.ultimaMensagem ? new Date(b.ultimaMensagem.date).getTime() : 0;
+            return dateB - dateA;
+          });
+
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar conversas:', error);
+          // Se der erro na busca de conversas, pelo menos mostra os pacientes autorizados
+          this.pacientesComMensagens = pacientesAutorizados.map(paciente => ({
+            paciente: {
+              id: paciente.id,
+              name: paciente.name,
+              avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
+            },
+            mensagens: [],
+            ultimaMensagem: undefined
+          }));
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+
+    } catch (error: any) {
+      console.error('Erro ao carregar pacientes:', error);
+      this.pacientesComMensagens = [];
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
   selecionarPaciente(pacienteComMensagens: PacienteComMensagens) {
     this.pacienteSelecionado = pacienteComMensagens;
+    
     
     // Marcar todas as mensagens não lidas como lidas IMEDIATAMENTE
     const mensagensNaoLidas = pacienteComMensagens.mensagens.filter(m => {
@@ -167,24 +203,28 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
     this.pacientesComMensagens = [...this.pacientesComMensagens];
     this.cdr.detectChanges();
     
-    // Depois fazer as chamadas para o backend
-    for (const mensagem of mensagensNaoLidas) {
-      try {
-        await this.http.patch(`http://localhost:8080/api/messages/${mensagem.id}`, {}, { headers: { 'Content-Type': 'application/json' } }).toPromise();
-      } catch (error) {
-        console.error('Erro ao marcar mensagem como lida:', error);
+    // Usar o service para marcar como lidas no backend
+    const mensagemIds = mensagensNaoLidas.map(m => m.id);
+    this.mensagensService.marcarMensagensComoLidas(mensagemIds).subscribe({
+      next: () => {
+        console.log('Mensagens marcadas como lidas no backend');
+      },
+      error: (error) => {
+        console.error('Erro ao marcar mensagens como lidas:', error);
         // Se der erro, reverter o estado local
-        mensagem.read = false;
+        mensagensNaoLidas.forEach(m => m.read = false);
+        this.cdr.detectChanges();
       }
-    }
+    });
   }
 
   async enviarMensagem() {
     if (!this.novaMensagem.trim() || !this.pacienteSelecionado) return;
 
     // Recupera nome do médico logado do localStorage
-    const nomeMedico = localStorage.getItem('medicoNome') || `medico_${this.medicoId}`;
-    const mensagem = {
+    const nomeMedico = localStorage.getItem('medicoNome') || `Dr. Médico ${this.medicoId}`;
+    const mensagem: Message = {
+      id: '', // Será gerado pelo backend
       senderId: `${this.medicoId}`,
       senderType: 'MEDIC',
       senderName: nomeMedico,
@@ -195,11 +235,12 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
       date: new Date().toISOString(),
       read: false
     };
-    
 
+    console.log('🩺 MÉDICO enviando mensagem:', mensagem);
 
     try {
-      await this.http.post('http://localhost:8080/api/messages', mensagem, { headers: { 'Content-Type': 'application/json' } }).toPromise();
+      const response = await this.mensagensService.enviarMensagem(mensagem).toPromise();
+      console.log('✅ Mensagem enviada com sucesso:', response);
       this.novaMensagem = '';
       
       // Recarregar mensagens
@@ -217,7 +258,7 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
         }, 100);
       }
     } catch (error) {
-      console.error('Erro ao enviar mensagem:', error);
+      console.error('❌ Erro ao enviar mensagem (MÉDICO):', error);
     }
   }
 

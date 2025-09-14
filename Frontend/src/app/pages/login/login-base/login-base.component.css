@@ -214,4 +214,49 @@
   }
 }
 
+/* ===== LINK DE CADASTRO ===== */
+.signup-link {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.signup-link p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.signup-text {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.signup-text:hover {
+  color: #1e7e34;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.signup-text:active {
+  transform: translateY(0);
+}
+
+/* Responsive para mobile */
+@media (max-width: 480px) {
+  .signup-link {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .signup-link p {
+    font-size: 0.85rem;
+  }
+}
 

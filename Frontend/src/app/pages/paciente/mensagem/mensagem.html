@@ -38,12 +38,12 @@
       </header>
 
       <div class="panel-messages" #messagesContainer>
-        <p *ngIf="conversaSelecionada.mensagens.length === 0">Debug: Nenhuma mensagem encontrada</p>
-        <p *ngIf="conversaSelecionada.mensagens.length > 0">Debug: {{ conversaSelecionada.mensagens.length }} mensagens</p>
-        <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.senderId === senderId">
+        <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.senderType === 'PATIENT'">
           <div class="msg-bubble">
             <div class="msg-text">{{ m.text }}</div>
-            <div class="msg-meta"><small>{{ m.date | date:'dd/MM HH:mm' }}</small></div>
+            <div class="msg-meta">
+              <small>{{ m.date | date:'dd/MM HH:mm' }}</small>
+            </div>
           </div>
         </div>
       </div>

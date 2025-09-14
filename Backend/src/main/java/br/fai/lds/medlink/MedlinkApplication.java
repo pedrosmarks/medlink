@@ -33,6 +33,9 @@ public class MedlinkApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(MedlinkApplication.class,  args);
+		org.springframework.context.ConfigurableApplicationContext ctx = SpringApplication.run(MedlinkApplication.class,  args);
+		// Log da URL do datasource
+		String url = ctx.getEnvironment().getProperty("spring.datasource.url");
+		System.out.println("[INFO] Banco de dados em uso: " + url);
 	}
 }

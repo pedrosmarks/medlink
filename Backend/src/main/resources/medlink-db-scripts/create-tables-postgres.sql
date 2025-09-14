@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS endereco CASCADE;
 DROP TABLE IF EXISTS cidade CASCADE;
 DROP TABLE IF EXISTS estado CASCADE;
 
+
 -- Drop dos tipos se existirem
 DROP TYPE IF EXISTS status_solicitacao CASCADE;
 
@@ -266,11 +267,13 @@ CREATE TABLE usuario (
 
 CREATE TABLE mensagem (
     id SERIAL PRIMARY KEY,
-    paciente_id INT NOT NULL,
-    medico_id INT NOT NULL,
-    conteudo TEXT NOT NULL,
-    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    respondida BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_mensagem_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
-    CONSTRAINT fk_mensagem_medico FOREIGN KEY (medico_id) REFERENCES medico(id)
+    sender_id INTEGER NOT NULL,
+    sender_type VARCHAR(20) NOT NULL,
+    sender_name VARCHAR(100),
+    recipient_id INTEGER NOT NULL,
+    recipient_type VARCHAR(20) NOT NULL,
+    recipient_name VARCHAR(100),
+    text TEXT NOT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    read BOOLEAN NOT NULL DEFAULT FALSE
 );

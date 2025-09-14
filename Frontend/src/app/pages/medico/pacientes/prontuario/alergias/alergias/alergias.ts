@@ -125,15 +125,26 @@ export class Alergias implements OnInit {
       return;
     }
     
-    // Como não temos ID, vamos usar o nome da alergia para identificação
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies`;
-    console.log('Removendo alergia:', alergia.name, 'do paciente:', this.pacienteId);
-    
-    // Por enquanto, remove apenas localmente até o backend implementar remoção por ID
-    this.alergias.splice(index, 1);
-    console.log('Alergia removida localmente. Backend precisa implementar DELETE com ID.');
-    
-    // TODO: Quando backend adicionar campo 'id', usar:
-    // this.http.delete(`${url}/${alergia.id}`).subscribe(...);
+    // Verifica se a alergia tem ID para fazer DELETE no backend
+    if (alergia.id !== undefined && alergia.id !== null) {
+      const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies/${alergia.id}`;
+      console.log('Removendo alergia via backend:', url);
+      
+      this.http.delete<any>(url).subscribe({
+        next: (response) => {
+          console.log('Alergia removida com sucesso:', response);
+          this.carregarAlergias(); // Recarrega a lista do backend
+        },
+        error: (error) => {
+          console.error('Erro ao remover alergia:', error);
+          // Se der erro, remove localmente como fallback
+          this.alergias.splice(index, 1);
+        }
+      });
+    } else {
+      // Se não tem ID, remove apenas localmente
+      console.log('Alergia sem ID, removendo localmente');
+      this.alergias.splice(index, 1);
+    }
   }
 }

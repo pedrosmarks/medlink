@@ -14,6 +14,7 @@ public interface PatientDao extends CrudDao <Patient>, SoftDeleteDao {
     Patient readById(int id);
     Patient findByEmail(String email);
     List<Patient> findByMedicId(int medicId);
+    List<Patient> findAuthorizedByMedicId(int medicId);
     List<Patient> findAll();
 
 

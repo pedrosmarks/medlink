@@ -2,6 +2,7 @@ package br.fai.lds.medlink.implementation.dao.postgres;
 
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
+import br.fai.lds.medlink.util.CpfUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -109,8 +110,19 @@ public class PatientPostgresDaoImpl implements PatientDao {
         logger.log(Level.INFO, "Preparando para adicionar o paciente no banco de dados");
         try {
             connection.setAutoCommit(false);
+
+            // Sincroniza a sequence da tabela paciente para evitar conflitos de chave primária
+            try (PreparedStatement syncStmt = connection.prepareStatement(
+                "SELECT setval('paciente_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM paciente), false)")) {
+                syncStmt.execute();
+            } catch (SQLException e) {
+                // Se não conseguir sincronizar, continua (pode ser que a sequence já esteja correta)
+                logger.warning("Aviso ao sincronizar sequence da paciente: " + e.getMessage());
+            }
+
             int pessoaId = insertPessoa(entity);
-            String sql = "INSERT INTO paciente(pessoa_id, email, senha, convenio_medico, cartao_sus, ativo) VALUES (?, ?, ?, ?, ?, ?)";
+
+            String sql = "INSERT INTO paciente(pessoa_id, email, senha, convenio_medico, cartao_sus, ativo) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, pessoaId);
             preparedStatement.setString(2, entity.getEmail());
@@ -118,7 +130,17 @@ public class PatientPostgresDaoImpl implements PatientDao {
             preparedStatement.setString(4, entity.getPlan());
             preparedStatement.setString(5, entity.getSusCard());
             preparedStatement.setBoolean(6, entity.isActive());
-            preparedStatement.execute();
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int patientId = resultSet.getInt(1);
+                entity.setId(patientId); // Define o ID na entidade
+
+                // Criar prontuário para o paciente
+                createProntuario(patientId, entity);
+            }
+
+            resultSet.close();
             preparedStatement.close();
             connection.commit();
             logger.log(Level.INFO, "Paciente adicionado com sucesso.");
@@ -186,12 +208,25 @@ public class PatientPostgresDaoImpl implements PatientDao {
     }
 
     private int insertPessoa(Patient entity) throws SQLException {
+        // Sincroniza a sequence da tabela pessoa para evitar conflitos de chave primária
+        try (PreparedStatement syncStmt = connection.prepareStatement(
+            "SELECT setval('pessoa_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM pessoa), false)")) {
+            syncStmt.execute();
+        } catch (SQLException e) {
+            // Se não conseguir sincronizar, continua (pode ser que a sequence já esteja correta)
+            logger.warning("Aviso ao sincronizar sequence da pessoa: " + e.getMessage());
+        }
+
         String sql = "INSERT INTO pessoa(nome, cpf, sexo, data_nascimento) ";
         sql += " VALUES (?, ?, ?, ?)";
 
         PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, entity.getName());
-        preparedStatement.setString(2, entity.getCpf());
+
+        // Remove formatação do CPF usando a classe utilitária
+        String cpfSemFormatacao = CpfUtil.removeFormatacao(entity.getCpf());
+        preparedStatement.setString(2, cpfSemFormatacao);
+
         preparedStatement.setString(3, entity.getGender() == Gender.MASCULINO ? "M" : "F");
         preparedStatement.setDate(4, java.sql.Date.valueOf(entity.getBirthDate()));
 
@@ -209,6 +244,15 @@ public class PatientPostgresDaoImpl implements PatientDao {
     }
 
     private void createProntuario(int pacienteId, Patient entity) throws SQLException {
+        // Sincroniza a sequence da tabela prontuario para evitar conflitos de chave primária
+        try (PreparedStatement syncStmt = connection.prepareStatement(
+            "SELECT setval('prontuario_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM prontuario), false)")) {
+            syncStmt.execute();
+        } catch (SQLException e) {
+            // Se não conseguir sincronizar, continua (pode ser que a sequence já esteja correta)
+            logger.warning("Aviso ao sincronizar sequence do prontuario: " + e.getMessage());
+        }
+
         String sql = "INSERT INTO prontuario(paciente_id, tipo_sanguineo, doador_orgao, observacoes) ";
         sql += " VALUES (?, ?, ?, ?)";
 
@@ -387,7 +431,7 @@ public class PatientPostgresDaoImpl implements PatientDao {
     
     private void updateVacinas(int patientId, List<Vaccine> vacinas) {
         try {
-            // Remove todas as vacinas existentes
+            // Removes todas as vacinas existentes
             String deleteSql = "DELETE FROM vacina WHERE paciente_id = ?";
             try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
                 ps.setInt(1, patientId);
@@ -949,5 +993,44 @@ public class PatientPostgresDaoImpl implements PatientDao {
             logger.severe("Erro ao revogar acesso: " + e.getMessage());
             throw new RuntimeException("Erro ao revogar acesso", e);
         }
+    }
+
+    @Override
+    public List<Patient> findAuthorizedByMedicId(int medicId) {
+        List<Patient> patients = new ArrayList<>();
+        final String sql = """
+            SELECT pac.id, pe.nome, pe.cpf, pac.email, pac.senha, pe.sexo, pe.data_nascimento,
+                   pac.convenio_medico, pac.cartao_sus, pac.ativo, pr.tipo_sanguineo, pr.observacoes
+            FROM paciente pac
+            JOIN pessoa pe ON pac.pessoa_id = pe.id
+            LEFT JOIN prontuario pr ON pr.paciente_id = pac.id
+            JOIN solicitacao_acesso_prontuario sap ON sap.paciente_id = pac.id
+            WHERE sap.medico_id = ? AND sap.status = 'ACEITA'::status_solicitacao AND pac.ativo = true
+        """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, medicId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Patient patient = buildPatientFromResultSet(rs);
+                patients.add(patient);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar pacientes autorizados para o médico: " + medicId, e);
+        }
+        return patients;
+    }
+
+    // Método utilitário para mapear ResultSet para Patient (ajuste conforme já existente)
+    private Patient mapResultSetToPatient(ResultSet rs) throws SQLException {
+        // Exemplo simplificado, ajuste conforme necessário
+        Patient patient = new Patient();
+        patient.setId(rs.getInt("id"));
+        patient.setName(rs.getString("nome"));
+        patient.setEmail(rs.getString("email"));
+        patient.setCpf(rs.getString("cpf"));
+        patient.setBirthDate(rs.getDate("data_nascimento").toLocalDate());
+        // Adicione outros campos conforme necessário
+        return patient;
     }
 }

@@ -3,6 +3,7 @@ package br.fai.lds.medlink.domain.dataTransferObject.Medic;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.util.CpfUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -43,12 +44,13 @@ public class MedicCreateDto {
     /**
      * CPF (Cadastro de Pessoa Física) do médico.
      * <p>
-     * Deve estar no formato XXX.XXX.XXX-XX e ser um documento válido.
-     * Utilizado como identificador único do profissional.
+     * Pode ser fornecido no formato XXX.XXX.XXX-XX ou apenas números XXXXXXXXXXX.
+     * A validação aceita ambos os formatos e será normalizado internamente.
      * </p>
      */
     @NotNull(message = "O CPF não pode ser nulo")
-    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})$", message = "O CPF deve estar no formato XXX.XXX.XXX-XX")
+    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{11})$",
+             message = "O CPF deve estar no formato XXX.XXX.XXX-XX ou conter apenas 11 dígitos")
     private String cpf;
 
     /**
@@ -145,15 +147,22 @@ public class MedicCreateDto {
      * <p>
      * Cria uma nova instância da entidade Medic com todos os dados
      * fornecidos neste DTO, pronta para persistência no banco de dados.
+     * A validação do CPF é feita durante a conversão.
      * </p>
      * 
      * @return Nova instância de Medic com os dados deste DTO
+     * @throws IllegalArgumentException se o CPF não tiver o comprimento correto após normalização
      * @see Medic
      */
     public Medic toEntity() {
+        // Valida o CPF antes de criar a entidade
+        if (!CpfUtil.isValidLength(this.cpf)) {
+            throw new IllegalArgumentException("CPF deve ter exatamente 11 dígitos");
+        }
+
         Medic entity = new Medic();
         entity.setName(this.name);
-        entity.setCpf(this.cpf);
+        entity.setCpf(this.cpf); // Mantém o formato original, será normalizado no DAO
         entity.setGender(this.gender);
         entity.setBirthDate(this.birthDate);
         entity.setPhoneNumber(this.phoneNumber);

@@ -1,14 +1,12 @@
 package br.fai.lds.medlink.implementation.dao.postgres;
 
-import br.fai.lds.medlink.domain.Mensagem;
+import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.dao.message.MessageDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,21 +22,21 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public void create(Mensagem entity) {
+    public void create(Message entity) {
         logger.log(Level.INFO, "Preparando para adicionar mensagem no banco de dados");
-    String sql = "INSERT INTO mensagem(remetente_id, remetente_tipo, remetente_nome, destinatario_id, destinatario_tipo, destinatario_nome, texto, data, lida) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO mensagem(sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, entity.getRemetenteId());
-            preparedStatement.setString(2, entity.getRemetenteTipo());
-            preparedStatement.setString(3, entity.getRemetenteNome());
-            preparedStatement.setString(4, entity.getDestinatarioId());
-            preparedStatement.setString(5, entity.getDestinatarioTipo());
-            preparedStatement.setString(6, entity.getDestinatarioNome());
-            preparedStatement.setString(7, entity.getTexto());
-            preparedStatement.setString(8, entity.getData());
-            preparedStatement.setBoolean(9, entity.isLida());
+            preparedStatement.setString(1, entity.getSenderId());
+            preparedStatement.setString(2, entity.getSenderType());
+            preparedStatement.setString(3, entity.getSenderName());
+            preparedStatement.setString(4, entity.getRecipientId());
+            preparedStatement.setString(5, entity.getRecipientType());
+            preparedStatement.setString(6, entity.getRecipientName());
+            preparedStatement.setString(7, entity.getText());
+            preparedStatement.setString(8, entity.getDate());
+            preparedStatement.setBoolean(9, entity.isRead());
 
             preparedStatement.execute();
             preparedStatement.close();
@@ -76,7 +74,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public Mensagem readById(int id) {
+    public Message readById(int id) {
         String sql = "SELECT * FROM mensagem WHERE id = ?";
 
         try {
@@ -85,7 +83,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Mensagem mensagem = buildMensagemFromResultSet(resultSet);
+                Message mensagem = buildMessageFromResultSet(resultSet);
                 preparedStatement.close();
                 resultSet.close();
                 return mensagem;
@@ -99,16 +97,16 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<Mensagem> readAll() {
-        String sql = "SELECT * FROM mensagem ORDER BY data DESC";
-        List<Mensagem> mensagens = new ArrayList<>();
+    public List<Message> readAll() {
+        String sql = "SELECT * FROM mensagem ORDER BY date DESC";
+        List<Message> mensagens = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                mensagens.add(buildMensagemFromResultSet(resultSet));
+                mensagens.add(buildMessageFromResultSet(resultSet));
             }
 
             preparedStatement.close();
@@ -122,13 +120,13 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public void updateInformation(int id, Mensagem entity) {
-    String sql = "UPDATE mensagem SET texto = ?, lida = ? WHERE id = ?";
+    public void updateInformation(int id, Message entity) {
+        String sql = "UPDATE mensagem SET text = ?, read = ? WHERE id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, entity.getTexto());
-            preparedStatement.setBoolean(2, entity.isLida());
+            preparedStatement.setString(1, entity.getText());
+            preparedStatement.setBoolean(2, entity.isRead());
             preparedStatement.setInt(3, id);
 
             preparedStatement.execute();
@@ -141,9 +139,9 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<Mensagem> findByUserId(String userId, String userType) {
-        String sql = "SELECT * FROM mensagem WHERE (remetente_id = ? AND remetente_tipo = ?) OR (destinatario_id = ? AND destinatario_tipo = ?) ORDER BY data DESC";
-        List<Mensagem> mensagens = new ArrayList<>();
+    public List<Message> findByUserId(String userId, String userType) {
+        String sql = "SELECT * FROM mensagem WHERE (sender_id = ? AND sender_type = ?) OR (recipient_id = ? AND recipient_type = ?) ORDER BY date DESC";
+        List<Message> mensagens = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -155,7 +153,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                mensagens.add(buildMensagemFromResultSet(resultSet));
+                mensagens.add(buildMessageFromResultSet(resultSet));
             }
 
             preparedStatement.close();
@@ -169,14 +167,14 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<Mensagem> findConversationBetweenUsers(String user1Id, String user1Type, String user2Id, String user2Type) {
+    public List<Message> findConversationBetweenUsers(String user1Id, String user1Type, String user2Id, String user2Type) {
         String sql = """
             SELECT * FROM mensagem 
-            WHERE ((remetente_id = ? AND remetente_tipo = ?) AND (destinatario_id = ? AND destinatario_tipo = ?))
-               OR ((remetente_id = ? AND remetente_tipo = ?) AND (destinatario_id = ? AND destinatario_tipo = ?))
-            ORDER BY data ASC
+            WHERE ((sender_id = ? AND sender_type = ?) AND (recipient_id = ? AND recipient_type = ?))
+               OR ((sender_id = ? AND sender_type = ?) AND (recipient_id = ? AND recipient_type = ?))
+            ORDER BY date ASC
         """;
-        List<Mensagem> mensagens = new ArrayList<>();
+        List<Message> mensagens = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -192,7 +190,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                mensagens.add(buildMensagemFromResultSet(resultSet));
+                mensagens.add(buildMessageFromResultSet(resultSet));
             }
 
             preparedStatement.close();
@@ -207,7 +205,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
 
     @Override
     public void markAsRead(String messageId) {
-        String sql = "UPDATE mensagem SET lida = true WHERE id = ?";
+        String sql = "UPDATE mensagem SET read = true WHERE id = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -221,9 +219,9 @@ public class MessagePostgresDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<Mensagem> findUnreadMessages(String userId, String userType) {
-        String sql = "SELECT * FROM mensagem WHERE destinatario_id = ? AND destinatario_tipo = ? AND lida = false ORDER BY data DESC";
-        List<Mensagem> mensagens = new ArrayList<>();
+    public List<Message> findUnreadMessages(String userId, String userType) {
+        String sql = "SELECT * FROM mensagem WHERE recipient_id = ? AND recipient_type = ? AND read = false ORDER BY date DESC";
+        List<Message> mensagens = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -233,7 +231,7 @@ public class MessagePostgresDaoImpl implements MessageDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                mensagens.add(buildMensagemFromResultSet(resultSet));
+                mensagens.add(buildMessageFromResultSet(resultSet));
             }
 
             preparedStatement.close();
@@ -246,18 +244,18 @@ public class MessagePostgresDaoImpl implements MessageDao {
         return mensagens;
     }
 
-    private Mensagem buildMensagemFromResultSet(ResultSet resultSet) throws SQLException {
-        Mensagem mensagem = new Mensagem();
-        mensagem.setId(String.valueOf(resultSet.getInt("id")));
-        mensagem.setRemetenteId(resultSet.getString("remetente_id"));
-        mensagem.setRemetenteTipo(resultSet.getString("remetente_tipo"));
-        mensagem.setRemetenteNome(resultSet.getString("remetente_nome"));
-        mensagem.setDestinatarioId(resultSet.getString("destinatario_id"));
-        mensagem.setDestinatarioTipo(resultSet.getString("destinatario_tipo"));
-        mensagem.setDestinatarioNome(resultSet.getString("destinatario_nome"));
-    mensagem.setTexto(resultSet.getString("texto"));
-        mensagem.setData(resultSet.getString("data"));
-        mensagem.setLida(resultSet.getBoolean("lida"));
-        return mensagem;
+    private Message buildMessageFromResultSet(ResultSet resultSet) throws SQLException {
+        Message message = new Message();
+        message.setId(String.valueOf(resultSet.getInt("id")));
+        message.setSenderId(resultSet.getString("sender_id"));
+        message.setSenderType(resultSet.getString("sender_type"));
+        message.setSenderName(resultSet.getString("sender_name"));
+        message.setRecipientId(resultSet.getString("recipient_id"));
+        message.setRecipientType(resultSet.getString("recipient_type"));
+        message.setRecipientName(resultSet.getString("recipient_name"));
+        message.setText(resultSet.getString("text"));
+        message.setDate(resultSet.getString("date"));
+        message.setRead(resultSet.getBoolean("read"));
+        return message;
     }
 }

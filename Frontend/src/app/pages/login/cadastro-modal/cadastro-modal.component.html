@@ -1,0 +1,369 @@
+<div *ngIf="isOpen" class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <fa-icon [icon]="perfil === 'medico' ? faUserDoctor : faUser" class="title-icon"></fa-icon>
+        Cadastro de {{ perfil === 'medico' ? 'Médico(a)' : 'Paciente' }}
+      </h2>
+      <button class="close-button" (click)="fecharModal()">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <form (ngSubmit)="cadastrar()" class="cadastro-form">
+        <!-- DADOS PESSOAIS -->
+        <div class="section-title">👤 Dados Pessoais</div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <fa-icon [icon]="faUser" class="label-icon"></fa-icon>
+              Nome Completo *
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="nome" 
+              name="nome" 
+              placeholder="Digite seu nome completo"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faIdCard" class="label-icon"></fa-icon>
+              CPF *
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="cpf" 
+              name="cpf" 
+              placeholder="000.000.000-00"
+              required>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faVenusMars" class="label-icon"></fa-icon>
+              Gênero *
+            </label>
+            <select 
+              class="form-input" 
+              [(ngModel)]="genero" 
+              name="genero" 
+              required>
+              <option value="">Selecione</option>
+              <option value="MALE">Masculino</option>
+              <option value="FEMALE">Feminino</option>
+              <option value="OTHER">Outro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faCalendarAlt" class="label-icon"></fa-icon>
+              Data de Nascimento *
+            </label>
+            <input 
+              type="date" 
+              class="form-input" 
+              [(ngModel)]="dataNascimento" 
+              name="dataNascimento" 
+              required>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faPhone" class="label-icon"></fa-icon>
+              Telefone *
+            </label>
+            <input 
+              type="tel" 
+              class="form-input" 
+              [(ngModel)]="telefone" 
+              name="telefone" 
+              placeholder="(00) 00000-0000"
+              required>
+          </div>
+        </div>
+
+        <!-- ENDEREÇO -->
+        <div class="section-title">📍 Endereço</div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <fa-icon [icon]="faMapMarkerAlt" class="label-icon"></fa-icon>
+              Rua *
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.rua" 
+              name="rua" 
+              placeholder="Nome da rua"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">Número</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.numero" 
+              name="numero" 
+              placeholder="123">
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">Complemento</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.complemento" 
+              name="complemento" 
+              placeholder="Apto, sala, etc.">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">Bairro *</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.bairro" 
+              name="bairro" 
+              placeholder="Nome do bairro"
+              required>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">CEP *</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.cep" 
+              name="cep" 
+              placeholder="00000-000"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">Cidade *</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="endereco.cidade" 
+              name="cidade" 
+              placeholder="Nome da cidade"
+              required>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">Estado *</label>
+            <select 
+              class="form-input" 
+              [(ngModel)]="endereco.estado" 
+              name="estado" 
+              required>
+              <option value="">Selecione</option>
+              <option value="SP">São Paulo</option>
+              <option value="RJ">Rio de Janeiro</option>
+              <option value="MG">Minas Gerais</option>
+              <option value="RS">Rio Grande do Sul</option>
+              <option value="PR">Paraná</option>
+              <option value="SC">Santa Catarina</option>
+              <!-- Adicionar outros estados conforme necessário -->
+            </select>
+          </div>
+        </div>
+
+        <!-- ACESSO -->
+        <div class="section-title">🔐 Dados de Acesso</div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <fa-icon [icon]="faEnvelope" class="label-icon"></fa-icon>
+              Email *
+            </label>
+            <input 
+              type="email" 
+              class="form-input" 
+              [(ngModel)]="email" 
+              name="email" 
+              placeholder="seu@email.com"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faLock" class="label-icon"></fa-icon>
+              Senha *
+            </label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="senha" 
+              name="senha" 
+              placeholder="Mínimo 6 caracteres"
+              required>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-label">
+              <fa-icon [icon]="faLock" class="label-icon"></fa-icon>
+              Confirmar Senha *
+            </label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="confirmarSenha" 
+              name="confirmarSenha" 
+              placeholder="Repita sua senha"
+              required>
+          </div>
+        </div>
+
+        <!-- CAMPOS ESPECÍFICOS PARA MÉDICOS -->
+        <div *ngIf="perfil === 'medico'" class="medico-fields">
+          <div class="section-title">🩺 Dados Profissionais</div>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label class="form-label">
+                <fa-icon [icon]="faIdCard" class="label-icon"></fa-icon>
+                CRM *
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="crm" 
+                name="crm" 
+                placeholder="123456"
+                required>
+            </div>
+
+            <div class="form-group half-width">
+              <label class="form-label">
+                <fa-icon [icon]="faUserDoctor" class="label-icon"></fa-icon>
+                Especialidade *
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="especialidade" 
+                name="especialidade" 
+                placeholder="Ex: Cardiologia"
+                required>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAMPOS ESPECÍFICOS PARA PACIENTES -->
+        <div *ngIf="perfil === 'paciente'" class="paciente-fields">
+          <div class="section-title">🏥 Informações Médicas</div>
+          
+          <div class="form-row">
+            <div class="form-group half-width">
+              <label class="form-label">
+                <fa-icon [icon]="faTint" class="label-icon"></fa-icon>
+                Tipo Sanguíneo
+              </label>
+              <select 
+                class="form-input" 
+                [(ngModel)]="tipoSanguineo" 
+                name="tipoSanguineo">
+                <option value="">Selecione</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+
+            <div class="form-group half-width">
+              <label class="form-label">
+                <fa-icon [icon]="faHeart" class="label-icon"></fa-icon>
+                Plano de Saúde
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="plano" 
+                name="plano" 
+                placeholder="Ex: Unimed, Bradesco">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">
+                <fa-icon [icon]="faIdCard" class="label-icon"></fa-icon>
+                Cartão SUS
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="cartaoSUS" 
+                name="cartaoSUS" 
+                placeholder="000 0000 0000 0000">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">
+                <fa-icon [icon]="faClipboard" class="label-icon"></fa-icon>
+                Observações Médicas
+              </label>
+              <textarea 
+                class="form-input" 
+                [(ngModel)]="observacoes" 
+                name="observacoes" 
+                placeholder="Alergias, comorbidades, medicamentos em uso..."
+                rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensagens de erro e sucesso -->
+        <div *ngIf="erro" class="error-message">
+          {{ erro }}
+        </div>
+
+        <div *ngIf="sucesso" class="success-message">
+          {{ sucesso }}
+        </div>
+
+        <!-- Botões -->
+        <div class="modal-actions">
+          <button type="button" class="cancel-button" (click)="fecharModal()" [disabled]="carregando">
+            Cancelar
+          </button>
+          <button type="submit" class="submit-button" [disabled]="carregando || !nome || !email || !senha || !confirmarSenha || !cpf || !genero || !dataNascimento || !telefone">
+            <span *ngIf="!carregando">Criar Conta</span>
+            <span *ngIf="carregando">Criando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

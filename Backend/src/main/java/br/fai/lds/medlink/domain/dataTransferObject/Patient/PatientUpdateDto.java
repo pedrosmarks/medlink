@@ -3,6 +3,7 @@ package br.fai.lds.medlink.domain.dataTransferObject.Patient;
 import br.fai.lds.medlink.domain.Address;
 import br.fai.lds.medlink.domain.Gender;
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.util.CpfUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -33,7 +34,15 @@ public class PatientUpdateDto {
     @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
     private String name;
     
-    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})$", message = "O CPF deve estar no formato XXX.XXX.XXX-XX")
+    /**
+     * CPF (Cadastro de Pessoa Física) do paciente.
+     * <p>
+     * Pode ser fornecido no formato XXX.XXX.XXX-XX ou apenas números XXXXXXXXXXX.
+     * A validação aceita ambos os formatos e será normalizado internamente.
+     * </p>
+     */
+    @Pattern(regexp = "^(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{11})$",
+             message = "O CPF deve estar no formato XXX.XXX.XXX-XX ou conter apenas 11 dígitos")
     private String cpf;
     
     private Gender gender;
@@ -60,13 +69,22 @@ public class PatientUpdateDto {
      * Atualiza uma entidade Patient existente com os dados deste DTO.
      * 
      * <p>Apenas os campos não nulos deste DTO serão aplicados à entidade,
-     * permitindo atualizações parciais.</p>
-     * 
+     * permitindo atualizações parciais. O CPF é validado antes da atualização.</p>
+     *
      * @param entity Entidade Patient a ser atualizada
+     * @throws IllegalArgumentException se o CPF não tiver o comprimento correto após normalização
      */
     public void updateEntity(Patient entity) {
         if (this.name != null) entity.setName(this.name);
-        if (this.cpf != null) entity.setCpf(this.cpf);
+
+        if (this.cpf != null) {
+            // Valida o CPF antes de atualizar
+            if (!CpfUtil.isValidLength(this.cpf)) {
+                throw new IllegalArgumentException("CPF deve ter exatamente 11 dígitos");
+            }
+            entity.setCpf(this.cpf); // Será normalizado no DAO
+        }
+
         if (this.gender != null) entity.setGender(this.gender);
         if (this.birthDate != null) entity.setBirthDate(this.birthDate);
         if (this.phoneNumber != null) entity.setPhoneNumber(this.phoneNumber);

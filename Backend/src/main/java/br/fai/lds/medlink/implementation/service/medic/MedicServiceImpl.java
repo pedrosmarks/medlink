@@ -1,7 +1,10 @@
 package br.fai.lds.medlink.implementation.service.medic;
 
 import br.fai.lds.medlink.domain.Medic;
+import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.PatientAuthorizedDto;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
+import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.medic.MedicService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,12 @@ import br.fai.lds.medlink.util.LogSanitizer;
 public class MedicServiceImpl implements MedicService {
 
     private final MedicDao medicDao;
+    private final PatientDao patientDao;
 
     @Autowired
-    public MedicServiceImpl(MedicDao medicDao) {
+    public MedicServiceImpl(MedicDao medicDao, PatientDao patientDao) {
         this.medicDao = medicDao;
+        this.patientDao = patientDao;
     }
 
     @Override
@@ -157,5 +162,15 @@ public class MedicServiceImpl implements MedicService {
             log.error("Erro ao buscar médicos por IDs {}: {}", ids.toString(), LogSanitizer.sanitize(e.getMessage()), e);
             throw new RuntimeException("Erro ao buscar médicos por IDs", e);
         }
+    }
+
+    @Override
+    public List<PatientAuthorizedDto> findAuthorizedPatients(int medicId) {
+        List<Patient> patients = patientDao.findAuthorizedByMedicId(medicId);
+        List<PatientAuthorizedDto> dtos = new java.util.ArrayList<>();
+        for (Patient p : patients) {
+            dtos.add(new PatientAuthorizedDto(p.getId(), p.getName(), p.getBirthDate(), p.getEmail()));
+        }
+        return dtos;
     }
 }
