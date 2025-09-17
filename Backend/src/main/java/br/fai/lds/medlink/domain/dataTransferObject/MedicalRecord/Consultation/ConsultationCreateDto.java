@@ -23,14 +23,24 @@ import java.time.LocalDate;
 @Builder
 public class ConsultationCreateDto {
 
+    /**
+     * Data da consulta médica.
+     * Não pode ser uma data futura.
+     */
     @NotNull(message = "Consultation date is required")
     @JsonFormat(pattern = "dd/MM/yyyy")
     @PastOrPresent(message = "Data da consulta não pode ser futura")
     private LocalDate date;
 
+    /**
+     * Motivo ou razão da consulta médica.
+     */
     @NotBlank(message = "Reason is required")
     private String reason;
 
+    /**
+     * Observações adicionais sobre a consulta.
+     */
     private String notes;
 
     /**

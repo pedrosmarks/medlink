@@ -24,13 +24,22 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class VaccineCreateDto {
 
+    /**
+     * Nome da vacina administrada.
+     */
     @NotBlank(message = "Name is required")
     private String name;
 
+    /**
+     * Data de aplicação da vacina.
+     */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull(message = "Date is required")
     private LocalDate date;
 
+    /**
+     * Status da vacinação (aplicada, agendada, etc.).
+     */
     private String status;
 
     /**

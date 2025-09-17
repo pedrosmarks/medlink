@@ -1,15 +1,44 @@
 package br.fai.lds.medlink.domain;
 
+/**
+ * Entidade que representa uma mensagem no sistema de comunicação.
+ * 
+ * <p>Permite a troca de mensagens entre médicos e pacientes,
+ * mantendo o histórico de comunicação e status de leitura.</p>
+ * 
+ * @author MedLink Team
+ * @version 1.0
+ * @since 1.0
+ */
 public class Message {
+    /** ID único da mensagem. */
     private String id;
+    
+    /** ID do remetente da mensagem. */
     private String senderId;
+    
+    /** Tipo do remetente (MEDICO ou PACIENTE). */
     private String senderType;
+    
+    /** Nome do remetente da mensagem. */
     private String senderName;
+    
+    /** ID do destinatário da mensagem. */
     private String recipientId;
+    
+    /** Tipo do destinatário (MEDICO ou PACIENTE). */
     private String recipientType;
+    
+    /** Nome do destinatário da mensagem. */
     private String recipientName;
+    
+    /** Conteúdo textual da mensagem. */
     private String text;
+    
+    /** Data e hora de envio da mensagem. */
     private String date;
+    
+    /** Indica se a mensagem foi lida pelo destinatário. */
     private boolean read;
 
     public Message() {
