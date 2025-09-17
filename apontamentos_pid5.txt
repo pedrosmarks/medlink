@@ -1,0 +1,2 @@
+Melhorias que devem compor a entrega 6 do PID:
+-  Diagramas de Sequência se atentar para usar linhas pontilhadas nas mensagens de retorno  e a nomenclatura dos eventos devem seguir o mesmo padrâo da nomenclatura dos métodos.
