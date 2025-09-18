@@ -25,9 +25,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class DiagnosisCreateDto {
 
+    /**
+     * Descrição detalhada do diagnóstico médico.
+     */
     @NotBlank(message = "Description is required")
     private String description;
 
+    /**
+     * Data em que o diagnóstico foi realizado.
+     * Não pode ser uma data futura.
+     */
     @NotNull(message = "Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Data do diagnóstico não pode ser futura")

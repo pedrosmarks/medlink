@@ -29,18 +29,64 @@ import java.util.stream.Collectors;
 @Builder
 public class MedicalRecordResponseDto {
 
+    /**
+     * ID único do prontuário médico.
+     */
     private int id;
+    
+    /**
+     * ID do paciente proprietário do prontuário.
+     */
     private Integer patientId;
+    
+    /**
+     * Tipo sanguíneo do paciente.
+     */
     private BloodType bloodType;
+    
+    /**
+     * Status de doador de órgãos.
+     */
     private OrganDonorStatus organDonor;
+    
+    /**
+     * Diagnóstico médico principal.
+     */
     private String diagnosis;
+    
+    /**
+     * Histórico familiar de doenças.
+     */
     private String familyHistory;
+    
+    /**
+     * Indica se o prontuário está ativo.
+     */
     private boolean medicalRecordActive;
 
+    /**
+     * Lista de alergias do paciente.
+     */
     private List<AllergyCreateDto> allergies;
+    
+    /**
+     * Lista de medicações em uso.
+     */
     private List<MedicationCreateDto> medications;
+    
+    /**
+     * Histórico de cirurgias realizadas.
+     */
     private List<SurgeryCreateDto> surgeries;
+    
+    /**
+     * Histórico de vacinação.
+     */
     private List<VaccineCreateDto> vaccines;
+    
+    /**
+     * Histórico de consultas médicas.
+     */
     private List<ConsultationCreateDto> consultations;
 
     /**

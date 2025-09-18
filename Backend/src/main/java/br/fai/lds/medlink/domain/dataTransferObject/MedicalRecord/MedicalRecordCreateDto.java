@@ -24,32 +24,59 @@ import java.util.List;
 @AllArgsConstructor
 public class MedicalRecordCreateDto {
 
+    /**
+     * Tipo sanguíneo do paciente (A+, B+, AB+, O+, A-, B-, AB-, O-).
+     */
     @NotNull(message = "O tipo sanguíneo é obrigatório")
     private BloodType bloodType;
 
+    /**
+     * Status de doador de órgãos do paciente.
+     */
     @NotNull(message = "O status de doador de órgãos é obrigatório")
     private OrganDonorStatus organDonor;
 
+    /**
+     * Diagnóstico médico principal do paciente.
+     */
     @NotBlank(message = "O diagnóstico é obrigatório")
     @Size(min = 5, max = 500)
     private String diagnosis;
 
+    /**
+     * Histórico familiar de doenças e condições médicas.
+     */
     @NotBlank(message = "O histórico familiar é obrigatório")
     @Size(min = 5, max = 500)
     private String familyHistory;
 
+    /**
+     * Lista de alergias conhecidas do paciente.
+     */
     @NotNull(message = "As alergias são obrigatórias")
     private List<Allergy> allergies;
 
+    /**
+     * Histórico de vacinação do paciente.
+     */
     @NotNull(message = "As vacinas são obrigatórias")
     private List<Vaccine> vaccines;
 
+    /**
+     * Histórico de cirurgias realizadas pelo paciente.
+     */
     @NotNull(message = "O histórico cirúrgico é obrigatório")
     private List<Surgery> surgicalHistory;
 
+    /**
+     * Lista de medicações em uso pelo paciente.
+     */
     @NotNull(message = "A medicação é obrigatória")
     private List<Medication> medications;
 
+    /**
+     * Indica se o prontuário médico está ativo.
+     */
     private boolean medicalRecordActive = true;
 
     /**

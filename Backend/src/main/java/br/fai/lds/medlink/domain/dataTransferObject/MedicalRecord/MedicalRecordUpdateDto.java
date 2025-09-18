@@ -21,20 +21,56 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalRecordUpdateDto {
+    /**
+     * Novo tipo sanguíneo do paciente (opcional).
+     */
     private BloodType bloodType;
+    
+    /**
+     * Novo status de doador de órgãos (opcional).
+     */
     private OrganDonorStatus organDonor;
     
+    /**
+     * Novo diagnóstico médico (opcional).
+     */
     @Size(min = 5, max = 500, message = "Diagnóstico deve ter entre 5 e 500 caracteres")
     private String diagnosis;
     
+    /**
+     * Novo histórico familiar (opcional).
+     */
     @Size(min = 5, max = 500, message = "Histórico familiar deve ter entre 5 e 500 caracteres")
     private String familyHistory;
     
+    /**
+     * Nova lista de alergias (opcional).
+     */
     private List<Allergy> allergies;
+    
+    /**
+     * Nova lista de vacinas (opcional).
+     */
     private List<Vaccine> vaccines;
+    
+    /**
+     * Nova lista de cirurgias (opcional).
+     */
     private List<Surgery> surgeries;
+    
+    /**
+     * Nova lista de medicações (opcional).
+     */
     private List<Medication> medications;
+    
+    /**
+     * Nova lista de consultas (opcional).
+     */
     private List<Consultation> consultations;
+    
+    /**
+     * Novo status de ativo do prontuário (opcional).
+     */
     private Boolean medicalRecordActive;
 
     /**

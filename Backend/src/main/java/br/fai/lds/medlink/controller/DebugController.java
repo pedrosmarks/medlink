@@ -1,1 +1,0 @@
-// Este arquivo foi removido - endpoints de debug não são mais necessários

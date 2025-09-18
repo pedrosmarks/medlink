@@ -18,17 +18,28 @@ import lombok.*;
 @Builder
 public class AllergyCreateDto {
 
+    /**
+     * Nome da alergia ou substância alergênica.
+     */
     @NotBlank(message = "Name is required")
     private String name;
 
+    /**
+     * Substância específica que causa a reação alérgica.
+     */
     @NotBlank(message = "Substance is required")
     private String substance;
 
-
-    @NotBlank(message = "Name is required")
+    /**
+     * Tipo de reação alérgica apresentada pelo paciente.
+     */
+    @NotBlank(message = "Reaction is required")
     private String reaction;
 
-    @NotBlank(message = "Name is required")
+    /**
+     * Grau de severidade da reação alérgica (leve, moderada, grave).
+     */
+    @NotBlank(message = "Severity is required")
     private String severity;
 
     /**
