@@ -35,8 +35,9 @@ public abstract class Person {
     private Gender gender;
 
     @NotNull(message = "A data de nascimento não pode ser nula")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
+
 
     @NotNull(message = "O número de telefone não pode ser nulo")
     private String phoneNumber;

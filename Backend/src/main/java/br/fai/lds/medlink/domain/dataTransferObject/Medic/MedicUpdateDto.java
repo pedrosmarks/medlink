@@ -57,9 +57,10 @@ public class MedicUpdateDto {
     /**
      * Data de nascimento do médico (opcional).
      * <p>
-     * Aceita formatos: dd/MM/yyyy ou yyyy-MM-dd.
+     * Aceita formato: yyyy-MM-dd.
      * </p>
      */
+    @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     /**

@@ -73,7 +73,7 @@ public class MedicCreateDto {
      * </p>
      */
     @NotNull(message = "A data de nascimento não pode ser nula")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     /**

@@ -53,7 +53,7 @@ public class PatientCreateDto {
     private Gender gender;
     
     @NotNull(message = "A data de nascimento não pode ser nula")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Past(message = "Data de nascimento deve ser no passado")
     private LocalDate birthDate;
     

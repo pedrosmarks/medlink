@@ -8,6 +8,8 @@ import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import br.fai.lds.medlink.port.dao.message.MessageDao;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -45,6 +47,19 @@ public class AppConfiguration {
     public MedicalRecordDao getMedicalRecordDao(final Connection connection) {
         return new MedicalRecordPostgresDaoImpl(connection);
     }
+    @Bean
+    public OpenAPI customOpenApi(){
+        /**
+         * Para acessar a URL do swagger pelo navegador, basta
+         * digitar localhost:8080/swagger-ui.html
+         * Lembrando que : 8080 é a porta, caso você tenha alterado no
+         * arquivo application.properties, altere aqui também.
+         * @retun;
+         */
+        return new OpenAPI().info(new Info().title("MEDLINK").version("0.0.1").description("API - MEDLINK"));
+}
+
+
 
     @Bean
     public MessageDao getMessageDao(final Connection connection) {

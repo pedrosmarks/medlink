@@ -2,12 +2,14 @@ package br.fai.lds.medlink;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "br.fai.lds.medlink")
 public class MedlinkApplication {
+
 
 	@org.springframework.context.annotation.Bean
 	public org.springframework.web.servlet.config.annotation.WebMvcConfigurer corsConfigurer() {
