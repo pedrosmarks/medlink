@@ -38,26 +38,19 @@ export class Requisicoes implements OnInit, OnDestroy {
 
   carregarRequisicoes(): void {
     this.loading = true;
-    console.log('🔍 Carregando requisições para paciente:', this.pacienteId);
     
     this.accessRequestsService.getPendingRequests(this.pacienteId).subscribe({
       next: (response) => {
-        console.log('✅ Requisições carregadas:', response);
         this.requisicoes = (response.data || []).map(req => ({
           ...req,
           status: (['pendente', 'aprovado', 'rejeitado'].includes(req.status?.toLowerCase())
             ? req.status.toLowerCase()
             : 'pendente') as 'pendente' | 'aprovado' | 'rejeitado'
         }));
-        console.log('📊 Total de requisições:', this.requisicoes.length);
         this.loading = false;
       },
-      error: (error) => {
-        console.warn('❌ Erro ao carregar requisições:', {
-          status: error.status,
-          statusText: error.statusText,
-          url: error.url
-        });
+      error: () => {
+        // Tratar erro silenciosamente ou mostrar mensagem ao usuário
         this.requisicoes = [];
         this.loading = false;
       }
@@ -79,65 +72,44 @@ export class Requisicoes implements OnInit, OnDestroy {
   }
 
   aprovar(request: AccessRequest): void {
-    console.log('✅ Aprovando requisição:', {
-      pacienteId: this.pacienteId,
-      medicoId: request.medicoId,
-      endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=approve`
-    });
+
     
     // Remove imediatamente da lista local para melhor UX
     this.requisicoes = this.requisicoes.filter(req => req.medicoId !== request.medicoId);
     
     this.accessRequestsService.approveRequest(this.pacienteId, request.medicoId).subscribe({
       next: (response) => {
-        console.log('✅ Requisição aprovada:', response);
+
         alert(response.message + '\n\nO médico agora aparece na sua lista de médicos!');
         // Recarrega para garantir sincronização com o backend
         this.carregarRequisicoes();
         // Notifica outros componentes que um médico foi aprovado
         window.dispatchEvent(new CustomEvent('medico-aprovado'));
       },
-      error: (error) => {
-        console.error('❌ Erro ao aprovar:', {
-          status: error.status,
-          statusText: error.statusText,
-          error: error.error,
-          url: error.url
-        });
+      error: () => {
         // Em caso de erro, recarrega a lista para voltar ao estado original
         this.carregarRequisicoes();
-        alert(`Erro ao aprovar: ${error.status} - ${error.statusText}`);
+        alert('Erro ao aprovar a solicitação. Por favor, tente novamente.');
       }
     });
   }
 
   recusar(request: AccessRequest): void {
-    console.log('❌ Rejeitando requisição:', {
-      pacienteId: this.pacienteId,
-      medicoId: request.medicoId,
-      endpoint: `PUT /api/patients/${this.pacienteId}/access-request/${request.medicoId}?action=reject`
-    });
+
     
     // Remove imediatamente da lista local para melhor UX
     this.requisicoes = this.requisicoes.filter(req => req.medicoId !== request.medicoId);
     
     this.accessRequestsService.rejectRequest(this.pacienteId, request.medicoId).subscribe({
       next: (response) => {
-        console.log('❌ Requisição rejeitada:', response);
         alert(response.message);
         // Recarrega para garantir sincronização com o backend
         this.carregarRequisicoes();
       },
-      error: (error) => {
-        console.error('❌ Erro ao rejeitar:', {
-          status: error.status,
-          statusText: error.statusText,
-          error: error.error,
-          url: error.url
-        });
+      error: () => {
         // Em caso de erro, recarrega a lista para voltar ao estado original
         this.carregarRequisicoes();
-        alert(`Erro ao rejeitar: ${error.status} - ${error.statusText}`);
+        alert('Erro ao rejeitar a solicitação. Por favor, tente novamente.');
       }
     });
   }

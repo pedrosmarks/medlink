@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.port.dao.patient;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.Consultation;
 import br.fai.lds.medlink.port.dao.crud.CrudDao;
 import br.fai.lds.medlink.port.dao.crud.SoftDeleteDao;
 
@@ -16,6 +17,6 @@ public interface PatientDao extends CrudDao <Patient>, SoftDeleteDao {
     List<Patient> findByMedicId(int medicId);
     List<Patient> findAuthorizedByMedicId(int medicId);
     List<Patient> findAll();
-
-
+    Consultation addConsultation(int patientId, Consultation consultation);
+    List<Consultation> getConsultationsByPatientId(int patientId);
 }

@@ -2,6 +2,7 @@ package br.fai.lds.medlink.domain;
 
 import lombok.*;
 import java.time.LocalDate;
+import jakarta.persistence.*;
 
 /**
  * Entidade que representa uma consulta médica no prontuário.
@@ -13,11 +14,17 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 1.0
  */
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Consultation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /** Identificador único da consulta. */
+    private int id;
+
     /** Data da consulta médica. */
     private LocalDate date;
     

@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, ChangeDetec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { MensagemService } from '../../../mensagem.service';
 import { MedicosService } from '../../../services/medicos/medicos.service';
 import { MensagensService } from '../../../services/mensagens/mensagem.service';
 import { Message, Conversation } from '../../../models/message.interface';
@@ -22,7 +21,9 @@ export interface ConversaComMedico {
 
 @Component({
   selector: 'app-mensagem',
+  standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
+  providers: [MedicosService, MensagensService],
   templateUrl: './mensagem.html',
   styleUrls: ['./mensagem.css']
 })
@@ -42,7 +43,6 @@ export class Mensagem implements OnInit, AfterViewChecked {
   shouldScrollToBottom = false;
 
   constructor(
-    private mensagemService: MensagemService, 
     private http: HttpClient, 
     private cdr: ChangeDetectorRef, 
     private medicosService: MedicosService,
@@ -61,9 +61,9 @@ export class Mensagem implements OnInit, AfterViewChecked {
     this.loading = true;
     
     try {
-      // 1. Buscar médicos autorizados para este paciente usando o endpoint correto
-      const medicosResponse = await this.http.get<any>(`http://localhost:8080/api/patients/${this.senderId}/authorized-doctors`).toPromise();
-      const medicosAutorizados: Medico[] = medicosResponse.data || [];
+      // 1. Buscar médicos autorizados para este paciente usando o serviço
+      const medicosResponse = await this.medicosService.getMedicosAutorizadosCompletos(this.senderId).toPromise();
+      const medicosAutorizados: Medico[] = medicosResponse || [];
       
       // 2. Buscar conversas do paciente usando o novo service
       this.mensagensService.getConversationsForUser(this.senderId, 'PATIENT').subscribe({
@@ -217,7 +217,7 @@ export class Mensagem implements OnInit, AfterViewChecked {
     const mensagemIds = mensagensNaoLidas.map(m => m.id);
     this.mensagensService.marcarMensagensComoLidas(mensagemIds).subscribe({
       next: () => {
-        console.log('Mensagens marcadas como lidas no backend');
+
       },
       error: (error) => {
         console.error('Erro ao marcar mensagens como lidas:', error);
@@ -249,11 +249,8 @@ export class Mensagem implements OnInit, AfterViewChecked {
       read: false
     };
     
-    console.log('🤒 PACIENTE enviando mensagem:', msg);
-    
     try {
       const response = await this.mensagensService.enviarMensagem(msg).toPromise();
-      console.log('✅ Mensagem enviada com sucesso:', response);
       this.novaMensagemConteudo = '';
       
       // Recarregar mensagens

@@ -2,13 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../../../services/auth/auth.service';
 import { faUser, faEnvelope, faLock, faTimes, faUserDoctor, faPhone, faIdCard, faMapMarkerAlt, faCalendarAlt, faVenusMars, faTint, faClipboard, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-cadastro-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, FontAwesomeModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './cadastro-modal.component.html',
   styleUrls: ['./cadastro-modal.component.css']
 })
@@ -68,7 +68,7 @@ export class CadastroModalComponent {
   sucesso = '';
   carregando = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private authService: AuthService) {}
 
   fecharModal() {
     this.close.emit();
@@ -153,20 +153,11 @@ export class CadastroModalComponent {
 
     try {
       const dados = this.getDadosCadastro();
-      const endpoint = this.perfil === 'medico' ? 
-        'http://localhost:8080/api/medic' : 
-        'http://localhost:8080/api/patients';
 
-      console.log('📤 Enviando dados para:', endpoint);
-      console.log('🗓️ Data original:', this.dataNascimento);
-      console.log('🗓️ Data formatada:', dados.birthDate);
-      console.log('📋 Dados completos:', dados);
-
-      const response = await this.http.post(endpoint, dados, {
-        headers: { 'Content-Type': 'application/json' }
-      }).toPromise();
-
-      console.log('✅ Cadastro realizado com sucesso:', response);
+      const response = await this.authService.registrarUsuario(
+        dados, 
+        this.perfil as 'medico' | 'paciente'
+      ).toPromise();
       this.sucesso = `Cadastro de ${this.perfil} criado com sucesso! Bem-vindo(a) ao MedLink!`;
       
       // Fechar modal após 2 segundos

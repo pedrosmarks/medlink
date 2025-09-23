@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.implementation.service.pacient;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.Consultation;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.patient.PatientService;
@@ -207,5 +208,15 @@ public class PatientServiceImpl implements PatientService {
             log.error("Erro ao revogar acesso do médico {} ao paciente {}: {}", medicoId, patientId, e.getMessage(), e);
             throw new RuntimeException("Erro ao revogar acesso", e);
         }
+    }
+
+    @Override
+    public Consultation addConsultation(int patientId, Consultation consultation) {
+        return patientDao.addConsultation(patientId, consultation);
+    }
+
+    @Override
+    public List<Consultation> getConsultationsByPatientId(int patientId) {
+        return patientDao.getConsultationsByPatientId(patientId);
     }
 }

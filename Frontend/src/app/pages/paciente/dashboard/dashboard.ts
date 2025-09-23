@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MedicosService } from '../../../services/medicos/medicos.service';
+import { MensagensService } from '../../../services/mensagens/mensagem.service';
 
 @Component({
   selector: 'app-paciente-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -19,7 +19,7 @@ export class Dashboard implements OnInit {
   consultasRealizadas: number = 0;
   loading: boolean = false;
 
-  constructor(private http: HttpClient, private medicosService: MedicosService) {}
+  constructor(private medicosService: MedicosService, private mensagensService: MensagensService) {}
 
   async ngOnInit(): Promise<void> {
     // Busca dados do paciente do localStorage
@@ -34,15 +34,12 @@ export class Dashboard implements OnInit {
     
     try {
       // Buscar médicos autorizados
-  const medicos = await this.medicosService.getMedicosAutorizadosCompletos(this.pacienteId).toPromise().catch(() => []);
-  this.medicosAutorizados = Array.isArray(medicos) ? medicos.length : 0;
+      const medicos = await this.medicosService.getMedicosAutorizadosCompletos(this.pacienteId).toPromise().catch(() => []);
+      this.medicosAutorizados = Array.isArray(medicos) ? medicos.length : 0;
 
       // Buscar mensagens não lidas
-      const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();
-      const todasMensagens = mensagensResponse.data || mensagensResponse || [];
-      this.mensagensNaoLidas = todasMensagens.filter((m: any) => 
-        !m.lida && m.destinatarioId === this.pacienteId && m.destinatarioTipo === 'paciente'
-      ).length;
+      const mensagensCount = await this.mensagensService.countMensagensNaoLidas(this.pacienteId, 'PATIENT').toPromise();
+      this.mensagensNaoLidas = mensagensCount || 0;
 
       // Dados simulados mas baseados na estrutura real
       this.proximasConsultas = Math.floor(Math.random() * 3) + 1;

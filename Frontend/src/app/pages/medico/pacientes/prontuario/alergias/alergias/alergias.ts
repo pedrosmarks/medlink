@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-alergias',
@@ -21,7 +21,7 @@ export class Alergias implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -55,13 +55,12 @@ export class Alergias implements OnInit {
   }
 
   carregarAlergias() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies`;
-    console.log('Carregando alergias de:', url);
+    console.log('Carregando alergias para paciente:', this.pacienteId);
     
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        console.log('Alergias recebidas:', response);
-        this.alergias = response.data || response;
+    this.prontuarioService.getAlergiasPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        console.log('Alergias recebidas:', data);
+        this.alergias = data;
         
         // Log detalhado das alergias
         this.alergias.forEach((alergia, index) => {
@@ -99,10 +98,9 @@ export class Alergias implements OnInit {
       severity: 'Moderada'
     };
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies`;
-    console.log('Adicionando alergia:', url, novaAlergia);
+    console.log('Adicionando alergia para paciente:', this.pacienteId, novaAlergia);
     
-    this.http.post<any>(url, novaAlergia).subscribe({
+    this.prontuarioService.adicionarAlergia(this.pacienteId, novaAlergia).subscribe({
       next: (response) => {
         console.log('Alergia adicionada:', response);
         this.carregarAlergias(); // Recarrega a lista
@@ -127,10 +125,9 @@ export class Alergias implements OnInit {
     
     // Verifica se a alergia tem ID para fazer DELETE no backend
     if (alergia.id !== undefined && alergia.id !== null) {
-      const url = `http://localhost:8080/api/patients/${this.pacienteId}/allergies/${alergia.id}`;
-      console.log('Removendo alergia via backend:', url);
+      console.log('Removendo alergia via backend:', alergia.id);
       
-      this.http.delete<any>(url).subscribe({
+      this.prontuarioService.removerAlergia(this.pacienteId, alergia.id).subscribe({
         next: (response) => {
           console.log('Alergia removida com sucesso:', response);
           this.carregarAlergias(); // Recarrega a lista do backend

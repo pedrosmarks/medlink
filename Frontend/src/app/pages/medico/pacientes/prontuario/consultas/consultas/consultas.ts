@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-consultas',
@@ -23,7 +23,7 @@ export class Consultas implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -41,11 +41,11 @@ export class Consultas implements OnInit {
       }
     });
     
-    // Buscar consultas do novo endpoint
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/consultations`).subscribe({
-      next: (response) => {
-        console.log('Response consultas:', response);
-        this.consultas = response.data || response || [];
+    // Buscar consultas do paciente
+    this.prontuarioService.getConsultasPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        console.log('Response consultas:', data);
+        this.consultas = data;
         console.log('Consultas carregadas:', this.consultas);
       },
       error: (error) => {
@@ -64,20 +64,53 @@ export class Consultas implements OnInit {
       notes: this.novaConsultaNotes.trim()
     };
 
-    // Adicionar localmente (implementar endpoint POST se necessário)
-    this.consultas = [...this.consultas, nova];
-    this.novaConsultaDate = '';
-    this.novaConsultaReason = '';
-    this.novaConsultaNotes = '';
-    
-    console.log('Consulta adicionada localmente. Implementar endpoint POST se necessário.');
+    this.prontuarioService.adicionarConsulta(this.pacienteId, nova).subscribe({
+      next: (response) => {
+        console.log('Consulta adicionada:', response);
+        // Recarregar as consultas para atualizar a lista
+        this.prontuarioService.getConsultasPaciente(this.pacienteId).subscribe(data => {
+          this.consultas = data;
+        });
+        this.novaConsultaDate = '';
+        this.novaConsultaReason = '';
+        this.novaConsultaNotes = '';
+      },
+      error: (error) => {
+        console.error('Erro ao adicionar consulta:', error);
+        // Adicionar localmente se o backend falhar
+        this.consultas = [...this.consultas, nova];
+        this.novaConsultaDate = '';
+        this.novaConsultaReason = '';
+        this.novaConsultaNotes = '';
+      }
+    });
   }
 removerConsulta(index: number) {
-  const novasConsultas = this.consultas.slice();
-  novasConsultas.splice(index, 1);
+  const consulta = this.consultas[index];
+  if (!consulta || !consulta.id) {
+    // Se não tem ID, apenas remove localmente
+    const novasConsultas = this.consultas.slice();
+    novasConsultas.splice(index, 1);
+    this.consultas = novasConsultas;
+    console.log('Consulta removida localmente (não estava salva no backend)');
+    return;
+  }
   
-  // Atualizar no backend (implementar endpoint específico se necessário)
-  this.consultas = novasConsultas;
-  console.log('Consulta removida. Implementar endpoint de remoção se necessário.');
+  this.prontuarioService.removerConsulta(this.pacienteId, consulta.id).subscribe({
+    next: (response) => {
+      console.log('Consulta removida:', response);
+      // Recarregar as consultas para atualizar a lista
+      this.prontuarioService.getConsultasPaciente(this.pacienteId).subscribe(data => {
+        this.consultas = data;
+      });
+    },
+    error: (error) => {
+      console.error('Erro ao remover consulta:', error);
+      // Remove localmente se o backend falhar
+      const novasConsultas = this.consultas.slice();
+      novasConsultas.splice(index, 1);
+      this.consultas = novasConsultas;
+    }
+  });
 }
 }

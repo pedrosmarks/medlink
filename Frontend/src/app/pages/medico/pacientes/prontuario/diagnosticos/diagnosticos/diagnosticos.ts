@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-diagnosticos',
@@ -22,7 +22,7 @@ export class Diagnosticos implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -49,13 +49,12 @@ export class Diagnosticos implements OnInit {
   }
 
   carregarDiagnosticos() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`;
-    console.log('Carregando diagnósticos de:', url);
+    console.log('Carregando diagnósticos do paciente:', this.pacienteId);
     
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        console.log('Diagnósticos recebidos:', response);
-        this.diagnosticos = response.data || response;
+    this.prontuarioService.getDiagnosticosPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        console.log('Diagnósticos recebidos:', data);
+        this.diagnosticos = data;
       },
       error: (error) => {
         console.error('Erro ao carregar diagnósticos:', error);
@@ -84,10 +83,9 @@ export class Diagnosticos implements OnInit {
       date: this.novoDiagnosticoData
     };
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`;
-    console.log('Adicionando diagnóstico:', url, novoDiagnostico);
+    console.log('Adicionando diagnóstico para paciente:', this.pacienteId, novoDiagnostico);
     
-    this.http.post<any>(url, novoDiagnostico).subscribe({
+    this.prontuarioService.adicionarDiagnostico(this.pacienteId, novoDiagnostico).subscribe({
       next: (response) => {
         console.log('Diagnóstico adicionado:', response);
         this.carregarDiagnosticos();
@@ -112,10 +110,9 @@ export class Diagnosticos implements OnInit {
     }
     
     if (diagnostico.id) {
-      const url = `http://localhost:8080/api/patients/${this.pacienteId}/diagnoses/${diagnostico.id}`;
-      console.log('Removendo diagnóstico:', url);
+      console.log('Removendo diagnóstico:', diagnostico.id);
       
-      this.http.delete<any>(url).subscribe({
+      this.prontuarioService.removerDiagnostico(this.pacienteId, diagnostico.id).subscribe({
         next: (response) => {
           console.log('Diagnóstico removido:', response);
           this.carregarDiagnosticos();

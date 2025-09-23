@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-alergias',
@@ -23,7 +23,7 @@ carregando: any;
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -33,15 +33,13 @@ carregando: any;
   }
 
   carregarAlergias(): void {
-    console.log('Carregando alergias para paciente ID:', this.pacienteId);
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/allergies`)
+    this.prontuarioService.getAlergiasPaciente(this.pacienteId)
       .subscribe({
-        next: (response) => {
-          console.log('Alergias carregadas:', response);
-          this.alergias = response.data || [];
+        next: (data: any[]) => {
+          this.alergias = data;
           this.carregando = false;
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Erro ao carregar alergias:', error);
           this.alergias = [];
           this.carregando = false;
@@ -53,29 +51,25 @@ carregando: any;
     if (!this.novaAlergia.trim()) return;
     const nova = { descricao: this.novaAlergia.trim() };
 
-    // Buscar paciente completo antes de atualizar
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const alergiasAtualizadas = [...(paciente.alergias || []), nova];
-      const pacienteAtualizado = { ...paciente, alergias: alergiasAtualizadas };
-
-      this.http.put<any>(`http://localhost:8080/api/patients/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.alergias = alergiasAtualizadas;
-          this.novaAlergia = '';
-        });
-    });
+    this.prontuarioService.adicionarAlergia(this.pacienteId, nova)
+      .subscribe(() => {
+        // Recarregar alergias após adicionar
+        this.carregarAlergias();
+        this.novaAlergia = '';
+      });
   }
 
   removerAlergia(index: number) {
-    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe(paciente => {
-      const novasAlergias = paciente.alergias.slice();
-      novasAlergias.splice(index, 1);
-      const pacienteAtualizado = { ...paciente, alergias: novasAlergias };
+    const alergiaId = this.alergias[index].id;
+    if (!alergiaId) {
+      console.error('Não foi possível encontrar o ID da alergia para remover');
+      return;
+    }
 
-      this.http.put<any>(`http://localhost:8080/api/patients/${this.pacienteId}`, pacienteAtualizado)
-        .subscribe(() => {
-          this.alergias = novasAlergias;
-        });
-    });
+    this.prontuarioService.removerAlergia(this.pacienteId, alergiaId)
+      .subscribe(() => {
+        // Recarregar alergias após remover
+        this.carregarAlergias();
+      });
   }
 }

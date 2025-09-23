@@ -99,14 +99,8 @@ export class MensagensService {
 
   // Enviar nova mensagem
   enviarMensagem(mensagem: Message): Observable<any> {
-    console.log('📤 Service enviando mensagem para API:', {
-      endpoint: `${this.apiUrl}/messages`,
-      payload: mensagem
-    });
-    
     return this.http.post<any>(`${this.apiUrl}/messages`, mensagem).pipe(
       map((response: any) => {
-        console.log('📥 Resposta da API:', response);
         return response.data || response;
       })
     );
@@ -141,6 +135,19 @@ export class MensagensService {
   getPacientes(): Observable<any[]> {
     return this.http.get<any>(`${this.apiUrl}/patients`).pipe(
       map((response: any) => response.data || response)
+    );
+  }
+
+  // Contar mensagens não lidas para um usuário
+  countMensagensNaoLidas(userId: string, userType: 'MEDIC' | 'PATIENT'): Observable<number> {
+    return this.getMensagens().pipe(
+      map((messages: Message[]) => {
+        return messages.filter(msg => 
+          msg.recipientId === userId && 
+          msg.recipientType === userType &&
+          !msg.read
+        ).length;
+      })
     );
   }
 }

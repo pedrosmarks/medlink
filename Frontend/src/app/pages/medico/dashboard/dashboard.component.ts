@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MedicosService } from '../../../services/medicos/medicos.service';
+import { MensagensService } from '../../../services/mensagens/mensagem.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -18,7 +19,10 @@ export class DashboardComponent implements OnInit {
   totalConsultas: number = 0;
   loading: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private medicosService: MedicosService,
+    private mensagensService: MensagensService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     // Busca dados do médico do localStorage
@@ -34,16 +38,13 @@ export class DashboardComponent implements OnInit {
     
     try {
       // Buscar pacientes autorizados
-      const pacientesResponse = await this.http.get<any>(`http://localhost:8080/api/medic/${this.medicoId}/patients`).toPromise();
-      const pacientes = pacientesResponse.data || pacientesResponse || [];
+      const pacientesResponse = await this.medicosService.getPacientesAutorizados(String(this.medicoId)).toPromise();
+      const pacientes = pacientesResponse || [];
       this.totalPacientesAutorizados = pacientes.length;
 
       // Buscar mensagens não lidas
-      const mensagensResponse = await this.http.get<any>('http://localhost:8080/messages').toPromise();
-      const todasMensagens = mensagensResponse.data || mensagensResponse || [];
-      this.mensagensNaoLidas = todasMensagens.filter((m: any) => 
-        !m.lida && m.destinatarioId === `medico_${this.medicoId}` && m.destinatarioTipo === 'medico'
-      ).length;
+      const mensagensCount = await this.mensagensService.countMensagensNaoLidas(String(this.medicoId), 'MEDIC').toPromise();
+      this.mensagensNaoLidas = mensagensCount || 0;
 
       // Dados simulados mas baseados na estrutura real
       this.consultasHoje = Math.floor(Math.random() * 6) + 2;

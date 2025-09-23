@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MensagensService } from '../../../services/mensagens/mensagem.service';
+import { MedicosService } from '../../../services/medicos/medicos.service';
 import { Message, Conversation } from '../../../models/message.interface';
 
 interface Paciente {
@@ -38,7 +39,8 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
   constructor(
     private http: HttpClient, 
     private cdr: ChangeDetectorRef,
-    private mensagensService: MensagensService
+    private mensagensService: MensagensService,
+    private medicosService: MedicosService
   ) {}
 
   ngOnInit() {
@@ -53,9 +55,12 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
     this.loading = true;
     
     try {
-      // 1. Buscar pacientes autorizados para este médico
-      const pacientesResponse = await this.http.get<any>(`http://localhost:8080/api/medic/${this.medicoId}/authorized-patients`).toPromise();
-      const pacientesAutorizados: Paciente[] = pacientesResponse.data || [];
+      // 1. Buscar pacientes autorizados para este médico usando o serviço
+      const pacientesResponse = await this.medicosService.getPacientesAutorizados(String(this.medicoId)).toPromise();
+      
+      // Garantir que pacientesAutorizados seja sempre um array
+      const pacientesAutorizados: Paciente[] = Array.isArray(pacientesResponse) ? pacientesResponse : [];
+      console.log('Pacientes autorizados:', pacientesAutorizados);
       
       // 2. Buscar conversas do médico usando o novo service
       this.mensagensService.getConversationsForUser(`${this.medicoId}`, 'MEDIC').subscribe({
@@ -111,15 +116,19 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
         error: (error) => {
           console.error('Erro ao carregar conversas:', error);
           // Se der erro na busca de conversas, pelo menos mostra os pacientes autorizados
-          this.pacientesComMensagens = pacientesAutorizados.map(paciente => ({
-            paciente: {
-              id: paciente.id,
-              name: paciente.name,
-              avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
-            },
-            mensagens: [],
-            ultimaMensagem: undefined
-          }));
+          if (Array.isArray(pacientesAutorizados)) {
+            this.pacientesComMensagens = pacientesAutorizados.map(paciente => ({
+              paciente: {
+                id: paciente.id,
+                name: paciente.name,
+                avatar: paciente.avatar || 'https://cdn-icons-png.flaticon.com/512/921/921347.png'
+              },
+              mensagens: [],
+              ultimaMensagem: undefined
+            }));
+          } else {
+            this.pacientesComMensagens = [];
+          }
           this.loading = false;
           this.cdr.detectChanges();
         }
@@ -196,7 +205,6 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
     // Marcar como lidas localmente primeiro para atualização imediata da UI
     mensagensNaoLidas.forEach(m => {
       m.read = true;
-      console.log('Médico: Marcando mensagem como lida localmente:', m.id);
     });
     
     // Forçar detecção de mudança
@@ -207,7 +215,6 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
     const mensagemIds = mensagensNaoLidas.map(m => m.id);
     this.mensagensService.marcarMensagensComoLidas(mensagemIds).subscribe({
       next: () => {
-        console.log('Mensagens marcadas como lidas no backend');
       },
       error: (error) => {
         console.error('Erro ao marcar mensagens como lidas:', error);
@@ -236,11 +243,8 @@ export class MensagemComponent implements OnInit, AfterViewChecked {
       read: false
     };
 
-    console.log('🩺 MÉDICO enviando mensagem:', mensagem);
-
     try {
       const response = await this.mensagensService.enviarMensagem(mensagem).toPromise();
-      console.log('✅ Mensagem enviada com sucesso:', response);
       this.novaMensagem = '';
       
       // Recarregar mensagens

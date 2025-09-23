@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-vacinas',
@@ -22,7 +22,7 @@ export class Vacinas implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -49,13 +49,12 @@ export class Vacinas implements OnInit {
   }
 
   carregarVacinas() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;
-    console.log('Carregando vacinas de:', url);
+    console.log('Carregando vacinas para paciente:', this.pacienteId);
     
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        console.log('Vacinas recebidas:', response);
-        this.vacinas = response.data || response;
+    this.prontuarioService.getVacinasPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        console.log('Vacinas recebidas:', data);
+        this.vacinas = data;
       },
       error: (error) => {
         console.error('Erro ao carregar vacinas:', error);
@@ -84,10 +83,9 @@ export class Vacinas implements OnInit {
       date: this.novaVacinaData
     };
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines`;
-    console.log('Adicionando vacina:', url, novaVacina);
+    console.log('Adicionando vacina para paciente:', this.pacienteId, novaVacina);
     
-    this.http.post<any>(url, novaVacina).subscribe({
+    this.prontuarioService.adicionarVacina(this.pacienteId, novaVacina).subscribe({
       next: (response) => {
         console.log('Vacina adicionada:', response);
         this.carregarVacinas();
@@ -111,10 +109,9 @@ export class Vacinas implements OnInit {
       return;
     }
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/vaccines/${vacina.id}`;
-    console.log('Removendo vacina:', url);
+    console.log('Removendo vacina:', vacina.id);
     
-    this.http.delete<any>(url).subscribe({
+    this.prontuarioService.removerVacina(this.pacienteId, vacina.id).subscribe({
       next: (response) => {
         console.log('Vacina removida:', response);
         this.carregarVacinas(); // Recarrega a lista

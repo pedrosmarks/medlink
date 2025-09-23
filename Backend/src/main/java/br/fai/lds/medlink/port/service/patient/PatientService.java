@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.port.service.patient;
 
 import br.fai.lds.medlink.domain.Patient;
+import br.fai.lds.medlink.domain.Consultation;
 import br.fai.lds.medlink.domain.dataTransferObject.Patient.PatientResponseDto;
 import br.fai.lds.medlink.port.service.crud.CrudService;
 
@@ -22,4 +23,6 @@ public interface PatientService extends CrudService<Patient> {
     void sendAccessRequest(int patientId, int medicoId);
 
     void revokeDoctorAccess(int patientId, int medicoId);
+    Consultation addConsultation(int patientId, Consultation consultation);
+    List<Consultation> getConsultationsByPatientId(int patientId);
 }

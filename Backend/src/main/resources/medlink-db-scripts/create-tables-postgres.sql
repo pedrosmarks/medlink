@@ -203,11 +203,9 @@ CREATE TABLE medico_clinica_especialidade (
 CREATE TABLE consulta (
     id SERIAL PRIMARY KEY,
     prontuario_id INT NOT NULL,
-    medico_clinica_especialidade_id INT NOT NULL,
     data_hora TIMESTAMP NOT NULL,
     observacao VARCHAR(500),
-    CONSTRAINT fk_consulta_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id),
-    CONSTRAINT fk_consulta_medico_clinica_especialidade FOREIGN KEY (medico_clinica_especialidade_id) REFERENCES medico_clinica_especialidade(id)
+    CONSTRAINT fk_consulta_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
 -- =============================

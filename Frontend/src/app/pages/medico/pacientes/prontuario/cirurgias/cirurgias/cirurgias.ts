@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-cirurgias',
@@ -23,7 +23,7 @@ export class Cirurgias implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -48,11 +48,9 @@ export class Cirurgias implements OnInit {
   }
 
   carregarCirurgias() {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries`;
-    
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        this.cirurgias = response.data || response;
+    this.prontuarioService.getCirurgiasPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        this.cirurgias = data;
       },
       error: (error) => {
         console.error('Erro ao carregar cirurgias:', error);
@@ -83,10 +81,9 @@ export class Cirurgias implements OnInit {
       location: ""
     };
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries`;
-    console.log('Adicionando cirurgia:', url, novaCirurgia);
+    console.log('Adicionando cirurgia para paciente:', this.pacienteId, novaCirurgia);
     
-    this.http.post<any>(url, novaCirurgia).subscribe({
+    this.prontuarioService.adicionarCirurgia(this.pacienteId, novaCirurgia).subscribe({
       next: (response) => {
         console.log('Cirurgia adicionada:', response);
         this.carregarCirurgias();
@@ -113,10 +110,9 @@ export class Cirurgias implements OnInit {
     }
     
     if (cirurgia.id) {
-      const url = `http://localhost:8080/api/patients/${this.pacienteId}/surgeries/${cirurgia.id}`;
-      console.log('Removendo cirurgia:', url);
+      console.log('Removendo cirurgia:', cirurgia.id);
       
-      this.http.delete<any>(url).subscribe({
+      this.prontuarioService.removerCirurgia(this.pacienteId, cirurgia.id).subscribe({
         next: (response) => {
           console.log('Cirurgia removida:', response);
           this.carregarCirurgias();

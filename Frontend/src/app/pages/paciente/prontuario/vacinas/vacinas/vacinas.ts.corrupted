@@ -39,4 +39,4 @@ export class Vacinas implements OnInit {
       });
   }
 }
-
+}

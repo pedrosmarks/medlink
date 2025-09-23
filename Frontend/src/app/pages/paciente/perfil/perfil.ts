@@ -25,28 +25,14 @@ export class Perfil implements OnInit {
     const pacienteId = localStorage.getItem('userId');
     const userProfile = localStorage.getItem('userProfile');
     
-    console.log('ID do usuário:', pacienteId);
-    console.log('Perfil do usuário:', userProfile);
-    
     if (pacienteId && userProfile === 'PATIENT') {
-      console.log('Fazendo chamada para:', `http://localhost:8080/api/patients/${pacienteId}`);
       this.perfilReadService.getPerfilPacienteById(pacienteId).subscribe({
         next: (response) => {
-          console.log('Response completo:', response);
-          console.log('response.data:', response.data);
-          console.log('Estrutura dos dados:', JSON.stringify(response, null, 2));
-          
-          // Verifica se tem endereço
-          console.log('Tem endereço?', response.data?.address);
-          console.log('Endereço completo:', JSON.stringify(response.data?.address, null, 2));
-          
           // Processa response.data (formato ApiResponse)
           this.perfil = response.data || response;
-          console.log('Perfil final:', this.perfil);
-          console.log('Endereço no perfil final:', this.perfil?.address);
         },
         error: (error) => {
-          console.error('Erro ao buscar perfil do paciente:', error);
+          // Tratar erro silenciosamente ou mostrar mensagem ao usuário
         }
       });
     }
@@ -61,10 +47,9 @@ export class Perfil implements OnInit {
     this.perfilUpdateService.updatePerfilPaciente(this.perfil).subscribe({
       next: () => {
         this.editando = false;
-        console.log('Perfil atualizado com sucesso');
       },
-      error: (error) => {
-        console.error('Erro ao atualizar perfil:', error);
+      error: () => {
+        // Tratar erro silenciosamente ou mostrar mensagem ao usuário
       }
     });
   }

@@ -49,7 +49,17 @@ export class MedicosService {
 
   // Buscar pacientes autorizados para um médico específico
   getPacientesAutorizados(medicoId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/medic/${medicoId}/patients`);
+    return this.http.get<any>(`${this.apiUrl}/api/medic/${medicoId}/patients`).pipe(
+      map(response => {
+        // Handle both array responses and object responses with a data property
+        if (Array.isArray(response)) {
+          return response;
+        } else if (response && response.data && Array.isArray(response.data)) {
+          return response.data;
+        }
+        return [];
+      })
+    );
   }
 
   // Buscar todos os médicos

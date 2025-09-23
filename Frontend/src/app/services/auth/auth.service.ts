@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private router: Router) {}
+  private apiUrl = 'http://localhost:8080/api';
+
+  constructor(private router: Router, private http: HttpClient) {}
 
   /**
    * Verifica se o usuário está logado
@@ -82,5 +86,20 @@ export class AuthService {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  /**
+   * Registra um novo usuário (médico ou paciente)
+   * @param userData Dados do usuário a ser cadastrado
+   * @param perfil Tipo de usuário ('medico' ou 'paciente')
+   */
+  registrarUsuario(userData: any, perfil: 'medico' | 'paciente'): Observable<any> {
+    const endpoint = perfil === 'medico' ? 
+      `${this.apiUrl}/medic` : 
+      `${this.apiUrl}/patients`;
+
+    return from(this.http.post(endpoint, userData, {
+      headers: { 'Content-Type': 'application/json' }
+    }).toPromise());
   }
 }

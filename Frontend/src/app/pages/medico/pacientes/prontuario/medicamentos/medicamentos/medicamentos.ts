@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PacientesReadService } from '../../../../../../services/pacientes/pacientes-read.service';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-medicamentos',
@@ -23,7 +23,7 @@ export class Medicamentos implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pacientesReadService: PacientesReadService,
-    private http: HttpClient
+    private prontuarioService: ProntuarioService
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +42,9 @@ export class Medicamentos implements OnInit {
   }
 
   carregarMedicamentos() {
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/medications`).subscribe({
-      next: (response) => {
-        this.medicamentos = response.data || response || [];
+    this.prontuarioService.getMedicamentosPaciente(this.pacienteId).subscribe({
+      next: (data) => {
+        this.medicamentos = data;
         console.log('Medicamentos carregados:', this.medicamentos.length);
       },
       error: (error) => {
@@ -63,10 +63,9 @@ export class Medicamentos implements OnInit {
       frequency: this.novoMedicamentoFrequency.trim()
     };
 
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications`;
-    console.log('Adicionando medicamento:', url, novo);
+    console.log('Adicionando medicamento para paciente:', this.pacienteId, novo);
     
-    this.http.post<any>(url, novo).subscribe({
+    this.prontuarioService.adicionarMedicamento(this.pacienteId, novo).subscribe({
       next: (response) => {
         console.log('Medicamento adicionado:', response);
         this.carregarMedicamentos(); // Recarrega a lista
@@ -95,10 +94,9 @@ export class Medicamentos implements OnInit {
       return;
     }
     
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}/medications/${medicamento.id}`;
-    console.log('Removendo medicamento:', url);
+    console.log('Removendo medicamento:', medicamento.id);
     
-    this.http.delete<any>(url).subscribe({
+    this.prontuarioService.removerMedicamento(this.pacienteId, medicamento.id).subscribe({
       next: (response) => {
         console.log('Medicamento removido:', response);
         this.carregarMedicamentos(); // Recarrega a lista

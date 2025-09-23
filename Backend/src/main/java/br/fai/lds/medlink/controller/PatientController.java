@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Consultation.ConsultationCreateDto;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +115,8 @@ public class PatientController extends BaseController {
     
     @GetMapping("/{id}/consultations")
     public ResponseEntity<ApiResponse<List<Consultation>>> getConsultationsByPatient(@PathVariable int id) {
-        return getPatientMedicalData(id, Patient::getConsultations, "Consultas recuperadas com sucesso.");
+        List<Consultation> consultations = patientService.getConsultationsByPatientId(id);
+        return success("Consultas recuperadas com sucesso.", consultations);
     }
 
     @GetMapping("/{id}/vaccines")
@@ -580,5 +583,31 @@ public class PatientController extends BaseController {
             return success(successMessage, data);
         });
     }
-}
 
+    @PostMapping("/{patientId}/consultations")
+    public ResponseEntity<ApiResponse<Consultation>> addConsultation(
+            @PathVariable int patientId,
+            @Valid @RequestBody ConsultationCreateDto consultationDto) {
+        log.info("Iniciando adição de consulta para paciente ID: {}", patientId);
+        log.debug("Dados da consulta recebidos: {}", consultationDto);
+        Consultation newConsultation = consultationDto.toEntity();
+        Consultation savedConsultation = patientService.addConsultation(patientId, newConsultation);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Consulta adicionada com sucesso.", savedConsultation));
+    }
+
+    @DeleteMapping("/{patientId}/consultations/{consultationId}")
+    public ResponseEntity<ApiResponse<String>> deleteConsultation(
+            @PathVariable int patientId,
+            @PathVariable int consultationId) {
+        log.info("Iniciando remoção de consulta ID {} do paciente {}", consultationId, patientId);
+        return removeMedicalItem(patientId, consultationId, "consulta", patient -> {
+            if (patient.getConsultations() == null) {
+                return false;
+            }
+            boolean removed = patient.getConsultations().removeIf(consultation -> consultation.getId() == consultationId);
+            log.debug("Consulta removida: {}, Total após remoção: {}", removed, patient.getConsultations().size());
+            return removed;
+        });
+    }
+}

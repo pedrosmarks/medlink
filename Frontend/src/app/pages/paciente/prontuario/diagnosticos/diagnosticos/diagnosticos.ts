@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { ProntuarioService } from '../../../../../services/prontuario/prontuario.service';
 
 @Component({
   selector: 'app-diagnosticos',
@@ -16,7 +16,7 @@ export class Diagnosticos implements OnInit {
   pacienteId: string = '';
   carregando: boolean = true;
 
-  constructor(private http: HttpClient) {}
+  constructor(private prontuarioService: ProntuarioService) {}
 
   ngOnInit(): void {
     this.pacienteId = localStorage.getItem('userId') || '';
@@ -25,15 +25,13 @@ export class Diagnosticos implements OnInit {
   }
 
   carregarDiagnosticos(): void {
-    console.log('Carregando diagnósticos para paciente ID:', this.pacienteId);
-    this.http.get<any>(`http://localhost:8080/api/patients/${this.pacienteId}/diagnoses`)
+    this.prontuarioService.getDiagnosticosPaciente(this.pacienteId)
       .subscribe({
-        next: (response) => {
-          console.log('Diagnósticos carregados:', response);
-          this.diagnosticos = response.data || [];
+        next: (data: any[]) => {
+          this.diagnosticos = data;
           this.carregando = false;
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Erro ao carregar diagnósticos:', error);
           this.diagnosticos = [];
           this.carregando = false;

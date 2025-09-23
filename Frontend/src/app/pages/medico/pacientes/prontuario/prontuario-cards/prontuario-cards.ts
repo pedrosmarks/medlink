@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { PacientesReadService } from '../../../../../services/pacientes/pacientes-read.service';
 
 @Component({
   selector: 'app-prontuario-cards',
@@ -16,7 +16,7 @@ export class ProntuarioCards implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
+    private pacientesReadService: PacientesReadService
   ) {}
 
   ngOnInit(): void {
@@ -43,10 +43,9 @@ export class ProntuarioCards implements OnInit {
   }
 
   carregarPaciente(): void {
-    const url = `http://localhost:8080/api/patients/${this.pacienteId}`;
-    console.log('Carregando paciente de:', url);
+    console.log('Carregando dados do paciente:', this.pacienteId);
     
-    this.http.get<any>(url).subscribe({
+    this.pacientesReadService.getPacienteById(this.pacienteId).subscribe({
       next: (response) => {
         console.log('Paciente carregado:', response);
         const paciente = response.data || response;

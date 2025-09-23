@@ -605,16 +605,12 @@ public class PatientPostgresDaoImpl implements PatientDao {
             }
             
             if (consultas != null && !consultas.isEmpty()) {
-                // Busca um medico_clinica_especialidade_id válido ou usa 1 como padrão
-                int medicoClinicaEspecialidadeId = getDefaultMedicoClinicaEspecialidadeId();
-                
-                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id, medico_clinica_especialidade_id) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
                     for (Consultation consulta : consultas) {
                         ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
                         ps.setString(2, consulta.getNotes());
                         ps.setInt(3, prontuarioId);
-                        ps.setInt(4, medicoClinicaEspecialidadeId);
                         ps.addBatch();
                     }
                     ps.executeBatch();
@@ -1032,5 +1028,69 @@ public class PatientPostgresDaoImpl implements PatientDao {
         patient.setBirthDate(rs.getDate("data_nascimento").toLocalDate());
         // Adicione outros campos conforme necessário
         return patient;
+    }
+
+    @Override
+    public Consultation addConsultation(int patientId, Consultation consultation) {
+        // Buscar o prontuario_id do paciente
+        int prontuarioId = -1;
+        String prontuarioSql = "SELECT id FROM prontuario WHERE paciente_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(prontuarioSql)) {
+            ps.setInt(1, patientId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                prontuarioId = rs.getInt("id");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar prontuario_id", e);
+            throw new RuntimeException("Erro ao buscar prontuario_id", e);
+        }
+        if (prontuarioId == -1) {
+            throw new RuntimeException("Prontuário não encontrado para paciente_id=" + patientId);
+        }
+        // Inserir consulta usando prontuario_id
+        String sql = "INSERT INTO consulta (prontuario_id, data_hora, observacao) VALUES (?, ?, ?) RETURNING id";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, prontuarioId);
+            stmt.setTimestamp(2, java.sql.Timestamp.valueOf(consultation.getDate().atStartOfDay()));
+            stmt.setString(3, consultation.getNotes());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                consultation.setId(id);
+            }
+            rs.close();
+            return consultation;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao adicionar consulta", e);
+            throw new RuntimeException("Erro ao adicionar consulta", e);
+        }
+    }
+
+    @Override
+    public List<Consultation> getConsultationsByPatientId(int patientId) {
+        String sql = "SELECT c.id, c.data_hora, c.observacao FROM consulta c " +
+                "JOIN prontuario p ON c.prontuario_id = p.id " +
+                "WHERE p.paciente_id = ? ORDER BY c.data_hora DESC";
+        List<Consultation> consultations = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Consultation c = Consultation.builder()
+                        .id(rs.getInt("id"))
+                        .date(rs.getTimestamp("data_hora").toLocalDateTime().toLocalDate())
+                        .reason(rs.getString("observacao"))
+                        .notes(rs.getString("observacao"))
+                        .build();
+                consultations.add(c);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar consultas", e);
+            throw new RuntimeException("Erro ao buscar consultas", e);
+        }
+        return consultations;
     }
 }
