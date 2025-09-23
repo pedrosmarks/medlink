@@ -51,19 +51,20 @@
                   {{ getMedicoMessage(req) }}
                 </p>
                 
-                <div class="d-flex gap-2" *ngIf="req.status === 'pendente'">
+                <div class="d-flex gap-2 justify-content-end" *ngIf="req.status === 'pendente'">
+                   <button 
+                    class="btn btn-danger btn-sm" 
+                    (click)="recusar(req)"
+                  >
+                    <i class="fas fa-times"></i> Rejeitar
+                  </button>
                   <button 
                     class="btn btn-success btn-sm" 
                     (click)="aprovar(req)"
                   >
                     <i class="fas fa-check"></i> Aprovar
                   </button>
-                  <button 
-                    class="btn btn-danger btn-sm" 
-                    (click)="recusar(req)"
-                  >
-                    <i class="fas fa-times"></i> Rejeitar
-                  </button>
+                 
                 </div>
                 
                 <div *ngIf="req.status !== 'pendente'" class="text-muted">
