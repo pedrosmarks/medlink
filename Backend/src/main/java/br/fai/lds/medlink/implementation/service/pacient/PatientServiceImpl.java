@@ -219,4 +219,9 @@ public class PatientServiceImpl implements PatientService {
     public List<Consultation> getConsultationsByPatientId(int patientId) {
         return patientDao.getConsultationsByPatientId(patientId);
     }
+
+    @Override
+    public boolean deleteConsultation(int patientId, int consultationId) {
+        return patientDao.deleteConsultation(patientId, consultationId);
+    }
 }

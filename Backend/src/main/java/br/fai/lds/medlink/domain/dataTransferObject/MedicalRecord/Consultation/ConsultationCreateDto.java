@@ -30,7 +30,7 @@ public class ConsultationCreateDto {
      * Não pode ser uma data futura.
      */
     @NotNull(message = "Consultation date is required")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Data da consulta não pode ser futura")
     private LocalDate date;
 

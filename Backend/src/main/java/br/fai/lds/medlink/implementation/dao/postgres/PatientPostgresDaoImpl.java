@@ -1093,4 +1093,28 @@ public class PatientPostgresDaoImpl implements PatientDao {
         }
         return consultations;
     }
+
+    /**
+     * Remove uma consulta do paciente (DELETE direto no banco)
+     */
+    public boolean deleteConsultation(int patientId, int consultationId) {
+        try {
+            int prontuarioId = getProntuarioIdByPatientId(patientId);
+            if (prontuarioId <= 0) {
+                logger.warning("Prontuário não encontrado para paciente " + patientId);
+                return false;
+            }
+            String sql = "DELETE FROM consulta WHERE id = ? AND prontuario_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, consultationId);
+                ps.setInt(2, prontuarioId);
+                int rows = ps.executeUpdate();
+                logger.info("Consultas removidas: " + rows + " para paciente_id=" + patientId + ", consulta_id=" + consultationId);
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            logger.severe("Erro ao remover consulta: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -19,4 +19,5 @@ public interface PatientDao extends CrudDao <Patient>, SoftDeleteDao {
     List<Patient> findAll();
     Consultation addConsultation(int patientId, Consultation consultation);
     List<Consultation> getConsultationsByPatientId(int patientId);
+    boolean deleteConsultation(int patientId, int consultationId);
 }

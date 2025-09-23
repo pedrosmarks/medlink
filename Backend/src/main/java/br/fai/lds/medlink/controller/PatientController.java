@@ -601,13 +601,11 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int consultationId) {
         log.info("Iniciando remoção de consulta ID {} do paciente {}", consultationId, patientId);
-        return removeMedicalItem(patientId, consultationId, "consulta", patient -> {
-            if (patient.getConsultations() == null) {
-                return false;
-            }
-            boolean removed = patient.getConsultations().removeIf(consultation -> consultation.getId() == consultationId);
-            log.debug("Consulta removida: {}, Total após remoção: {}", removed, patient.getConsultations().size());
-            return removed;
-        });
+        boolean removed = patientService.deleteConsultation(patientId, consultationId);
+        if (removed) {
+            return ResponseEntity.ok(new ApiResponse<>("Consulta removida com sucesso."));
+        } else {
+            return ResponseEntity.status(404).body(new ApiResponse<>("Consulta não encontrada ou não pertence ao paciente."));
+        }
     }
 }
