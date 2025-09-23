@@ -1,11 +1,24 @@
 <div class="prontuario-container">
+
+   
   <div class="header">
-    <button class="btn btn-secondary mb-3" [routerLink]="['../../']">
+    <div class="text-start">
+      <button class="btn btn-secondary mb-3" [routerLink]="['../../']">
       ← Voltar aos pacientes
-    </button>
+    </button> 
+   
+      
+    
+    </div>
+    
+    
     <h2>Prontuário Médico</h2>
     <p>Dr. {{ medicoNome }} - Visualizando dados de: <strong>{{ pacienteNome }}</strong></p>
   </div>
+  <div>
+    
+  </div>
+  
 
   <div class="prontuario-cards">
     <div class="cards-grid">
@@ -64,4 +77,4 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
