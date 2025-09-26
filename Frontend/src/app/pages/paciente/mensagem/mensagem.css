@@ -213,7 +213,7 @@
 }
 
 .msg-row.mine .msg-bubble {
-  background: #0d5016;
+  background: #23aa42 !important;
   color: white;
   border-radius: 18px 18px 4px 18px;
   max-width: 75%;
