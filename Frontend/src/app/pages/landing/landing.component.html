@@ -1,0 +1,157 @@
+<div class="landing-layout">
+  <!-- Background animado -->
+  <div class="landing-background">
+    <div class="hero-bg"></div>
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <h2 class="logo-text">Medlink</h2>
+      </a>
+      <button class="btn btn-login" (click)="navigateToLogin()">Fazer Login</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center min-vh-100">
+        <div class="col-lg-6">
+          <div class="hero-content">
+            <h1 class="hero-title">Bem-vindo ao Medlink</h1>
+            <p class="hero-subtitle">Conectando pacientes e médicos através da tecnologia</p>
+            <p class="hero-description">Gerencie consultas, prontuários e comunicação médica de forma simples e segura</p>
+            <div class="hero-buttons">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="hero-image">
+            <div class="image-card">
+              <i class="fas fa-heartbeat hero-icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-12">
+          <h2 class="section-title">Nossos Serviços</h2>
+          <p class="section-subtitle">Soluções completas para gestão médica digital</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h5 class="feature-title">Gestão de Pacientes</h5>
+            <p class="feature-text">Organize e gerencie todos os seus pacientes em um painel centralizado e intuitivo.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-file-medical"></i>
+            </div>
+            <h5 class="feature-title">Prontuário Digital</h5>
+            <p class="feature-text">Acesso completo ao histórico médico, exames e prescrições em formato digital.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-comments"></i>
+            </div>
+            <h5 class="feature-title">Comunicação Privada</h5>
+            <p class="feature-text">Sistema de mensagens entre médicos e pacientes com total privacidade.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="cta-section">
+    <div class="container text-center">
+      <div class="cta-card">
+        <h2 class="cta-title">Nossa Equipe</h2>
+        <p class="cta-text">Desenvolvido por estudantes de Sistemas de Informação da FAI - Centro de Ensino Superior</p>
+        
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="team-member-inline">
+              <img src="thamiris.jfif" alt="Augusto" class="team-photo">
+              <h5>Thamiris</h5>
+              <p class="team-role">Estudante</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="team-member-inline">
+              <img src="augusto.jpg" alt="Augusto" class="team-photo">
+              <h5>Augusto</h5>
+              <p class="team-role">Estudante</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="team-member-inline">
+              <img src="pedro.enc" alt="Augusto" class="team-photo">
+              <h5>Pedro</h5>
+              <p class="team-role">Estudante</p>
+            </div>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="footer-brand">
+            <h4 class="footer-logo">Medlink</h4>
+            <p class="footer-description">Conectando pacientes e médicos através da tecnologia para um cuidado médico mais eficiente e humanizado.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="footer-links">
+            <h5>Links Rápidos</h5>
+            <ul>
+              <li><a href="/">Início</a></li>
+              <li><a (click)="navigateToLogin()">Login</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="footer-contact">
+            <h5>Contato</h5>
+            <p><i class="fas fa-graduation-cap"></i> FAI - Centro de Ensino Superior</p>
+          </div>
+        </div>
+      </div>
+      <hr class="footer-divider">
+      <div class="row">
+        <div class="col-12 text-center">
+          <p class="footer-copyright">© 2024 Medlink. Desenvolvido por estudantes de Sistemas de Informação.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

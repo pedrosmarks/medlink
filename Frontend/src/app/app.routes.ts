@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { InicialComponent as MedicoInicialComponent } from './pages/medico/inicial.component';
 import { DashboardComponent } from './pages/medico/dashboard/dashboard.component';
@@ -18,7 +19,7 @@ import { AuthGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
 
   // Rotas do médico
@@ -136,12 +137,7 @@ export const routes: Routes = [
     ]
   },
 
-  // Rota padrão - redireciona baseado no login
-  { 
-    path: '', 
-    redirectTo: '/login', 
-    pathMatch: 'full' 
-  },
+
   
   // Rota coringa - redireciona para login
   { 
