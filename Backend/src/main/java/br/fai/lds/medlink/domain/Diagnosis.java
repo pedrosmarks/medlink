@@ -26,4 +26,9 @@ public class Diagnosis {
     
     /** Data em que o diagnóstico foi realizado. */
     private LocalDate date;
+
+    /** Indica se o diagnóstico foi excluído logicamente. */
+    private boolean softDeleted;
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

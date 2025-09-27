@@ -32,4 +32,9 @@ public class Surgery {
     
     /** Observações e anotações sobre a cirurgia. */
     private String notes;
+
+    /** Indica se a cirurgia foi marcada como deletada (soft delete). */
+    private boolean softDeleted;
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

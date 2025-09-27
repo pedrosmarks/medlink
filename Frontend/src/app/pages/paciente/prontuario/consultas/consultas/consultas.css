@@ -100,6 +100,10 @@
   align-items: flex-start;
   gap: 15px;
 }
+/* Card soft-deleted */
+.consulta-card.soft-deleted {
+  background-color: #ffdddd !important;
+  border: 2px solid #d32f2f !important;
 
 .consulta-card:hover {
   transform: translateY(-2px);

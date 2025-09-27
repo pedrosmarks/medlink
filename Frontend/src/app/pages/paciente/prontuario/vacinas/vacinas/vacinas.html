@@ -9,7 +9,7 @@
 </div>
 
 <div class="vacinas-grid">
-  <div class="vacina-card" *ngFor="let vacina of vacinas; let i = index">
+  <div class="vacina-card" [ngClass]="{'soft-deleted': vacina.softDeleted}" *ngFor="let vacina of vacinas; let i = index">
     
     <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
     <div>

@@ -127,6 +127,7 @@ CREATE TABLE historico_cirurgico (
     prontuario_id INT NOT NULL,
     descricao_cirurgica VARCHAR(500) NOT NULL,
     data_cirurgia DATE,
+    soft_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_historico_cirurgico_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
@@ -139,6 +140,7 @@ CREATE TABLE vacina (
     paciente_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     date DATE NOT NULL,
+    soft_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_vacina_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
 );
 
@@ -149,6 +151,7 @@ CREATE TABLE alergia (
     substance VARCHAR(100),
     reaction VARCHAR(100),
     severity VARCHAR(50),
+    soft_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_alergia_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
@@ -157,6 +160,7 @@ CREATE TABLE diagnostico (
     prontuario_id INT NOT NULL,
     description VARCHAR(500) NOT NULL,
     date DATE NOT NULL,
+    soft_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_diagnostico_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
@@ -166,6 +170,7 @@ CREATE TABLE medicamento (
     name VARCHAR(100) NOT NULL,
     dosage VARCHAR(50),
     frequency VARCHAR(50),
+    soft_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_medicamento_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 
@@ -205,6 +210,8 @@ CREATE TABLE consulta (
     prontuario_id INT NOT NULL,
     data_hora TIMESTAMP NOT NULL,
     observacao VARCHAR(500),
+    soft_deleted BOOLEAN DEFAULT FALSE,
+    reason VARCHAR(255),
     CONSTRAINT fk_consulta_prontuario FOREIGN KEY (prontuario_id) REFERENCES prontuario(id)
 );
 

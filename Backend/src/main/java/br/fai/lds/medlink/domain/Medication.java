@@ -28,4 +28,9 @@ public class Medication {
     
     /** Frequência de administração do medicamento. */
     private String frequency;
+
+    /** Indica se o registro do medicamento foi excluído logicamente. */
+    private boolean softDeleted;
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

@@ -43,6 +43,11 @@ public class PatientPostgresDaoImpl implements PatientDao {
         }
     }
 
+    @Override
+    public void revokeAccess(int patientId, int medicoId) {
+
+    }
+
     private String mapStatusToEnum(String status) {
         // Mapeia os status para os valores corretos do ENUM
         if (status == null) return "PENDENTE";
@@ -531,37 +536,65 @@ public class PatientPostgresDaoImpl implements PatientDao {
         }
     }
     
+    // Atualiza medicamentos: agora faz apenas soft delete dos removidos e insere/atualiza os demais
     private void updateMedicamentos(int prontuarioId, List<Medication> medicamentos) {
         try {
-            String deleteSql = "DELETE FROM medicamento WHERE prontuario_id = ?";
-            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+            // Busca todos os IDs de medicamentos existentes (não deletados)
+            List<Integer> medicamentosExistentes = new ArrayList<>();
+            String selectSql = "SELECT id FROM medicamento WHERE prontuario_id = ? AND soft_deleted = FALSE";
+            try (PreparedStatement ps = connection.prepareStatement(selectSql)) {
                 ps.setInt(1, prontuarioId);
-                int deleted = ps.executeUpdate();
-                logger.info("Medicamentos deletados: " + deleted + " para prontuario_id=" + prontuarioId);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    medicamentosExistentes.add(rs.getInt("id"));
+                }
             }
-            
-            if (medicamentos != null && !medicamentos.isEmpty()) {
-                String insertSql = "INSERT INTO medicamento (name, dosage, frequency, prontuario_id) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement ps = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                    for (Medication medicamento : medicamentos) {
-                        ps.setString(1, medicamento.getName());
-                        ps.setString(2, medicamento.getDosage());
-                        ps.setString(3, medicamento.getFrequency());
-                        ps.setInt(4, prontuarioId);
-                        ps.addBatch();
+
+            // Monta lista de IDs dos medicamentos recebidos
+            List<Integer> idsRecebidos = new ArrayList<>();
+            if (medicamentos != null) {
+                for (Medication medicamento : medicamentos) {
+                    if (medicamento.getId() != 0) {
+                        idsRecebidos.add(medicamento.getId());
                     }
-                    int[] results = ps.executeBatch();
-                    
-                    // Recuperar IDs gerados
-                    ResultSet generatedKeys = ps.getGeneratedKeys();
-                    int index = 0;
-                    while (generatedKeys.next() && index < medicamentos.size()) {
-                        medicamentos.get(index).setId(generatedKeys.getInt(1));
-                        index++;
+                }
+            }
+
+            // Soft delete nos medicamentos que não estão mais na lista recebida
+            for (Integer idExistente : medicamentosExistentes) {
+                if (!idsRecebidos.contains(idExistente)) {
+                    String softDeleteSql = "UPDATE medicamento SET soft_deleted = TRUE WHERE id = ?";
+                    try (PreparedStatement ps = connection.prepareStatement(softDeleteSql)) {
+                        ps.setInt(1, idExistente);
+                        ps.executeUpdate();
                     }
-                    generatedKeys.close();
-                    
-                    logger.info("Medicamentos inseridos: " + results.length + " para prontuario_id=" + prontuarioId);
+                }
+            }
+
+            // Atualiza ou insere medicamentos recebidos
+            if (medicamentos != null) {
+                for (Medication medicamento : medicamentos) {
+                    if (medicamento.getId() != 0 && medicamentosExistentes.contains(medicamento.getId())) {
+                        // Atualiza medicamento existente
+                        String updateSql = "UPDATE medicamento SET name = ?, dosage = ?, frequency = ? WHERE id = ?";
+                        try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
+                            ps.setString(1, medicamento.getName());
+                            ps.setString(2, medicamento.getDosage());
+                            ps.setString(3, medicamento.getFrequency());
+                            ps.setInt(4, medicamento.getId());
+                            ps.executeUpdate();
+                        }
+                    } else if (medicamento.getId() == 0) {
+                        // Insere novo medicamento
+                        String insertSql = "INSERT INTO medicamento (name, dosage, frequency, prontuario_id, soft_deleted) VALUES (?, ?, ?, ?, FALSE)";
+                        try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                            ps.setString(1, medicamento.getName());
+                            ps.setString(2, medicamento.getDosage());
+                            ps.setString(3, medicamento.getFrequency());
+                            ps.setInt(4, prontuarioId);
+                            ps.executeUpdate();
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -598,22 +631,60 @@ public class PatientPostgresDaoImpl implements PatientDao {
     
     private void updateConsultas(int prontuarioId, List<Consultation> consultas) {
         try {
-            String deleteSql = "DELETE FROM consulta WHERE prontuario_id = ?";
-            try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+            // Busca todas as consultas existentes (não deletadas)
+            List<Integer> consultasExistentes = new ArrayList<>();
+            String selectSql = "SELECT id FROM consulta WHERE prontuario_id = ? AND soft_deleted = FALSE";
+            try (PreparedStatement ps = connection.prepareStatement(selectSql)) {
                 ps.setInt(1, prontuarioId);
-                ps.executeUpdate();
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    consultasExistentes.add(rs.getInt("id"));
+                }
             }
-            
-            if (consultas != null && !consultas.isEmpty()) {
-                String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id) VALUES (?, ?, ?)";
-                try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
-                    for (Consultation consulta : consultas) {
-                        ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
-                        ps.setString(2, consulta.getNotes());
-                        ps.setInt(3, prontuarioId);
-                        ps.addBatch();
+
+            // Monta lista de IDs das consultas recebidas
+            List<Integer> idsRecebidos = new ArrayList<>();
+            if (consultas != null) {
+                for (Consultation consulta : consultas) {
+                    if (consulta.getId() != 0) {
+                        idsRecebidos.add(consulta.getId());
                     }
-                    ps.executeBatch();
+                }
+            }
+
+            // Soft delete nas consultas que não estão mais na lista recebida
+            for (Integer idExistente : consultasExistentes) {
+                if (!idsRecebidos.contains(idExistente)) {
+                    String softDeleteSql = "UPDATE consulta SET soft_deleted = TRUE WHERE id = ?";
+                    try (PreparedStatement ps = connection.prepareStatement(softDeleteSql)) {
+                        ps.setInt(1, idExistente);
+                        ps.executeUpdate();
+                    }
+                }
+            }
+
+            // Atualiza ou insere consultas recebidas
+            if (consultas != null) {
+                for (Consultation consulta : consultas) {
+                    if (consulta.getId() != 0 && consultasExistentes.contains(consulta.getId())) {
+                        // Atualiza consulta existente
+                        String updateSql = "UPDATE consulta SET data_hora = ?, observacao = ? WHERE id = ?";
+                        try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
+                            ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
+                            ps.setString(2, consulta.getNotes());
+                            ps.setInt(3, consulta.getId());
+                            ps.executeUpdate();
+                        }
+                    } else if (consulta.getId() == 0) {
+                        // Insere nova consulta
+                        String insertSql = "INSERT INTO consulta (data_hora, observacao, prontuario_id, soft_deleted) VALUES (?, ?, ?, FALSE)";
+                        try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                            ps.setTimestamp(1, java.sql.Timestamp.valueOf(consulta.getDate().atStartOfDay()));
+                            ps.setString(2, consulta.getNotes());
+                            ps.setInt(3, prontuarioId);
+                            ps.executeUpdate();
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -702,6 +773,11 @@ public class PatientPostgresDaoImpl implements PatientDao {
     }
 
     @Override
+    public List<Patient> findAuthorizedByMedicId(int medicId) {
+        return List.of();
+    }
+
+    @Override
     public boolean deactivate(int id) {
         // Implementação do método exigido pela interface SoftDeleteDao
         logger.log(Level.INFO, "Desativando paciente com ID: " + id);
@@ -727,6 +803,109 @@ public class PatientPostgresDaoImpl implements PatientDao {
 
     public List<Patient> findAll() {
         return readAll();
+    }
+
+    @Override
+    public Consultation addConsultation(int patientId, Consultation consultation) {
+        int prontuarioId;
+        try {
+            prontuarioId = getProntuarioIdByPatientId(patientId);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar prontuário para inserção de consulta", e);
+            return null;
+        }
+        if (prontuarioId <= 0) return null;
+        String sql = "INSERT INTO consulta (data_hora, observacao, prontuario_id, reason, soft_deleted) VALUES (?, ?, ?, ?, FALSE) RETURNING id";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setTimestamp(1, java.sql.Timestamp.valueOf(consultation.getDate().atStartOfDay()));
+            ps.setString(2, consultation.getNotes());
+            ps.setInt(3, prontuarioId);
+            ps.setString(4, consultation.getReason());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                consultation.setId(id);
+                return consultation;
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao inserir consulta", e);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Consultation> getConsultationsByPatientId(int patientId) {
+        List<Consultation> consultations = new ArrayList<>();
+        int prontuarioId;
+        try {
+            prontuarioId = getProntuarioIdByPatientId(patientId);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar prontuário para consultas", e);
+            return consultations;
+        }
+        if (prontuarioId <= 0) return consultations;
+        // Agora busca todas as consultas, inclusive deletadas
+        String sql = "SELECT id, data_hora, observacao, reason, soft_deleted FROM consulta WHERE prontuario_id = ? ORDER BY data_hora DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, prontuarioId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                consultations.add(Consultation.builder()
+                        .id(rs.getInt("id"))
+                        .date(rs.getTimestamp("data_hora").toLocalDateTime().toLocalDate())
+                        .notes(rs.getString("observacao"))
+                        .reason(rs.getString("reason"))
+                        .softDeleted(rs.getBoolean("soft_deleted"))
+                        .build());
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar consultas", e);
+        }
+        return consultations;
+    }
+
+    @Override
+    public boolean deleteConsultation(int patientId, int consultationId) {
+        int prontuarioId;
+        try {
+            prontuarioId = getProntuarioIdByPatientId(patientId);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar prontuário para deleção de consulta", e);
+            return false;
+        }
+        if (prontuarioId <= 0) return false;
+        String sql = "UPDATE consulta SET soft_deleted = TRUE WHERE id = ? AND prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, consultationId);
+            ps.setInt(2, prontuarioId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao deletar consulta", e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteMedication(int patientId, int medicationId) {
+        int prontuarioId;
+        try {
+            prontuarioId = getProntuarioIdByPatientId(patientId);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao buscar prontuário para deleção de medicamento", e);
+            return false;
+        }
+        if (prontuarioId <= 0) return false;
+        String sql = "UPDATE medicamento SET soft_deleted = TRUE WHERE id = ? AND prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, medicationId);
+            ps.setInt(2, prontuarioId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Erro ao deletar medicamento", e);
+            return false;
+        }
     }
 
     public void softDelete(int id) {
@@ -857,9 +1036,10 @@ public class PatientPostgresDaoImpl implements PatientDao {
         return 0;
     }
 
+    // VACINAS
     private List<Vaccine> getVacinasByPatientId(int patientId) throws SQLException {
         List<Vaccine> vacinas = new ArrayList<>();
-        String sql = "SELECT id, name, date FROM vacina WHERE paciente_id = ?";
+        String sql = "SELECT id, name, date, soft_deleted FROM vacina WHERE paciente_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             ResultSet rs = ps.executeQuery();
@@ -868,15 +1048,31 @@ public class PatientPostgresDaoImpl implements PatientDao {
                         .id(rs.getInt("id"))
                         .name(rs.getString("name"))
                         .date(rs.getDate("date").toLocalDate())
+                        .softDeleted(rs.getBoolean("soft_deleted"))
                         .build());
             }
         }
         return vacinas;
     }
 
+    public boolean deleteVaccine(int patientId, int vaccineId) {
+        String sql = "UPDATE vacina SET soft_deleted = TRUE WHERE id = ? AND paciente_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, vaccineId);
+            ps.setInt(2, patientId);
+            int rows = ps.executeUpdate();
+            logger.info("[SOFT DELETE] Vacina: linhas afetadas: " + rows + " para pacienteId=" + patientId + ", vacinaId=" + vaccineId);
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.severe("Erro ao realizar soft delete da vacina: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ALERGIAS
     private List<Allergy> getAlergiasByProntuarioId(int prontuarioId) throws SQLException {
         List<Allergy> alergias = new ArrayList<>();
-        String sql = "SELECT id, name, substance, reaction, severity FROM alergia WHERE prontuario_id = ?";
+        String sql = "SELECT id, name, substance, reaction, severity, soft_deleted FROM alergia WHERE prontuario_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, prontuarioId);
             ResultSet rs = ps.executeQuery();
@@ -887,15 +1083,31 @@ public class PatientPostgresDaoImpl implements PatientDao {
                         .substance(rs.getString("substance"))
                         .reaction(rs.getString("reaction"))
                         .severity(rs.getString("severity"))
+                        .softDeleted(rs.getBoolean("soft_deleted"))
                         .build());
             }
         }
         return alergias;
     }
 
+    public boolean deleteAllergy(int prontuarioId, int allergyId) {
+        String sql = "UPDATE alergia SET soft_deleted = TRUE WHERE id = ? AND prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, allergyId);
+            ps.setInt(2, prontuarioId);
+            int rows = ps.executeUpdate();
+            logger.info("[SOFT DELETE] Alergia: linhas afetadas: " + rows + " para prontuarioId=" + prontuarioId + ", allergyId=" + allergyId);
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.severe("Erro ao realizar soft delete da alergia: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // DIAGNÓSTICOS
     private List<Diagnosis> getDiagnosticosByProntuarioId(int prontuarioId) throws SQLException {
         List<Diagnosis> diagnosticos = new ArrayList<>();
-        String sql = "SELECT id, description, date FROM diagnostico WHERE prontuario_id = ?";
+        String sql = "SELECT id, description, date, soft_deleted FROM diagnostico WHERE prontuario_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, prontuarioId);
             ResultSet rs = ps.executeQuery();
@@ -904,15 +1116,85 @@ public class PatientPostgresDaoImpl implements PatientDao {
                         .id(rs.getInt("id"))
                         .description(rs.getString("description"))
                         .date(rs.getDate("date").toLocalDate())
+                        .softDeleted(rs.getBoolean("soft_deleted"))
                         .build());
             }
         }
         return diagnosticos;
     }
 
+    public boolean deleteDiagnosis(int prontuarioId, int diagnosisId) {
+        String sql = "UPDATE diagnostico SET soft_deleted = TRUE WHERE id = ? AND prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, diagnosisId);
+            ps.setInt(2, prontuarioId);
+            int rows = ps.executeUpdate();
+            logger.info("[SOFT DELETE] Diagnóstico: linhas afetadas: " + rows + " para prontuarioId=" + prontuarioId + ", diagnosisId=" + diagnosisId);
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.severe("Erro ao realizar soft delete do diagnóstico: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // CIRURGIAS
+    private List<Surgery> getCirurgiasByProntuarioId(int prontuarioId) throws SQLException {
+        List<Surgery> cirurgias = new ArrayList<>();
+        String sql = "SELECT id, descricao_cirurgica, data_cirurgia, soft_deleted, '' as location, '' as notes FROM historico_cirurgico WHERE prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, prontuarioId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                cirurgias.add(Surgery.builder()
+                        .id(rs.getInt("id"))
+                        .name(rs.getString("descricao_cirurgica"))
+                        .date(rs.getDate("data_cirurgia") != null ? rs.getDate("data_cirurgia").toLocalDate() : null)
+                        .softDeleted(rs.getBoolean("soft_deleted"))
+                        .location(rs.getString("location"))
+                        .notes(rs.getString("notes"))
+                        .build());
+            }
+        }
+        return cirurgias;
+    }
+
+    public boolean deleteSurgery(int prontuarioId, int surgeryId) {
+        String sql = "UPDATE historico_cirurgico SET soft_deleted = TRUE WHERE id = ? AND prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, surgeryId);
+            ps.setInt(2, prontuarioId);
+            int rows = ps.executeUpdate();
+            logger.info("[SOFT DELETE] Cirurgia: linhas afetadas: " + rows + " para prontuarioId=" + prontuarioId + ", surgeryId=" + surgeryId);
+            return rows > 0;
+        } catch (SQLException e) {
+            logger.severe("Erro ao realizar soft delete da cirurgia: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // CONSULTAS
+    private List<Consultation> getConsultasByProntuarioId(int prontuarioId) throws SQLException {
+        List<Consultation> consultas = new ArrayList<>();
+        String sql = "SELECT id, data_hora, observacao, soft_deleted FROM consulta WHERE prontuario_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, prontuarioId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                consultas.add(Consultation.builder()
+                        .id(rs.getInt("id"))
+                        .date(rs.getTimestamp("data_hora").toLocalDateTime().toLocalDate())
+                        .notes(rs.getString("observacao"))
+                        .softDeleted(rs.getBoolean("soft_deleted"))
+                        .build());
+            }
+        }
+        return consultas;
+    }
+
+    // MEDICAMENTOS
     private List<Medication> getMedicamentosByProntuarioId(int prontuarioId) throws SQLException {
         List<Medication> medicamentos = new ArrayList<>();
-        String sql = "SELECT id, name, dosage, frequency FROM medicamento WHERE prontuario_id = ?";
+        String sql = "SELECT id, name, dosage, frequency, soft_deleted FROM medicamento WHERE prontuario_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, prontuarioId);
             ResultSet rs = ps.executeQuery();
@@ -922,199 +1204,10 @@ public class PatientPostgresDaoImpl implements PatientDao {
                         .name(rs.getString("name"))
                         .dosage(rs.getString("dosage"))
                         .frequency(rs.getString("frequency"))
+                        .softDeleted(rs.getBoolean("soft_deleted"))
                         .build());
             }
         }
         return medicamentos;
-    }
-
-    private List<Surgery> getCirurgiasByProntuarioId(int prontuarioId) throws SQLException {
-        List<Surgery> cirurgias = new ArrayList<>();
-        String sql = "SELECT id, descricao_cirurgica, data_cirurgia, '' as location, '' as notes FROM historico_cirurgico WHERE prontuario_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, prontuarioId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                cirurgias.add(Surgery.builder()
-                        .id(rs.getInt("id"))
-                        .name(rs.getString("descricao_cirurgica"))
-                        .date(rs.getDate("data_cirurgia") != null ? rs.getDate("data_cirurgia").toLocalDate() : null)
-                        .location(rs.getString("location"))
-                        .notes(rs.getString("notes"))
-                        .build());
-            }
-        }
-        return cirurgias;
-    }
-
-    private List<Consultation> getConsultasByProntuarioId(int prontuarioId) throws SQLException {
-        List<Consultation> consultas = new ArrayList<>();
-        String sql = "SELECT data_hora, observacao FROM consulta WHERE prontuario_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, prontuarioId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                consultas.add(Consultation.builder()
-                        .date(rs.getTimestamp("data_hora").toLocalDateTime().toLocalDate())
-                        .reason(rs.getString("observacao"))
-                        .notes(rs.getString("observacao"))
-                        .build());
-            }
-        }
-        return consultas;
-    }
-
-    // Revoga o acesso de um médico ao prontuário do paciente
-    public void revokeAccess(int patientId, int medicoId) {
-        try {
-            // Atualiza o status da solicitação para REVOGADA
-            String sqlUpdate = "UPDATE solicitacao_acesso_prontuario SET status = 'REVOGADA'::status_solicitacao, data_resposta = CURRENT_TIMESTAMP WHERE paciente_id = ? AND medico_id = ?";
-            try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
-                ps.setInt(1, patientId);
-                ps.setInt(2, medicoId);
-                ps.executeUpdate();
-            }
-            // Remove o vínculo do médico com o prontuário
-            int prontuarioId = getProntuarioIdByPatientId(patientId);
-            if (prontuarioId > 0) {
-                String sqlDelete = "DELETE FROM medico_acesso_prontuario WHERE prontuario_id = ? AND medico_id = ?";
-                try (PreparedStatement ps = connection.prepareStatement(sqlDelete)) {
-                    ps.setInt(1, prontuarioId);
-                    ps.setInt(2, medicoId);
-                    ps.executeUpdate();
-                }
-            }
-            logger.info("Acesso revogado: paciente_id=" + patientId + ", medico_id=" + medicoId);
-        } catch (SQLException e) {
-            logger.severe("Erro ao revogar acesso: " + e.getMessage());
-            throw new RuntimeException("Erro ao revogar acesso", e);
-        }
-    }
-
-    @Override
-    public List<Patient> findAuthorizedByMedicId(int medicId) {
-        List<Patient> patients = new ArrayList<>();
-        final String sql = """
-            SELECT pac.id, pe.nome, pe.cpf, pac.email, pac.senha, pe.sexo, pe.data_nascimento,
-                   pac.convenio_medico, pac.cartao_sus, pac.ativo, pr.tipo_sanguineo, pr.observacoes
-            FROM paciente pac
-            JOIN pessoa pe ON pac.pessoa_id = pe.id
-            LEFT JOIN prontuario pr ON pr.paciente_id = pac.id
-            JOIN solicitacao_acesso_prontuario sap ON sap.paciente_id = pac.id
-            WHERE sap.medico_id = ? AND sap.status = 'ACEITA'::status_solicitacao AND pac.ativo = true
-        """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, medicId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Patient patient = buildPatientFromResultSet(rs);
-                patients.add(patient);
-            }
-            rs.close();
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao buscar pacientes autorizados para o médico: " + medicId, e);
-        }
-        return patients;
-    }
-
-    // Método utilitário para mapear ResultSet para Patient (ajuste conforme já existente)
-    private Patient mapResultSetToPatient(ResultSet rs) throws SQLException {
-        // Exemplo simplificado, ajuste conforme necessário
-        Patient patient = new Patient();
-        patient.setId(rs.getInt("id"));
-        patient.setName(rs.getString("nome"));
-        patient.setEmail(rs.getString("email"));
-        patient.setCpf(rs.getString("cpf"));
-        patient.setBirthDate(rs.getDate("data_nascimento").toLocalDate());
-        // Adicione outros campos conforme necessário
-        return patient;
-    }
-
-    @Override
-    public Consultation addConsultation(int patientId, Consultation consultation) {
-        // Buscar o prontuario_id do paciente
-        int prontuarioId = -1;
-        String prontuarioSql = "SELECT id FROM prontuario WHERE paciente_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(prontuarioSql)) {
-            ps.setInt(1, patientId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                prontuarioId = rs.getInt("id");
-            }
-            rs.close();
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao buscar prontuario_id", e);
-            throw new RuntimeException("Erro ao buscar prontuario_id", e);
-        }
-        if (prontuarioId == -1) {
-            throw new RuntimeException("Prontuário não encontrado para paciente_id=" + patientId);
-        }
-        // Inserir consulta usando prontuario_id
-        String sql = "INSERT INTO consulta (prontuario_id, data_hora, observacao) VALUES (?, ?, ?) RETURNING id";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, prontuarioId);
-            stmt.setTimestamp(2, java.sql.Timestamp.valueOf(consultation.getDate().atStartOfDay()));
-            stmt.setString(3, consultation.getNotes());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int id = rs.getInt("id");
-                consultation.setId(id);
-            }
-            rs.close();
-            return consultation;
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao adicionar consulta", e);
-            throw new RuntimeException("Erro ao adicionar consulta", e);
-        }
-    }
-
-    @Override
-    public List<Consultation> getConsultationsByPatientId(int patientId) {
-        String sql = "SELECT c.id, c.data_hora, c.observacao FROM consulta c " +
-                "JOIN prontuario p ON c.prontuario_id = p.id " +
-                "WHERE p.paciente_id = ? ORDER BY c.data_hora DESC";
-        List<Consultation> consultations = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, patientId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Consultation c = Consultation.builder()
-                        .id(rs.getInt("id"))
-                        .date(rs.getTimestamp("data_hora").toLocalDateTime().toLocalDate())
-                        .reason(rs.getString("observacao"))
-                        .notes(rs.getString("observacao"))
-                        .build();
-                consultations.add(c);
-            }
-            rs.close();
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao buscar consultas", e);
-            throw new RuntimeException("Erro ao buscar consultas", e);
-        }
-        return consultations;
-    }
-
-    /**
-     * Remove uma consulta do paciente (DELETE direto no banco)
-     */
-    public boolean deleteConsultation(int patientId, int consultationId) {
-        try {
-            int prontuarioId = getProntuarioIdByPatientId(patientId);
-            if (prontuarioId <= 0) {
-                logger.warning("Prontuário não encontrado para paciente " + patientId);
-                return false;
-            }
-            String sql = "DELETE FROM consulta WHERE id = ? AND prontuario_id = ?";
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setInt(1, consultationId);
-                ps.setInt(2, prontuarioId);
-                int rows = ps.executeUpdate();
-                logger.info("Consultas removidas: " + rows + " para paciente_id=" + patientId + ", consulta_id=" + consultationId);
-                return rows > 0;
-            }
-        } catch (Exception e) {
-            logger.severe("Erro ao remover consulta: " + e.getMessage());
-            return false;
-        }
     }
 }

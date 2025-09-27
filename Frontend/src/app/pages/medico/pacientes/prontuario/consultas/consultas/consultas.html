@@ -23,18 +23,18 @@
 
 <div class="consultas-grid">
   <div class="consulta-card position-relative" *ngFor="let consulta of consultas; let i = index">
-    <button
-      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-      (click)="removerConsulta(i)"
-      title="Remover consulta"
-      style="z-index:2"
-    >×</button>
-    <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
-    <div>
-      <strong>Data:</strong> {{ consulta.date }}<br>
-      <strong>Motivo:</strong> {{ consulta.reason }}<br>
-      <strong>Observações:</strong> {{ consulta.notes || 'Nenhuma observação' }}
-    </div>
+      <button
+        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+        (click)="removerConsulta(i)"
+        title="Remover consulta"
+        style="z-index:2"
+      >×</button>
+      <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
+      <div [ngClass]="{'soft-deleted': consulta.softDeleted}">
+        <strong>Data:</strong> {{ consulta.date }}<br>
+        <strong>Motivo:</strong> {{ consulta.reason }}<br>
+        <strong>Observações:</strong> {{ consulta.notes || 'Nenhuma observação' }}
+      </div>
   </div>
   <div *ngIf="consultas.length === 0" class="text-muted">
     Nenhuma consulta cadastrada para este paciente.

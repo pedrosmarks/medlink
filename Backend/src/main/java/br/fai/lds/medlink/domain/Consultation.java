@@ -33,4 +33,8 @@ public class Consultation {
     
     /** Observações e anotações médicas da consulta. */
     private String notes;
+
+    private boolean softDeleted;
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

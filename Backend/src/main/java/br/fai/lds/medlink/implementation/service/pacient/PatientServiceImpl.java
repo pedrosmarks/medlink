@@ -224,4 +224,73 @@ public class PatientServiceImpl implements PatientService {
     public boolean deleteConsultation(int patientId, int consultationId) {
         return patientDao.deleteConsultation(patientId, consultationId);
     }
+
+    @Override
+    public boolean deleteMedication(int patientId, int medicationId) {
+        if (patientId <= 0 || medicationId <= 0) {
+            throw new IllegalArgumentException("IDs devem ser maiores que zero");
+        }
+        try {
+            boolean result = patientDao.deleteMedication(patientId, medicationId);
+            if (result) {
+                log.info("Medicamento removido com sucesso: pacienteId={}, medicamentoId={}", patientId, medicationId);
+            } else {
+                log.warn("Medicamento não encontrado para remoção: pacienteId={}, medicamentoId={}", patientId, medicationId);
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("Erro ao remover medicamento pacienteId={}, medicamentoId={}: {}", patientId, medicationId, e.getMessage(), e);
+            throw new RuntimeException("Erro ao remover medicamento", e);
+        }
+    }
+
+    @Override
+    public boolean deleteVaccine(int patientId, int vaccineId) {
+        return patientDao.deleteVaccine(patientId, vaccineId);
+    }
+    @Override
+    public boolean deleteAllergy(int patientId, int allergyId) {
+        int prontuarioId = 0;
+        try {
+            prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
+            if (prontuarioId == 0) {
+                log.warn("Prontuário não encontrado para paciente {} ao deletar alergia.", patientId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
+            return false;
+        }
+        return patientDao.deleteAllergy(prontuarioId, allergyId);
+    }
+    @Override
+    public boolean deleteDiagnosis(int patientId, int diagnosisId) {
+        int prontuarioId = 0;
+        try {
+            prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
+            if (prontuarioId == 0) {
+                log.warn("Prontuário não encontrado para paciente {} ao deletar diagnóstico.", patientId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
+            return false;
+        }
+        return patientDao.deleteDiagnosis(prontuarioId, diagnosisId);
+    }
+    @Override
+    public boolean deleteSurgery(int patientId, int surgeryId) {
+        int prontuarioId = 0;
+        try {
+            prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
+            if (prontuarioId == 0) {
+                log.warn("Prontuário não encontrado para paciente {} ao deletar cirurgia.", patientId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
+            return false;
+        }
+        return patientDao.deleteSurgery(prontuarioId, surgeryId);
+    }
 }

@@ -9,10 +9,11 @@
 </div>
 
 <div class="alergias-grid">
-  <div class="alergia-card" *ngFor="let alergia of alergias; let i = index">
+  <div class="alergia-card" [ngClass]="{'soft-deleted': alergia.softDeleted}" *ngFor="let alergia of alergias; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
     <div>
-      <strong>Alergia:</strong> {{ alergia.nome || alergia.descricao }}
+      
+    <strong>Alergia:</strong> {{ alergia.name }}
     </div>
   </div>
   <div *ngIf="!carregando && alergias.length === 0" class="text-muted">

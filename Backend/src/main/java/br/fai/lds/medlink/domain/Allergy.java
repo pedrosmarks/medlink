@@ -32,4 +32,9 @@ public class Allergy {
     
     /** Grau de severidade da alergia (leve, moderada, grave). */
     private String severity;
+
+    /** Indica se a alergia foi removida (soft delete). */
+    private boolean softDeleted;
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

@@ -9,7 +9,7 @@
 </div>
 
 <div class="consultas-grid">
-  <div class="consulta-card" *ngFor="let consulta of consultas; let i = index">
+  <div class="consulta-card" [ngClass]="{'soft-deleted': consulta.softDeleted}" *ngFor="let consulta of consultas; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="36" alt="Consulta" />
     <div>
       <strong>Data:</strong> {{ consulta.date | date:'dd/MM/yyyy' }}<br>

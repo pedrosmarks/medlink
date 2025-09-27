@@ -9,7 +9,7 @@
 </div>
 
 <div class="cirurgias-grid">
-  <div class="cirurgia-card" *ngFor="let cirurgia of cirurgias; let i = index">
+  <div class="cirurgia-card" [ngClass]="{'soft-deleted': cirurgia.softDeleted}" *ngFor="let cirurgia of cirurgias; let i = index">
     <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
     <div>
       <strong>Tipo:</strong> {{ cirurgia.name }}<br>

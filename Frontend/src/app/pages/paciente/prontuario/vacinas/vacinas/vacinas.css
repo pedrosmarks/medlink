@@ -57,6 +57,10 @@
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
   transition: all 0.3s ease;
 }
+/* Card soft-deleted */
+.vacina-card.soft-deleted {
+  background-color: #ffdddd !important;
+  border: 2px solid #d32f2f !important;
 
 .vacina-card:hover {
   transform: translateY(-2px);

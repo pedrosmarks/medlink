@@ -26,6 +26,7 @@ public class AllergyResponseDto {
     private String substance;
     private String reaction;
     private String severity;
+    private boolean softDeleted;
 
     /**
      * Cria um DTO de resposta a partir de uma entidade Allergy.
@@ -33,13 +34,14 @@ public class AllergyResponseDto {
      * @param entity Entidade Allergy a ser convertida
      * @return DTO com os dados da alergia formatados para resposta
      */
-    public static AllergyResponseDto fromEntity(Allergy entity) {
+    public static AllergyResponseDto fromEntity(br.fai.lds.medlink.domain.Allergy entity) {
         return AllergyResponseDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .substance(entity.getSubstance())
                 .reaction(entity.getReaction())
                 .severity(entity.getSeverity())
+                .softDeleted(entity.isSoftDeleted())
                 .build();
     }
 }

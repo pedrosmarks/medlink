@@ -162,12 +162,13 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int vaccineId) {
         log.info("Iniciando remoção de vacina ID {} do paciente {}", vaccineId, patientId);
-        return removeMedicalItem(patientId, vaccineId, "vacina", patient -> {
-            log.debug("Vacinas antes da remoção: {}", patient.getVacinas().size());
-            boolean removed = patient.getVacinas().removeIf(vaccine -> vaccine.getId() == vaccineId);
-            log.debug("Vacina removida: {}, Vacinas após remoção: {}", removed, patient.getVacinas().size());
-            return removed;
-        });
+        boolean deleted = patientService.deleteVaccine(patientId, vaccineId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Vacina removida com sucesso.", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Vacina não encontrada.", null));
+        }
     }
 
     @GetMapping("/{id}/medications")
@@ -198,13 +199,13 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int medicationId) {
         log.info("Iniciando remoção de medicamento ID {} do paciente {}", medicationId, patientId);
-        return removeMedicalItem(patientId, medicationId, "medicamento", patient -> {
-            log.debug("Medicamentos antes da remoção: {}", patient.getMedications().size());
-            boolean removed = patient.getMedications().removeIf(medication -> 
-                medication.getId() != null && medication.getId() == medicationId);
-            log.debug("Medicamento removido: {}, Medicamentos após remoção: {}", removed, patient.getMedications().size());
-            return removed;
-        });
+        boolean deleted = patientService.deleteMedication(patientId, medicationId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Medicamento removido com sucesso.", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Medicamento não encontrado.", null));
+        }
     }
 
     @GetMapping("/{id}/surgeries")
@@ -246,9 +247,14 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteSurgery(
             @PathVariable int patientId,
             @PathVariable int surgeryId) {
-        return removeMedicalItem(patientId, surgeryId, "cirurgia", patient -> 
-            patient.getCirurgias().removeIf(surgery -> surgery.getId() == surgeryId)
-        );
+        log.info("Iniciando remoção de cirurgia ID {} do paciente {}", surgeryId, patientId);
+        boolean deleted = patientService.deleteSurgery(patientId, surgeryId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Cirurgia removida com sucesso.", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Cirurgia não encontrada.", null));
+        }
     }
 
     @GetMapping("/{id}/diagnoses")
@@ -267,7 +273,7 @@ public class PatientController extends BaseController {
             log.debug("Diagnósticos atuais: {}", patient.getDiagnosticos().size());
             
             // ID será gerado automaticamente pelo banco
-            Diagnosis newDiagnosis = new Diagnosis(0, diagnosisDto.getDescription(), diagnosisDto.getDate());
+            Diagnosis newDiagnosis = new Diagnosis(0, diagnosisDto.getDescription(), diagnosisDto.getDate(), false);
             patient.getDiagnosticos().add(newDiagnosis);
             
             log.debug("Diagnóstico adicionado. Total de diagnósticos: {}", patient.getDiagnosticos().size());
@@ -280,12 +286,13 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int diagnosisId) {
         log.info("Iniciando remoção de diagnóstico ID {} do paciente {}", diagnosisId, patientId);
-        return removeMedicalItem(patientId, diagnosisId, "diagnóstico", patient -> {
-            log.debug("Diagnósticos antes da remoção: {}", patient.getDiagnosticos().size());
-            boolean removed = patient.getDiagnosticos().removeIf(diagnosis -> diagnosis.getId() == diagnosisId);
-            log.debug("Diagnóstico removido: {}, Diagnósticos após remoção: {}", removed, patient.getDiagnosticos().size());
-            return removed;
-        });
+        boolean deleted = patientService.deleteDiagnosis(patientId, diagnosisId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Diagnóstico removido com sucesso.", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Diagnóstico não encontrado.", null));
+        }
     }
 
     @GetMapping("/{id}/allergies")
@@ -307,9 +314,14 @@ public class PatientController extends BaseController {
     public ResponseEntity<ApiResponse<String>> deleteAllergy(
             @PathVariable int patientId,
             @PathVariable int allergyId) {
-        return removeMedicalItem(patientId, allergyId, "alergia", patient -> 
-            patient.getAlergias().removeIf(allergy -> allergy.getId() == allergyId)
-        );
+        log.info("Iniciando remoção de alergia ID {} do paciente {}", allergyId, patientId);
+        boolean deleted = patientService.deleteAllergy(patientId, allergyId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Alergia removida com sucesso.", null));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Alergia não encontrada.", null));
+        }
     }
 
     @GetMapping("/search")
@@ -402,7 +414,6 @@ public class PatientController extends BaseController {
             patientService.updateAccessRequestStatus(patientId, medicId, newStatus);
             Patient patient = findPatientOrThrow(patientId);
             authorizeSpecialist(patient, medicId, patientId);
-            patientService.update(patientId, patient);
         } else if ("REJECTED".equals(actionUpper) || "RECUSADA".equals(actionUpper)) {
             newStatus = "RECUSADA";
             message = "Acesso rejeitado com sucesso.";
@@ -601,11 +612,12 @@ public class PatientController extends BaseController {
             @PathVariable int patientId,
             @PathVariable int consultationId) {
         log.info("Iniciando remoção de consulta ID {} do paciente {}", consultationId, patientId);
-        boolean removed = patientService.deleteConsultation(patientId, consultationId);
-        if (removed) {
-            return ResponseEntity.ok(new ApiResponse<>("Consulta removida com sucesso."));
+        boolean deleted = patientService.deleteConsultation(patientId, consultationId);
+        if (deleted) {
+            return ResponseEntity.ok(new ApiResponse<>("Consulta removida com sucesso.", null));
         } else {
-            return ResponseEntity.status(404).body(new ApiResponse<>("Consulta não encontrada ou não pertence ao paciente."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("Consulta não encontrada.", null));
         }
     }
 }

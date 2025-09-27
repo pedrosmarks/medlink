@@ -11,17 +11,17 @@
 
 <div class="alergias-grid">
   <div class="alergia-card position-relative" *ngFor="let alergia of alergias; let i = index">
-    <button
-      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-      (click)="removerAlergia(i)"
-      title="Remover alergia"
-      style="z-index:2"
-    >×</button>
-    <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
-    <div>
-      <strong>{{ alergia.name }}</strong>
-      <div><strong>Substância:</strong> {{ alergia.substance }}</div>
-    </div>
+      <button
+        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+        (click)="removerAlergia(i)"
+        title="Remover alergia"
+        style="z-index:2"
+      >×</button>
+      <img src="https://cdn-icons-png.flaticon.com/512/5389/5389707.png" width="36" alt="Alergia" />
+      <div [ngClass]="{'soft-deleted': alergia.softDeleted}">
+        <strong>{{ alergia.name }}</strong>
+        <div><strong>Substância:</strong> {{ alergia.substance }}</div>
+      </div>
   </div>
   <div *ngIf="alergias.length === 0" class="text-muted">
     Nenhuma alergia cadastrada para este paciente.

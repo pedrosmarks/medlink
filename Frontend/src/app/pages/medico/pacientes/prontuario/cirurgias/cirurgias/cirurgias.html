@@ -12,18 +12,17 @@
 
 <div class="cirurgias-grid">
   <div class="cirurgia-card position-relative" *ngFor="let cirurgia of cirurgias; let i = index">
-    <button
-      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-      (click)="removerCirurgia(i)"
-      title="Remover cirurgia"
-      style="z-index:2"
-    >×</button>
-    <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
-    <div>
-      <strong>{{ cirurgia.name }}</strong><br>
-      <strong>Data:</strong> {{ cirurgia.date }}<br>
-      
-    </div>
+      <button
+        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+        (click)="removerCirurgia(i)"
+        title="Remover cirurgia"
+        style="z-index:2"
+      >×</button>
+      <img src="https://cdn-icons-png.flaticon.com/512/4246/4246625.png" width="36" alt="Cirurgia" />
+      <div [ngClass]="{'soft-deleted': cirurgia.softDeleted}">
+        <strong>{{ cirurgia.name }}</strong><br>
+        <strong>Data:</strong> {{ cirurgia.date }}<br>
+      </div>
   </div>
   <div *ngIf="cirurgias.length === 0" class="text-muted">
     Nenhuma cirurgia cadastrada para este paciente.

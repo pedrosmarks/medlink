@@ -27,4 +27,9 @@ public interface PatientService extends CrudService<Patient> {
     List<Consultation> getConsultationsByPatientId(int patientId);
 
     boolean deleteConsultation(int patientId, int consultationId);
+    boolean deleteMedication(int patientId, int medicationId);
+    boolean deleteVaccine(int patientId, int vaccineId);
+    boolean deleteAllergy(int patientId, int allergyId);
+    boolean deleteDiagnosis(int patientId, int diagnosisId);
+    boolean deleteSurgery(int patientId, int surgeryId);
 }

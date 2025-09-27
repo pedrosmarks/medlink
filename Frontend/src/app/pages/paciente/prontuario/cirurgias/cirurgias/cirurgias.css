@@ -56,6 +56,10 @@
   align-items: flex-start;
   gap: 15px;
 }
+/* Card soft-deleted */
+.cirurgia-card.soft-deleted {
+  background-color: #ffdddd !important;
+  border: 2px solid #d32f2f !important;
 
 .cirurgia-card:hover {
   transform: translateY(-2px);

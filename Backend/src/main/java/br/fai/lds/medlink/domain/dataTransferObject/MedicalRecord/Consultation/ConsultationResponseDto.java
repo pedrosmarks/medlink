@@ -16,12 +16,14 @@ public class ConsultationResponseDto {
     private LocalDate date;
     private String reason;
     private String notes;
+    private boolean softDeleted;
 
     public static ConsultationResponseDto fromEntity(Consultation entity) {
         return ConsultationResponseDto.builder()
                 .date(entity.getDate())
                 .reason(entity.getReason())
                 .notes(entity.getNotes())
+                .softDeleted(entity.isSoftDeleted())
                 .build();
     }
 }

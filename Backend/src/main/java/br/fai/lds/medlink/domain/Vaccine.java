@@ -26,4 +26,10 @@ public class Vaccine {
     
     /** Data de aplicação da vacina. */
     private LocalDate date;
+
+    /** Indica se a vacina foi removida do prontuário. */
+    private boolean softDeleted;
+
+    public boolean isSoftDeleted() { return softDeleted; }
+    public void setSoftDeleted(boolean softDeleted) { this.softDeleted = softDeleted; }
 }

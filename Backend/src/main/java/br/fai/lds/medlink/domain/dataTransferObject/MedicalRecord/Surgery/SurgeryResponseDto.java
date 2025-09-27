@@ -18,6 +18,7 @@ public class SurgeryResponseDto {
     private LocalDate date;
     private String location;
     private String notes;
+    private boolean softDeleted;
 
     public static SurgeryResponseDto fromEntity(Surgery entity) {
         return SurgeryResponseDto.builder()
@@ -26,6 +27,7 @@ public class SurgeryResponseDto {
                 .date(entity.getDate())
                 .location(entity.getLocation())
                 .notes(entity.getNotes())
+                .softDeleted(entity.isSoftDeleted())
                 .build();
     }
 }

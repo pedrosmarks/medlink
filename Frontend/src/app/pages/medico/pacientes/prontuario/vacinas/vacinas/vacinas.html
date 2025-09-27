@@ -12,17 +12,17 @@
 
 <div class="vacinas-grid">
   <div class="vacina-card position-relative" *ngFor="let vacina of vacinas; let i = index">
-    <button
-      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-      (click)="removerVacina(i)"
-      title="Remover vacina"
-      style="z-index:2"
-    >×</button>
-    <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
-    <div>
-      <strong>{{ vacina.name }}</strong><br>
-      <strong>Data:</strong> {{ vacina.date }}
-    </div>
+      <button
+        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+        (click)="removerVacina(i)"
+        title="Remover vacina"
+        style="z-index:2"
+      >×</button>
+      <img src="https://cdn-icons-png.flaticon.com/512/3147/3147072.png" width="36" alt="Vacina" />
+      <div [ngClass]="{'soft-deleted': vacina.softDeleted}">
+        <strong>{{ vacina.name }}</strong><br>
+        <strong>Data:</strong> {{ vacina.date }}
+      </div>
   </div>
   <div *ngIf="vacinas.length === 0" class="text-muted">
     Nenhuma vacina cadastrada para este paciente.

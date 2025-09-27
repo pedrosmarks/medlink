@@ -20,14 +20,14 @@
 
 <div class="medicamentos-grid">
   <div class="medicamento-card position-relative" *ngFor="let medicamento of medicamentos; let i = index">
-    <button
-      class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-      (click)="removerMedicamento(i)"
-      title="Remover medicamento"
-      style="z-index:2"
-    >×</button>
-    <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="36" alt="Medicamento" />
-    <div>
+      <button
+        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+        (click)="removerMedicamento(i)"
+        title="Remover medicamento"
+        style="z-index:2"
+      >×</button>
+      <img src="https://cdn-icons-png.flaticon.com/512/5200/5200746.png" width="36" alt="Medicamento" />
+      <div [ngClass]="{'soft-deleted': medicamento.softDeleted}">
       <strong>Nome:</strong> {{ medicamento.name }}<br>
       <strong>Dosagem:</strong> {{ medicamento.dosage }}<br>
       <strong>Frequência:</strong> {{ medicamento.frequency }}
