@@ -1,0 +1,185 @@
+<div class="consentimento-modal" *ngIf="isOpen">
+  <div class="modal-overlay" (click)="recusarConsentimento()"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <div class="header-icon">
+        <fa-icon [icon]="faFileContract" class="icon-large"></fa-icon>
+      </div>
+      <h2>Consentimento para Tratamento de Dados</h2>
+      <button class="close-button" (click)="recusarConsentimento()">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="termo-consentimento">
+        <div class="secao">
+          <h3><fa-icon [icon]="faShieldAlt" class="icon"></fa-icon> CONSENTIMENTO PARA TRATAMENTO DE DADOS PESSOAIS SENSÍVEIS</h3>
+        </div>
+
+        <div class="secao">
+          <h4>1. IDENTIFICAÇÃO DO CONTROLADOR</h4>
+          <p><strong>MedLink - Sistema de Gestão Médica</strong><br>
+          Responsável pelo tratamento dos seus dados pessoais conforme Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018).</p>
+        </div>
+
+        <div class="secao">
+          <h4>2. DADOS COLETADOS</h4>
+          <p>Coletamos e tratamos os seguintes dados pessoais sensíveis relacionados à saúde:</p>
+          <ul>
+            <li><strong>Dados Pessoais:</strong> Nome, CPF, data de nascimento, endereço, telefone, e-mail</li>
+            <li><strong>Dados de Saúde:</strong> Tipo sanguíneo, alergias, medicamentos, histórico médico, consultas, diagnósticos, cirurgias, vacinas</li>
+            <li><strong>Dados Profissionais (Médicos):</strong> CRM, especialidade médica</li>
+          </ul>
+        </div>
+
+        <div class="secao">
+          <h4>3. FINALIDADE DO TRATAMENTO</h4>
+          <p>Seus dados serão utilizados exclusivamente para:</p>
+          <ul>
+            <li>Prestação de serviços médicos e de saúde</li>
+            <li>Manutenção de prontuário eletrônico</li>
+            <li>Comunicação entre médicos e pacientes</li>
+            <li>Controle de acesso ao prontuário médico</li>
+            <li>Cumprimento de obrigações legais e regulamentares</li>
+          </ul>
+        </div>
+
+        <div class="secao">
+          <h4>4. BASE LEGAL</h4>
+          <p>O tratamento de dados sensíveis de saúde é realizado com base no <strong>Art. 11, II, alínea 'a' da LGPD</strong> - consentimento específico e destacado do titular para finalidades específicas.</p>
+        </div>
+
+        <div class="secao">
+          <h4>5. COMPARTILHAMENTO DE DADOS</h4>
+          <p>Seus dados poderão ser compartilhados apenas com:</p>
+          <ul>
+            <li>Médicos autorizados por você</li>
+            <li>Autoridades sanitárias quando exigido por lei</li>
+            <li>Prestadores de serviços técnicos (sob contrato de confidencialidade)</li>
+          </ul>
+        </div>
+
+        <div class="secao">
+          <h4>6. SEUS DIREITOS</h4>
+          <p>Você tem direito a:</p>
+          <ul>
+            <li>Confirmação da existência de tratamento</li>
+            <li>Acesso aos seus dados</li>
+            <li>Correção de dados incompletos ou inexatos</li>
+            <li>Anonimização, bloqueio ou eliminação de dados desnecessários</li>
+            <li>Portabilidade dos dados</li>
+            <li>Revogação do consentimento a qualquer momento</li>
+          </ul>
+        </div>
+
+        <div class="secao">
+          <h4>7. SEGURANÇA DOS DADOS</h4>
+          <p>Implementamos medidas técnicas e organizacionais para proteger seus dados:</p>
+          <ul>
+            <li>Criptografia de dados sensíveis</li>
+            <li>Controle de acesso por autenticação</li>
+            <li>Logs de auditoria</li>
+            <li>Backup seguro dos dados</li>
+          </ul>
+        </div>
+
+        <div class="secao">
+          <h4>8. RETENÇÃO DOS DADOS</h4>
+          <p>Os dados serão mantidos pelo prazo necessário para as finalidades informadas e conforme exigências legais do Conselho Federal de Medicina (mínimo de 20 anos para prontuários).</p>
+        </div>
+
+        <div class="secao">
+          <h4>9. CONTATO</h4>
+          <p>Para exercer seus direitos ou esclarecer dúvidas:<br>
+          <strong>E-mail:</strong> sac&#64;medlink.com.br</p>
+        </div>
+
+        <div class="secao-consentimento">
+          <h4><fa-icon [icon]="faCheckCircle" class="icon-success"></fa-icon> DECLARAÇÃO DE CONSENTIMENTO</h4>
+          <p><strong>Eu declaro que:</strong></p>
+
+          <div class="checkbox-group">
+            <label class="checkbox-item" [class.checked]="checkboxes.leuCompreendeu">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="checkboxes.leuCompreendeu"
+                (change)="onCheckboxChange()">
+              <span class="checkmark"></span>
+              Li e compreendi este termo de consentimento
+            </label>
+
+            <label class="checkbox-item" [class.checked]="checkboxes.autorizaTratamento">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="checkboxes.autorizaTratamento"
+                (change)="onCheckboxChange()">
+              <span class="checkmark"></span>
+              Autorizo expressamente o tratamento dos meus dados pessoais sensíveis de saúde
+            </label>
+
+            <label class="checkbox-item" [class.checked]="checkboxes.consentiuCompartilhamento">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="checkboxes.consentiuCompartilhamento"
+                (change)="onCheckboxChange()">
+              <span class="checkmark"></span>
+              Consinto com o compartilhamento dos dados com médicos por mim autorizados
+            </label>
+
+            <label class="checkbox-item" [class.checked]="checkboxes.cienteDireitos">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="checkboxes.cienteDireitos"
+                (change)="onCheckboxChange()">
+              <span class="checkmark"></span>
+              Estou ciente dos meus direitos como titular dos dados
+            </label>
+
+            <label class="checkbox-item" [class.checked]="checkboxes.concordaPolitica">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="checkboxes.concordaPolitica"
+                (change)="onCheckboxChange()">
+              <span class="checkmark"></span>
+              Concordo com os termos da Política de Privacidade
+            </label>
+          </div>
+        </div>
+
+        <div class="secao-legal">
+          <h4>⚖️ INFORMAÇÕES LEGAIS ADICIONAIS</h4>
+          <div class="info-legal">
+            <p><strong>LGPD - Artigos Aplicáveis:</strong></p>
+            <ul>
+              <li>Art. 7º, I - Consentimento do titular</li>
+              <li>Art. 11, II, a - Dados sensíveis mediante consentimento específico</li>
+              <li>Art. 14 - Tratamento de dados de crianças e adolescentes</li>
+            </ul>
+            
+            <p><strong>Resolução CFM nº 1.821/2007:</strong></p>
+            <p>Aprovação das normas técnicas concernentes à digitalização e uso dos sistemas informatizados para a guarda e manuseio dos documentos dos prontuários dos pacientes.</p>
+            
+            <p class="versao"><strong>Versão:</strong> 1.0 | <strong>Data:</strong> Janeiro 2024</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button 
+        class="btn btn-secondary" 
+        (click)="recusarConsentimento()">
+        Não Aceito
+      </button>
+      <button 
+        class="btn btn-primary" 
+        [class.disabled]="!todosCheckboxesMarcados()"
+        [disabled]="!todosCheckboxesMarcados()"
+        (click)="aceitarConsentimento()">
+        <fa-icon [icon]="faCheckCircle" class="icon-btn"></fa-icon>
+        Aceitar e Continuar
+      </button>
+    </div>
+  </div>
+</div>

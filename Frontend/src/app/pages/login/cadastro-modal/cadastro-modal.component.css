@@ -31,6 +31,10 @@
   box-sizing: border-box;
 }
 
+.modal-container.inicial {
+  max-width: 500px;
+}
+
 /* ===== HEADER DO MODAL ===== */
 
 .modal-header {
@@ -42,6 +46,71 @@
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border-radius: 16px 16px 0 0;
+}
+
+/* ===== TELA INICIAL - BOAS-VINDAS ===== */
+
+.boas-vindas {
+  text-align: center;
+  padding: 40px 30px;
+}
+
+.icon-container {
+  margin-bottom: 24px;
+}
+
+.welcome-icon {
+  font-size: 64px;
+  color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.boas-vindas h3 {
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.boas-vindas p {
+  color: #555;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.icon-btn {
+  font-size: 16px;
 }
 
 .modal-title {

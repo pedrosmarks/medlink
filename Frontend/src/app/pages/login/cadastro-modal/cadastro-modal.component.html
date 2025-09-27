@@ -1,5 +1,42 @@
 <div *ngIf="isOpen" class="modal-backdrop" (click)="onBackdropClick($event)">
-  <div class="modal-container">
+  <!-- Componente de Consentimento LGPD -->
+  <app-consentimento-lgpd
+    [isOpen]="mostrarConsentimento"
+    (aceitar)="onConsentimentoAceito()"
+    (recusar)="onConsentimentoRecusado()">
+  </app-consentimento-lgpd>
+
+  <!-- Tela inicial se consentimento não foi aceito -->
+  <div *ngIf="!consentimentoAceito && !mostrarConsentimento" class="modal-container inicial">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <fa-icon [icon]="perfil === 'medico' ? faUserDoctor : faUser" class="title-icon"></fa-icon>
+        Cadastro de {{ perfil === 'medico' ? 'Médico(a)' : 'Paciente' }}
+      </h2>
+      <button class="close-button" (click)="fecharModal()">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="boas-vindas">
+        <div class="icon-container">
+          <fa-icon [icon]="perfil === 'medico' ? faUserDoctor : faUser" class="welcome-icon"></fa-icon>
+        </div>
+        <h3>Bem-vindo ao MedLink!</h3>
+        <p>Para criar sua conta, precisamos do seu consentimento para o tratamento de dados pessoais de acordo com a LGPD.</p>
+        <p>Este é um procedimento obrigatório para garantir a segurança e privacidade dos seus dados médicos.</p>
+        
+        <button class="btn btn-primary" (click)="iniciarCadastro()">
+          <fa-icon [icon]="faUser" class="icon-btn"></fa-icon>
+          Continuar com Cadastro
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulário de cadastro (após aceitar consentimento) -->
+  <div *ngIf="consentimentoAceito" class="modal-container">
     <div class="modal-header">
       <h2 class="modal-title">
         <fa-icon [icon]="perfil === 'medico' ? faUserDoctor : faUser" class="title-icon"></fa-icon>

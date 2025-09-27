@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../../services/auth/auth.service';
+import { ConsentimentoLgpdComponent } from './consentimento-lgpd.component';
 import { faUser, faEnvelope, faLock, faTimes, faUserDoctor, faPhone, faIdCard, faMapMarkerAlt, faCalendarAlt, faVenusMars, faTint, faClipboard, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-cadastro-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, FontAwesomeModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, ConsentimentoLgpdComponent],
   templateUrl: './cadastro-modal.component.html',
   styleUrls: ['./cadastro-modal.component.css']
 })
@@ -67,6 +68,8 @@ export class CadastroModalComponent {
   erro = '';
   sucesso = '';
   carregando = false;
+  mostrarConsentimento = false;
+  consentimentoAceito = false;
 
   constructor(private authService: AuthService) {}
 
@@ -105,6 +108,25 @@ export class CadastroModalComponent {
     this.erro = '';
     this.sucesso = '';
     this.carregando = false;
+    this.mostrarConsentimento = false;
+    this.consentimentoAceito = false;
+  }
+
+  // Inicia o processo de cadastro mostrando o consentimento
+  iniciarCadastro() {
+    this.mostrarConsentimento = true;
+  }
+
+  // Aceita o consentimento e exibe o formulário
+  onConsentimentoAceito() {
+    this.consentimentoAceito = true;
+    this.mostrarConsentimento = false;
+  }
+
+  // Recusa o consentimento e fecha o modal
+  onConsentimentoRecusado() {
+    this.mostrarConsentimento = false;
+    this.fecharModal();
   }
 
   validarFormulario(): boolean {
@@ -144,6 +166,12 @@ export class CadastroModalComponent {
   async cadastrar() {
     this.erro = '';
     this.sucesso = '';
+
+    // Verifica se o consentimento foi aceito
+    if (!this.consentimentoAceito) {
+      this.erro = 'É necessário aceitar o termo de consentimento para prosseguir!';
+      return;
+    }
 
     if (!this.validarFormulario()) {
       return;
