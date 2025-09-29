@@ -91,6 +91,30 @@ public abstract class BaseController {
     }
 
     /**
+     * Cria resposta de recurso criado com sucesso (201)
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> created(String message, T data) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(message, data));
+    }
+
+    /**
+     * Cria resposta de recurso criado sem dados (201)
+     */
+    protected ResponseEntity<ApiResponse<Void>> created(String message) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(message));
+    }
+
+    /**
+     * Cria resposta de acesso proibido (403)
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> forbidden(String message) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponse<>(message));
+    }
+
+    /**
      * Valida ID e lança exceção se inválido
      */
     protected void validateId(int id) {

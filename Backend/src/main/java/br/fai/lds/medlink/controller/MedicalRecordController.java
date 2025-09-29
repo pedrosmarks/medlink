@@ -43,8 +43,7 @@ public class MedicalRecordController extends BaseController {
         MedicalRecord entity = dto.toEntity();
         int id = medicalRecordService.create(entity);
         entity.setId(id);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Prontuário criado com sucesso!", MedicalRecordResponseDto.fromEntity(entity)));
+        return created("Prontuário criado com sucesso!", MedicalRecordResponseDto.fromEntity(entity));
     }
 
     /**
@@ -132,8 +131,7 @@ public class MedicalRecordController extends BaseController {
 
         boolean hasPermission = true; // lógica fake
         if (!hasPermission) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ApiResponse<>("Acesso negado: você não tem permissão para este prontuário."));
+            return forbidden("Acesso negado: você não tem permissão para este prontuário.");
         }
 
         MedicalRecordResponseDto dto = medicalRecordService.findByPatientId(medicId, patientId);
@@ -156,8 +154,7 @@ public class MedicalRecordController extends BaseController {
         
         boolean success = medicalRecordService.addConsultation(id, dto.toEntity());
         if (success) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Consulta adicionada ao prontuário com sucesso."));
+            return created("Consulta adicionada ao prontuário com sucesso.");
         } else {
             return internalServerError();
         }
@@ -176,8 +173,7 @@ public class MedicalRecordController extends BaseController {
         
         boolean success = medicalRecordService.addMedication(id, dto.toEntity());
         if (success) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Medicamento adicionado ao prontuário com sucesso."));
+            return created("Medicamento adicionado ao prontuário com sucesso.");
         } else {
             return internalServerError();
         }
@@ -196,8 +192,7 @@ public class MedicalRecordController extends BaseController {
         
         boolean success = medicalRecordService.addAllergy(id, dto.toEntity());
         if (success) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Alergia adicionada ao prontuário com sucesso."));
+            return created("Alergia adicionada ao prontuário com sucesso.");
         } else {
             return internalServerError();
         }
@@ -216,8 +211,7 @@ public class MedicalRecordController extends BaseController {
         
         boolean success = medicalRecordService.addVaccine(id, dto.toEntity());
         if (success) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Vacina adicionada ao prontuário com sucesso."));
+            return created("Vacina adicionada ao prontuário com sucesso.");
         } else {
             return internalServerError();
         }
