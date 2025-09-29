@@ -11,17 +11,35 @@ import org.springframework.context.annotation.Primary;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Configuração do Jackson para serialização/deserialização JSON.
+ * 
+ * <p>Personaliza o ObjectMapper para suportar múltiplos formatos de data,
+ * permitindo compatibilidade com diferentes frontends (ISO e formato brasileiro).</p>
+ *
+ */
 @Configuration
 public class JacksonConfig {
 
+    /**
+     * Configura o ObjectMapper principal da aplicação.
+     * 
+     * <p>Suporta deserialização de datas nos formatos:
+     * <ul>
+     *   <li>ISO (yyyy-MM-dd)</li>
+     *   <li>Brasileiro (dd/MM/yyyy)</li>
+     * </ul>
+     * E serialização no formato ISO padrão.</p>
+     * 
+     * @return ObjectMapper configurado para o sistema
+     */
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        
-        // Deserializer customizado para aceitar múltiplos formatos
+
         LocalDateDeserializer customDeserializer = new LocalDateDeserializer(DateTimeFormatter.ISO_LOCAL_DATE) {
             @Override
             protected LocalDate _fromString(com.fasterxml.jackson.core.JsonParser p, 
