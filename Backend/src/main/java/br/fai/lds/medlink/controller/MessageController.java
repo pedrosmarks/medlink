@@ -2,9 +2,11 @@ package br.fai.lds.medlink.controller;
 
 import br.fai.lds.medlink.domain.ApiResponse;
 import br.fai.lds.medlink.domain.Message;
+import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.port.service.message.MessageService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 /**
  * Controlador para gerenciamento de mensagens.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/messages")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"},
@@ -19,9 +22,11 @@ import java.util.List;
 public class MessageController extends BaseController {
 
     private final MessageService messageService;
+    private final PatientService patientService;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, PatientService patientService) {
         this.messageService = messageService;
+        this.patientService = patientService;
     }
 
     /**
@@ -34,10 +39,8 @@ public class MessageController extends BaseController {
             List<Message> messages = messageService.findAll();
             return success("Mensagens listadas com sucesso.", messages);
         } catch (Exception e) {
-            System.out.println("Erro no controller de mensagens: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>("Erro ao carregar mensagens: " + e.getMessage()));
+            log.error("Erro ao carregar mensagens: {}", e.getMessage(), e);
+            return error("Erro ao carregar mensagens: " + e.getMessage());
         }
     }
 
@@ -51,6 +54,14 @@ public class MessageController extends BaseController {
     public ResponseEntity<ApiResponse<List<Message>>> getConversations(
             @RequestParam String senderId,
             @RequestParam String senderType) {
+        
+        if (senderId == null || senderId.trim().isEmpty()) {
+            return badRequest("SenderId é obrigatório.");
+        }
+        if (senderType == null || senderType.trim().isEmpty()) {
+            return badRequest("SenderType é obrigatório.");
+        }
+        
         List<Message> conversations = messageService.findConversationsByUser(senderId, senderType);
         return success("Conversas listadas com sucesso.", conversations);
     }
@@ -62,8 +73,13 @@ public class MessageController extends BaseController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<Message>> sendMessage(@Valid @RequestBody Message message) {
+        
+        if (!canSendMessage(message.getSenderId(), message.getRecipientId(), message.getSenderType())) {
+            return forbidden("Você não tem autorização para enviar mensagem a este paciente.");
+        }
+        
         messageService.sendMessage(message);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Mensagem enviada com sucesso.", message));
+        return created("Mensagem enviada com sucesso.", message);
     }
 
     /**
@@ -73,9 +89,33 @@ public class MessageController extends BaseController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<Message>> markAsRead(@PathVariable String id) {
+        
+        if (id == null || id.trim().isEmpty()) {
+            return badRequest("ID da mensagem é obrigatório.");
+        }
+        
         Message message = messageService.markAsRead(id);
         return message != null ? 
             success("Mensagem marcada como lida.", message) : 
             notFound("Mensagem");
+    }
+
+    /**
+     * Verifica se o remetente tem autorização para enviar mensagem ao destinatário.
+     * @param senderId ID do remetente
+     * @param recipientId ID do destinatário
+     * @param senderType tipo do remetente (MEDIC ou PATIENT)
+     * @return true se autorizado, false caso contrário
+     */
+    private boolean canSendMessage(String senderId, String recipientId, String senderType) {
+        if (!"MEDIC".equals(senderType)) return true; // Pacientes podem enviar para seus médicos
+        
+        try {
+            List<Patient> patients = patientService.findByMedicId(Integer.parseInt(senderId));
+            return patients.stream().anyMatch(p -> p.getId() == Integer.parseInt(recipientId));
+        } catch (NumberFormatException e) {
+            log.error("Erro ao converter IDs para validação: senderId={}, recipientId={}", senderId, recipientId);
+            return false;
+        }
     }
 }
