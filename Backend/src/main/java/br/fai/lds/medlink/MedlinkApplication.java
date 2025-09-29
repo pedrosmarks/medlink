@@ -14,7 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @version 1.0
  * @since 1.0
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration.class
+})
 @ComponentScan(basePackages = "br.fai.lds.medlink")
 public class MedlinkApplication {
 
