@@ -9,7 +9,6 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDT
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,8 +51,7 @@ public class AuthController extends BaseController {
                     patient.getId(), patient.getName(), "PATIENT"));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>("Email ou senha incorretos."));
+        return unauthorized("Email ou senha incorretos.");
     }
 
 
@@ -67,8 +65,7 @@ public class AuthController extends BaseController {
         boolean requestSuccess = authenticationService.sendVerificationCode(dto.getIdentifier());
 
         if (!requestSuccess) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("Usuário não encontrado com esse e-mail ou CPF."));
+            return notFoundCustom("Usuário não encontrado com esse e-mail ou CPF.");
         }
 
         return success("Código de verificação enviado.");
@@ -84,8 +81,7 @@ public class AuthController extends BaseController {
         boolean resetSuccess = authenticationService.resetPassword(dto);
 
         if (!resetSuccess) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("Código inválido ou expirado."));
+            return badRequest("Código inválido ou expirado.");
         }
 
         return success("Senha redefinida com sucesso.");

@@ -67,6 +67,30 @@ public abstract class BaseController {
     }
 
     /**
+     * Cria resposta de erro não autorizado (401)
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> unauthorized(String message) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse<>(message));
+    }
+
+    /**
+     * Cria resposta de bad request customizada (400)
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> badRequest(String message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(message));
+    }
+
+    /**
+     * Cria resposta de not found customizada (404)
+     */
+    protected <T> ResponseEntity<ApiResponse<T>> notFoundCustom(String message) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(message));
+    }
+
+    /**
      * Valida ID e lança exceção se inválido
      */
     protected void validateId(int id) {
