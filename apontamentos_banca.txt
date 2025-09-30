@@ -1,7 +1,0 @@
-Precisa ser feito:
-- Adicionar textos relacionados ao lgpd
-- Remover, tira do db ou apenas diz que a informaçao foi invalidada?
-- Melhorar o diagrama de sequencia
-- Reduzir um pouco o tempo de explicaçao dos motivos e explicar mais o proprio projeto
-- Botão cancelar seria bom colocar a esquerda o confirmar a direita
-- Atualizar a documentação
