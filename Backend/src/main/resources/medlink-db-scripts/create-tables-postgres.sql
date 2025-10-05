@@ -1,3 +1,6 @@
+-- Habilitar extensão pgcrypto para funções de criptografia
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Drop das tabelas se existirem
 DROP TABLE IF EXISTS mensagem CASCADE;
 DROP TABLE IF EXISTS usuario CASCADE;

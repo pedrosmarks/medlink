@@ -5,5 +5,8 @@ import br.fai.lds.medlink.port.dao.crud.CrudDao;
 
 public interface MedicDao extends CrudDao <Medic> {
 
+    Medic tofindByEmail(String email);
+
     Medic findByEmail(String email);
+    Medic findByEmailAndPassword(String email, String password);
 }

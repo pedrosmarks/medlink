@@ -74,17 +74,17 @@ INSERT INTO telefone_clinica (clinica_id, numero, tipo_telefone) VALUES
 -- =====================================================
 
 INSERT INTO medico (id, pessoa_id, email, senha, crm, ativo) VALUES
-(1, 1, 'pedro.almeida@medlink.com', '123456', '123456-SP', true),
-(2, 2, 'jose.silva@medlink.com', '123', '654321-SP', true);
+(1, 1, 'pedro.almeida@medlink.com', crypt('123456', gen_salt('bf')), '123456-SP', true),
+(2, 2, 'jose.silva@medlink.com', crypt('123', gen_salt('bf')), '654321-SP', true);
 
 -- =====================================================
 -- INSERINDO PACIENTES
 -- =====================================================
 
 INSERT INTO paciente (id, pessoa_id, email, senha, convenio_medico, cartao_sus, ativo) VALUES
-(1, 3, 'joao@exemplo.com.br', '123', 'Particular', '123456', true),
-(2, 4, 'maria@exemplo.com.br', '123', 'Convênio', '654321', true),
-(3, 5, 'carlos@exemplo.com.br', '123', 'Convênio', '789123', true);
+(1, 3, 'joao@exemplo.com.br', crypt('123', gen_salt('bf')), 'Particular', '123456', true),
+(2, 4, 'maria@exemplo.com.br', crypt('123', gen_salt('bf')), 'Convênio', '654321', true),
+(3, 5, 'carlos@exemplo.com.br', crypt('123', gen_salt('bf')), 'Convênio', '789123', true);
 
 -- =====================================================
 -- INSERINDO PRONTUÁRIOS
@@ -125,11 +125,11 @@ INSERT INTO medico_acesso_prontuario (medico_id, prontuario_id, data_liberacao) 
 -- =====================================================
 
 INSERT INTO usuario (pessoa_id, email, senha, perfil) VALUES
-(1, 'pedro.almeida@medlink.com', '123456', 'MEDICO'),
-(2, 'jose.silva@medlink.com', '123', 'MEDICO'),
-(3, 'joao@exemplo.com.br', '123', 'PACIENTE'),
-(4, 'maria@exemplo.com.br', '123', 'PACIENTE'),
-(5, 'carlos@exemplo.com.br', '123', 'PACIENTE');
+(1, 'pedro.almeida@medlink.com', crypt('123456', gen_salt('bf')), 'MEDICO'),
+(2, 'jose.silva@medlink.com', crypt('123', gen_salt('bf')), 'MEDICO'),
+(3, 'joao@exemplo.com.br', crypt('123', gen_salt('bf')), 'PACIENTE'),
+(4, 'maria@exemplo.com.br', crypt('123', gen_salt('bf')), 'PACIENTE'),
+(5, 'carlos@exemplo.com.br', crypt('123', gen_salt('bf')), 'PACIENTE');
 
 -- Dados detalhados para pacientes do db.json
 -- Paciente 1: João da Silva

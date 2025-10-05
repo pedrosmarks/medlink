@@ -32,9 +32,14 @@ public class AuthController extends BaseController {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
 
+        // Tenta autenticar como PACIENTE primeiro
+        var patient = authenticationService.authenticatePatient(email, password);
+        if (patient != null) {
+            return success("Login realizado com sucesso.", new LoginResponseDTO(
+                    patient.getId(), patient.getName(), "PATIENT"));
+        }
 
-
-        
+        // Se não for paciente, tenta autenticar como MÉDICO
         var medic = authenticationService.authenticateMedic(email, password);
         if (medic != null) {
             System.out.println("=== LOGIN CONTROLLER - MÉDICO ===");
@@ -45,11 +50,6 @@ public class AuthController extends BaseController {
                     medic.getId(), medic.getName(), "MEDIC"));
         }
 
-        var patient = authenticationService.authenticatePatient(email, password);
-        if (patient != null) {
-            return success("Login realizado com sucesso.", new LoginResponseDTO(
-                    patient.getId(), patient.getName(), "PATIENT"));
-        }
 
         return unauthorized("Email ou senha incorretos.");
     }

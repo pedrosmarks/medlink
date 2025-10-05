@@ -43,7 +43,7 @@ public class MedicPostgresDaoImpl implements MedicDao {
                 logger.log(Level.WARNING, "Não foi possível corrigir a sequência medico_id_seq: " + e.getMessage());
             }
 
-            String sql = "INSERT INTO medico(pessoa_id, email, senha, crm, ativo) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO medico(pessoa_id, email, senha, crm, ativo) VALUES (?, ?, crypt(?, gen_salt('bf')), ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, pessoaId);
             preparedStatement.setString(2, entity.getEmail());
@@ -244,7 +244,7 @@ public class MedicPostgresDaoImpl implements MedicDao {
     }
 
     @Override
-    public Medic findByEmail(String email) {
+    public Medic tofindByEmail(String email) {
         final String sql = """
             SELECT m.id, pe.nome, pe.cpf, m.email, m.senha, pe.sexo, pe.data_nascimento, 
                    m.crm, m.ativo
@@ -270,6 +270,48 @@ public class MedicPostgresDaoImpl implements MedicDao {
             throw new RuntimeException(e);
         }
 
+        return null;
+    }
+
+    @Override
+    public Medic findByEmail(String email) {
+        final String sql = "SELECT m.id, pe.nome, pe.cpf, m.email, m.senha, pe.sexo, pe.data_nascimento, m.crm, m.ativo FROM medico m JOIN pessoa pe ON m.pessoa_id = pe.id WHERE m.email = ? AND m.ativo = true";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Medic medic = buildMedicFromResultSet(resultSet);
+                preparedStatement.close();
+                resultSet.close();
+                return medic;
+            }
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public Medic findByEmailAndPassword(String email, String password) {
+        final String sql = "SELECT m.id, pe.nome, pe.cpf, m.email, m.senha, pe.sexo, pe.data_nascimento, m.crm, m.ativo FROM medico m JOIN pessoa pe ON m.pessoa_id = pe.id WHERE m.email = ? AND m.senha = crypt(?::text, m.senha::text) AND m.ativo = true";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Medic medic = buildMedicFromResultSet(resultSet);
+                preparedStatement.close();
+                resultSet.close();
+                return medic;
+            }
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 

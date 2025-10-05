@@ -25,4 +25,6 @@ public interface PatientDao extends CrudDao <Patient>, SoftDeleteDao {
     boolean deleteAllergy(int prontuarioId, int allergyId);
     boolean deleteDiagnosis(int prontuarioId, int diagnosisId);
     boolean deleteSurgery(int prontuarioId, int surgeryId);
+
+    Patient findByEmailAndPassword(String email, String password);
 }

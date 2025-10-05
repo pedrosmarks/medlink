@@ -30,17 +30,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Patient authenticatePatient(String email, String password) {
         log.info("Tentando autenticar paciente com email: {}", email);
-        Patient patient = patientDao.findByEmail(email);
+        Patient patient = patientDao.findByEmailAndPassword(email, password);
         if (patient != null) {
             log.info("Paciente encontrado: {}", patient.getName());
-            if (patient.getPassword().equals(password)) {
-                log.info("Autenticação bem-sucedida para paciente: {}", patient.getName());
-                return patient;
-            } else {
-                log.warn("Senha incorreta para paciente: {}", email);
-            }
+            log.info("Autenticação bem-sucedida para paciente: {}", patient.getName());
+            return patient;
         } else {
-            log.warn("Paciente não encontrado com email: {}", email);
+            log.warn("Paciente não encontrado ou senha incorreta com email: {}", email);
         }
         return null;
     }
@@ -49,18 +45,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Medic authenticateMedic(String email, String password) {
         log.info("=== AUTENTICANDO MÉDICO ===");
         log.info("Email: {}", email);
-        
-        Medic medic = medicDao.findByEmail(email);
+        Medic medic = medicDao.findByEmailAndPassword(email, password);
         if (medic != null) {
-            log.info("Médico encontrado: ID={}, Nome={}", medic.getId(), medic.getName());
-            if (medic.getPassword().equals(password)) {
-                log.info("✅ Autenticação bem-sucedida para médico ID: {}", medic.getId());
-                return medic;
-            } else {
-                log.warn("❌ Senha incorreta para médico: {}", email);
-            }
+            log.info("✅ Autenticação bem-sucedida para médico ID: {}", medic.getId());
+            return medic;
         } else {
-            log.warn("❌ Médico não encontrado com email: {}", email);
+            log.warn("❌ Email ou senha incorretos para médico: {}", email);
         }
         return null;
     }
