@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +19,7 @@ import lombok.experimental.SuperBuilder;
  * @since 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor

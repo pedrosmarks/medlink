@@ -77,6 +77,7 @@ public class PatientCreateDto {
     private String observations;
     private String plan;
     private String susCard;
+    @Builder.Default
     private boolean active = true;
 
     /**

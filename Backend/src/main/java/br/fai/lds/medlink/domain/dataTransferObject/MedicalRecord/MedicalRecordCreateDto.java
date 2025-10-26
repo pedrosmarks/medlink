@@ -77,6 +77,7 @@ public class MedicalRecordCreateDto {
     /**
      * Indica se o prontuário médico está ativo.
      */
+    @Builder.Default
     private boolean medicalRecordActive = true;
 
     /**
