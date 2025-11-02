@@ -25,7 +25,7 @@ public class MedlinkApplication {
 
 
 	/**
-	 * Método principal da aplicação MedLink.
+	 * Metodo principal da aplicação MedLink.
 	 * 
 	 * @param args argumentos da linha de comando
 	 */
