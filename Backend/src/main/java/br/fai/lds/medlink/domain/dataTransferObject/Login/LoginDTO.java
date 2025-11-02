@@ -43,4 +43,14 @@ public class LoginDTO {
     @NotBlank(message = "Senha é obrigatória")
     @Size(min = 1, max = 20, message = "Senha deve ter entre 1 e 20 caracteres")
     private String password;
+
+    /**
+     * Tipo de usuário para autenticação.
+     * <p>
+     * Deve ser "MEDIC" para médicos ou "PATIENT" para pacientes.
+     * Este campo determina em qual tabela será feita a autenticação.
+     * </p>
+     */
+    @NotBlank(message = "Tipo de usuário é obrigatório")
+    private String userType;
 }
