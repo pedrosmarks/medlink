@@ -1,25 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  private apiUrl = 'http://localhost:8080/auth/login';
 
-  constructor(private http: HttpClient) {}
+  constructor(private authService: AuthService) {}
 
-  login(usuario: string, senha: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    
-    const body = {
+  login(usuario: string, senha: string, userType: string): Observable<any> {
+    return this.authService.login({
       email: usuario,
-      password: senha
-    };
-    
-    return this.http.post<any>(this.apiUrl, body, { headers });
+      password: senha,
+      userType: userType
+    });
   }
 }

@@ -1,5 +1,5 @@
 <div class="login-form">
-  <form (ngSubmit)="login()" class="modern-form">
+  <form class="modern-form">
     <div class="form-group">
       <label class="form-label">
         <fa-icon [icon]="faUser" class="label-icon"></fa-icon>
@@ -35,7 +35,7 @@
       </div>
     </div>
     
-    <button class="login-button" type="submit" [disabled]="!usuario || !senha">
+    <button class="login-button" type="button" [disabled]="!usuario || !senha" (click)="login()">
       <span class="button-content">
         <fa-icon [icon]="faSignInAlt" class="button-icon"></fa-icon>
         Entrar

@@ -163,7 +163,7 @@ export class CadastroModalComponent {
     return true;
   }
 
-  async cadastrar() {
+  cadastrar() {
     this.erro = '';
     this.sucesso = '';
 
@@ -178,44 +178,44 @@ export class CadastroModalComponent {
     }
 
     this.carregando = true;
+    const dados = this.getDadosCadastro();
 
-    try {
-      const dados = this.getDadosCadastro();
-
-      const response = await this.authService.registrarUsuario(
-        dados, 
-        this.perfil as 'medico' | 'paciente'
-      ).toPromise();
-      this.sucesso = `Cadastro de ${this.perfil} criado com sucesso! Bem-vindo(a) ao MedLink!`;
-      
-      // Fechar modal após 2 segundos
-      setTimeout(() => {
-        this.fecharModal();
-      }, 2000);
-
-    } catch (error: any) {
-      console.error('❌ Erro no cadastro:', error);
-      
-      if (error.status === 400 && error.error) {
-        // Tratar erros de validação do backend
-        const validationErrors = error.error;
-        if (typeof validationErrors === 'string') {
-          this.erro = validationErrors;
-        } else if (validationErrors.message) {
-          this.erro = validationErrors.message;
+    this.authService.registrarUsuario(
+      dados, 
+      this.perfil as 'medico' | 'paciente'
+    ).subscribe({
+      next: (response) => {
+        this.sucesso = `Cadastro de ${this.perfil} criado com sucesso! Bem-vindo(a) ao MedLink!`;
+        
+        // Fechar modal após 2 segundos
+        setTimeout(() => {
+          this.fecharModal();
+        }, 2000);
+        this.carregando = false;
+      },
+      error: (error) => {
+        console.error('❌ Erro no cadastro:', error);
+        
+        if (error.status === 400 && error.error) {
+          // Tratar erros de validação do backend
+          const validationErrors = error.error;
+          if (typeof validationErrors === 'string') {
+            this.erro = validationErrors;
+          } else if (validationErrors.message) {
+            this.erro = validationErrors.message;
+          } else {
+            this.erro = 'Dados inválidos. Verifique os campos!';
+          }
+        } else if (error.status === 409) {
+          this.erro = 'Já existe um usuário cadastrado com este email ou CPF!';
+        } else if (error.status === 0) {
+          this.erro = 'Erro de conexão. Verifique sua internet!';
         } else {
-          this.erro = 'Dados inválidos. Verifique os campos!';
+          this.erro = 'Erro no servidor. Tente novamente!';
         }
-      } else if (error.status === 409) {
-        this.erro = 'Já existe um usuário cadastrado com este email ou CPF!';
-      } else if (error.status === 0) {
-        this.erro = 'Erro de conexão. Verifique sua internet!';
-      } else {
-        this.erro = 'Erro no servidor. Tente novamente!';
+        this.carregando = false;
       }
-    } finally {
-      this.carregando = false;
-    }
+    });
   }
 
   private getDadosCadastro() {

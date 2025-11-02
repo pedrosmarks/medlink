@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from '../../../services/login/login';
+import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -14,11 +14,17 @@ import { CadastroModalComponent } from '../cadastro-modal/cadastro-modal.compone
   templateUrl: './login-base.component.html',
   styleUrls: ['./login-base.component.css']
 })
-export class LoginBaseComponent {
+export class LoginBaseComponent implements OnInit {
   @Input() perfil: string = '';
   usuario = '';
   senha = '';
   erro = '';
+  
+  ngOnInit() {
+    alert('COMPONENTE CARREGOU!');
+    console.log('🔧 LoginBaseComponent inicializado');
+    console.log('👤 Perfil recebido:', this.perfil);
+  }
   
   // Controle do modal de cadastro
   mostrarModalCadastro = false;
@@ -29,67 +35,58 @@ export class LoginBaseComponent {
   faSignInAlt = faSignInAlt;
   faExclamationTriangle = faExclamationTriangle;
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   login() {
+    alert('LOGIN CHAMADO!');
+    console.log('🚀 MÉTODO LOGIN CHAMADO!');
+    console.log('👤 Usuário:', this.usuario);
+    console.log('🔒 Senha:', this.senha ? '***' : 'vazia');
+    console.log('👨‍⚕️ Perfil:', this.perfil);
+    
     if (!this.usuario || !this.senha) {
       this.erro = 'Preencha todos os campos!';
+      console.log('❌ Campos vazios!');
       return;
     }
 
-    this.loginService.login(this.usuario, this.senha)
-  .subscribe({
-    next: (response) => {
-      // O backend retorna { data: { id, name, email, profile } }
-      if (response?.data?.id && response?.data?.profile) {
-        localStorage.setItem('userId', response.data.id);
-        localStorage.setItem('userName', response.data.name || 'Usuário');
-        localStorage.setItem('userEmail', response.data.email || this.usuario);
-        localStorage.setItem('userProfile', response.data.profile);
-
-        // Salva informações específicas por tipo de usuário
-        if (response.data.profile === 'MEDIC') {
-          localStorage.setItem('medicoId', response.data.id);
-          localStorage.setItem('userType', 'medico');
-          localStorage.removeItem('pacienteId'); // Remove dados de paciente se existir
-          this.router.navigate(['/medico/dashboard']);
-        } else if (response.data.profile === 'PATIENT') {
-          localStorage.setItem('pacienteId', response.data.id);
-          localStorage.setItem('userType', 'paciente');
-          localStorage.removeItem('medicoId'); // Remove dados de médico se existir
-          this.router.navigate(['/paciente/dashboard']);
-        } else {
-          this.erro = 'Tipo de usuário desconhecido!';
+    const userType = this.perfil === 'medico' ? 'MEDICO' : 'PACIENTE';
+    this.authService.login({ email: this.usuario, password: this.senha, userType })
+      .subscribe({
+        next: (response: any) => {
+          console.log('✅ Login realizado com sucesso:', response);
+          
+          // Redirecionar baseado no tipo de usuário
+          if (userType === 'MEDICO') {
+            this.router.navigate(['/medico/dashboard']);
+          } else {
+            this.router.navigate(['/paciente/dashboard']);
+          }
+        },
+        error: (error) => {
+          console.log('ERRO no login:', error);
+          
+          if (error.status === 400 && error.error) {
+            const validationErrors = error.error;
+            
+            if (validationErrors.email) {
+              this.erro = validationErrors.email;
+            } else if (validationErrors.password) {
+              this.erro = validationErrors.password;
+            } else if (typeof validationErrors === 'string') {
+              this.erro = validationErrors;
+            } else {
+              this.erro = 'Dados inválidos. Verifique os campos!';
+            }
+          } else if (error.status === 401) {
+            this.erro = 'Usuário ou senha inválidos!';
+          } else if (error.status === 0) {
+            this.erro = 'Erro de conexão. Verifique sua internet!';
+          } else {
+            this.erro = 'Erro no servidor. Tente novamente!';
+          }
         }
-      } else {
-        this.erro = 'Usuário ou senha inválidos!';
-      }
-    },
-    error: (error) => {
-      console.log('Erro no login:', error);
-      
-      if (error.status === 400 && error.error) {
-        // Erros de validação HTTP 400
-        const validationErrors = error.error;
-        
-        if (validationErrors.email) {
-          this.erro = validationErrors.email;
-        } else if (validationErrors.password) {
-          this.erro = validationErrors.password;
-        } else if (typeof validationErrors === 'string') {
-          this.erro = validationErrors;
-        } else {
-          this.erro = 'Dados inválidos. Verifique os campos!';
-        }
-      } else if (error.status === 401) {
-        this.erro = 'Usuário ou senha inválidos!';
-      } else if (error.status === 0) {
-        this.erro = 'Erro de conexão. Verifique sua internet!';
-      } else {
-        this.erro = 'Erro no servidor. Tente novamente!';
-      }
-    }
-  });
+      });
   }
 
   irParaCadastro(event: Event) {

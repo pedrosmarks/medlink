@@ -25,11 +25,10 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Verifica se já está logado e redireciona
     if (this.authService.isLoggedIn()) {
-      const userType = this.authService.getUserType();
-      if (userType === 'paciente') {
-        this.router.navigate(['/paciente']);
-      } else if (userType === 'medico') {
-        this.router.navigate(['/medico']);
+      if (this.authService.isPaciente()) {
+        this.router.navigate(['/paciente/dashboard']);
+      } else if (this.authService.isMedico()) {
+        this.router.navigate(['/medico/dashboard']);
       }
     }
   }
