@@ -19,13 +19,13 @@ import java.util.List;
 
 @Profile("basic")
 @Configuration
-@EnableWebSecurity
 public class BasicSecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
@@ -47,8 +47,8 @@ public class BasicSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/authenticate",
-                                "/api/medic/**",
-                                "/api/patient/**").permitAll()
+                                "/auth/**",
+                                "/api/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));

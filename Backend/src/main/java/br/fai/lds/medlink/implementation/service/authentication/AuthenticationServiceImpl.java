@@ -9,11 +9,13 @@ import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Profile("basic")
 @Slf4j
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -137,5 +139,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private void invalidateResetCode(String email) {
         resetCodes.remove(email);
+    }
+
+    @Override
+    public Patient findPatientByEmail(String email) {
+        return patientDao.findByEmail(email);
+    }
+
+    @Override
+    public Medic findMedicByEmail(String email) {
+        return medicDao.findByEmail(email);
     }
 }
