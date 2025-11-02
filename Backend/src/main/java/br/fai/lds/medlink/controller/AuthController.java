@@ -9,15 +9,17 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDT
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * Controlador responsável por gerenciar as operações de autenticação e recuperação de senha.
  */
+@Profile("basic")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/authenticate")
 public class AuthController extends BaseController {
 
     private final AuthenticationService authenticationService;
@@ -27,29 +29,27 @@ public class AuthController extends BaseController {
      * @param loginDTO dados de login contendo email e senha
      * @return resposta com dados do usuário autenticado ou erro de autenticação
      */
-    @PostMapping("/login")
+    @PostMapping()
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
+        String userType = loginDTO.getUserType();
 
-        // Tenta autenticar como PACIENTE primeiro
-        var patient = authenticationService.authenticatePatient(email, password);
-        if (patient != null) {
-            return success("Login realizado com sucesso.", new LoginResponseDTO(
-                    patient.getId(), patient.getName(), "PATIENT"));
+        if ("PATIENT".equals(userType)) {
+            var patient = authenticationService.authenticatePatient(email, password);
+            if (patient != null) {
+                return success("Login realizado com sucesso.", new LoginResponseDTO(
+                        patient.getId(), patient.getName(), "PATIENT"));
+            }
+        } else if ("MEDIC".equals(userType)) {
+            var medic = authenticationService.authenticateMedic(email, password);
+            if (medic != null) {
+                return success("Login realizado com sucesso.", new LoginResponseDTO(
+                        medic.getId(), medic.getName(), "MEDIC"));
+            }
+        } else {
+            return badRequest("Tipo de usuário inválido. Use 'MEDIC' ou 'PATIENT'.");
         }
-
-        // Se não for paciente, tenta autenticar como MÉDICO
-        var medic = authenticationService.authenticateMedic(email, password);
-        if (medic != null) {
-            System.out.println("=== LOGIN CONTROLLER - MÉDICO ===");
-            System.out.println("Médico autenticado: ID=" + medic.getId() + ", Nome=" + medic.getName());
-            System.out.println("Retornando LoginResponseDTO com ID: " + medic.getId());
-            
-            return success("Login realizado com sucesso.", new LoginResponseDTO(
-                    medic.getId(), medic.getName(), "MEDIC"));
-        }
-
 
         return unauthorized("Email ou senha incorretos.");
     }
