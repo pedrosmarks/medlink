@@ -15,5 +15,8 @@ public interface AuthenticationService {
 
     boolean sendVerificationCode(String identifier);
 
+    Patient findPatientByEmail(String email);
+    Medic findMedicByEmail(String email);
+
 }
 
