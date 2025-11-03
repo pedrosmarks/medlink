@@ -1,8 +1,8 @@
 package br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord;
 
-import br.fai.lds.medlink.domain.BloodType;
+import br.fai.lds.medlink.domain.enuns.BloodType;
 import br.fai.lds.medlink.domain.MedicalRecord;
-import br.fai.lds.medlink.domain.OrganDonorStatus;
+import br.fai.lds.medlink.domain.enuns.OrganDonorStatus;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Allergy.AllergyCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Consultation.ConsultationCreateDto;
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Medication.MedicationCreateDto;
@@ -11,7 +11,6 @@ import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.Vaccin
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

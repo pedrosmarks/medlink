@@ -1,5 +1,7 @@
 package br.fai.lds.medlink.domain;
 
+import br.fai.lds.medlink.domain.enuns.BloodType;
+import br.fai.lds.medlink.domain.enuns.OrganDonorStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -1,6 +1,6 @@
 package br.fai.lds.medlink;
 
-import br.fai.lds.medlink.domain.Gender;
+import br.fai.lds.medlink.domain.enuns.Gender;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.implementation.service.pacient.PatientServiceImpl;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;

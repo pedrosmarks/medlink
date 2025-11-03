@@ -1,15 +1,18 @@
 package br.fai.lds.medlink.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.util.List;
 
 /**
  * Entidade que representa um paciente no sistema MedLink.
  * 
- * <p>Contém todas as informações pessoais, médicas e de acesso do paciente,
+ * <p>Extende a classe Person e adiciona informações específicas do paciente,
  * incluindo histórico médico completo, especialistas autorizados e solicitações de acesso.</p>
  * 
  * @author MedLink Team
@@ -17,32 +20,14 @@ import java.util.List;
  * @since 1.0
  */
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = false)
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Patient {
-    /** ID único do paciente no sistema. */
-    private int id;
-    
-    /** Nome completo do paciente. */
-    private String name;
-    
-    /** CPF do paciente (documento de identificação). */
-    private String cpf;
-    
-    /** Senha de acesso do paciente ao sistema. */
-    private String password;
-    
-    /** Gênero do paciente (MASCULINO, FEMININO, OUTRO). */
-    private Gender gender;
-    
-    /** Data de nascimento do paciente. */
-    private LocalDate birthDate;
-    
+public class Patient extends Person {
     /** Idade do paciente (calculada ou informada). */
     private Integer age;
-    
-    /** Número de telefone para contato. */
-    private String phoneNumber;
     
     /** URL ou caminho para foto do paciente. */
     private String avatar;
@@ -52,9 +37,6 @@ public class Patient {
     
     /** Observações gerais sobre o paciente. */
     private String observations;
-    
-    /** Endereço residencial do paciente. */
-    private Address address;
     
     /** Email do paciente para contato e acesso. */
     private String email;
@@ -95,41 +77,5 @@ public class Patient {
     /** Lista de alergias conhecidas. */
     private List<Allergy> alergias;
 
-    public Patient() {}
 
-    public Patient(int id, String name, String cpf, String password, Gender gender,
-                   LocalDate birthDate, Integer age, String phoneNumber, String avatar, String bloodType,
-                   String observations, Address address, String email, String plan,
-                   String susCard, Integer medicId, boolean active,
-                   List<EspecialistaAutorizado> especialistasAutorizados,
-                   List<RequisicaoAcesso> requisicoesAcesso, List<Consultation> consultations,
-                   List<Vaccine> vacinas, List<Medication> medications,
-                   List<Surgery> cirurgias, List<Diagnosis> diagnosticos,
-                   List<Allergy> alergias) {
-        this.id = id;
-        this.name = name;
-        this.cpf = cpf;
-        this.password = password;
-        this.gender = gender;
-        this.birthDate = birthDate;
-        this.age = age;
-        this.phoneNumber = phoneNumber;
-        this.avatar = avatar;
-        this.bloodType = bloodType;
-        this.observations = observations;
-        this.address = address;
-        this.email = email;
-        this.plan = plan;
-        this.susCard = susCard;
-        this.medicId = medicId;
-        this.active = active;
-        this.especialistasAutorizados = especialistasAutorizados;
-        this.requisicoesAcesso = requisicoesAcesso;
-        this.consultations = consultations;
-        this.vacinas = vacinas;
-        this.medications = medications;
-        this.cirurgias = cirurgias;
-        this.diagnosticos = diagnosticos;
-        this.alergias = alergias;
-    }
 }

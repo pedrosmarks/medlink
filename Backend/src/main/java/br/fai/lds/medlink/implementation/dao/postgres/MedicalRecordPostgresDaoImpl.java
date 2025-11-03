@@ -1,6 +1,8 @@
 package br.fai.lds.medlink.implementation.dao.postgres;
 
 import br.fai.lds.medlink.domain.*;
+import br.fai.lds.medlink.domain.enuns.BloodType;
+import br.fai.lds.medlink.domain.enuns.OrganDonorStatus;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import lombok.extern.slf4j.Slf4j;
 

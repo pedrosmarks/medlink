@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.implementation.dao.postgres;
 
 import br.fai.lds.medlink.domain.*;
+import br.fai.lds.medlink.domain.enuns.Gender;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.util.CpfUtil;
 import lombok.extern.slf4j.Slf4j;

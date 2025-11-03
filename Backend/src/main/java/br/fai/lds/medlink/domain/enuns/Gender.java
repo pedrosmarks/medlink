@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain;
+package br.fai.lds.medlink.domain.enuns;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

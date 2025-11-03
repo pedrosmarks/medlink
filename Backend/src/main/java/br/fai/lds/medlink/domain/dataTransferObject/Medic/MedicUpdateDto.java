@@ -1,7 +1,7 @@
 package br.fai.lds.medlink.domain.dataTransferObject.Medic;
 
 import br.fai.lds.medlink.domain.Address;
-import br.fai.lds.medlink.domain.Gender;
+import br.fai.lds.medlink.domain.enuns.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;

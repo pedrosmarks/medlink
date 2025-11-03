@@ -1,4 +1,4 @@
-package br.fai.lds.medlink.domain;
+package br.fai.lds.medlink.domain.enuns;
 
 import lombok.Getter;
 

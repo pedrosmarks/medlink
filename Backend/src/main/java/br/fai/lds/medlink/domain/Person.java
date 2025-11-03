@@ -1,5 +1,6 @@
 package br.fai.lds.medlink.domain;
 
+import br.fai.lds.medlink.domain.enuns.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

@@ -1,6 +1,6 @@
 package br.fai.lds.medlink.implementation.dao.postgres;
 
-import br.fai.lds.medlink.domain.Gender;
+import br.fai.lds.medlink.domain.enuns.Gender;
 import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.util.CpfUtil;

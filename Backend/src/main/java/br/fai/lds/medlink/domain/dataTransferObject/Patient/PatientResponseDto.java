@@ -1,6 +1,7 @@
 package br.fai.lds.medlink.domain.dataTransferObject.Patient;
 
 import br.fai.lds.medlink.domain.*;
+import br.fai.lds.medlink.domain.enuns.Gender;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.Period;
