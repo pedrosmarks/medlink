@@ -29,9 +29,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+        System.out.println("CustomUserDetailsService - Carregando usuário: " + email);
+        
         // Tenta encontrar como paciente primeiro
         Patient patient = patientDao.findByEmail(email);
         if (patient != null) {
+            System.out.println("Usuário encontrado como PACIENTE: " + patient.getName());
             List<GrantedAuthority> authorities = List.of(
                     new SimpleGrantedAuthority("PATIENT")
             );
@@ -45,6 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Se não for paciente, tenta como médico
         Medic medic = medicDao.findByEmail(email);
         if (medic != null) {
+            System.out.println("Usuário encontrado como MEDICO: " + medic.getName());
             List<GrantedAuthority> authorities = List.of(
                     new SimpleGrantedAuthority("MEDIC")
             );
@@ -55,6 +59,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
         }
 
+        System.out.println("Usuário NÃO encontrado: " + email);
         throw new UsernameNotFoundException("Email não encontrado");
     }
 }

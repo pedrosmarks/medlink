@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../services/auth/auth.service';
+import { LoginService } from '../../../services/login/login';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -21,9 +21,7 @@ export class LoginBaseComponent implements OnInit {
   erro = '';
   
   ngOnInit() {
-    alert('COMPONENTE CARREGOU!');
-    console.log('🔧 LoginBaseComponent inicializado');
-    console.log('👤 Perfil recebido:', this.perfil);
+    // Componente inicializado
   }
   
   // Controle do modal de cadastro
@@ -35,10 +33,9 @@ export class LoginBaseComponent implements OnInit {
   faSignInAlt = faSignInAlt;
   faExclamationTriangle = faExclamationTriangle;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private loginService: LoginService, private router: Router) {}
 
   login() {
-    alert('LOGIN CHAMADO!');
     console.log('🚀 MÉTODO LOGIN CHAMADO!');
     console.log('👤 Usuário:', this.usuario);
     console.log('🔒 Senha:', this.senha ? '***' : 'vazia');
@@ -51,20 +48,54 @@ export class LoginBaseComponent implements OnInit {
     }
 
     const userType = this.perfil === 'medico' ? 'MEDICO' : 'PACIENTE';
-    this.authService.login({ email: this.usuario, password: this.senha, userType })
+    
+    this.loginService.login(this.usuario, this.senha, userType)
       .subscribe({
         next: (response: any) => {
-          console.log('✅ Login realizado com sucesso:', response);
+          console.log('✅ RESPOSTA DO BACKEND:', response);
+          console.log('🔍 Tipo da resposta:', typeof response);
+          console.log('🔍 Chaves:', Object.keys(response || {}));
           
-          // Redirecionar baseado no tipo de usuário
-          if (userType === 'MEDICO') {
-            this.router.navigate(['/medico/dashboard']);
+          // Backend retorna apenas { token: "..." }
+          if (response?.token) {
+            console.log('🔑 Token recebido, decodificando...');
+            
+            // Decodificar JWT para extrair dados
+            try {
+              const payload = JSON.parse(atob(response.token.split('.')[1]));
+              console.log('🔍 Payload do JWT:', payload);
+              
+              // Salvar dados do JWT
+              localStorage.setItem('userId', payload.userId || payload.pacienteId || payload.sub);
+              localStorage.setItem('userName', payload.fullname || 'Usuário');
+              localStorage.setItem('userEmail', payload.email);
+              localStorage.setItem('userType', payload.role);
+              
+              // Redirecionar baseado no role do JWT
+              if (payload.role === 'MEDICO') {
+                localStorage.setItem('medicoId', payload.userId || payload.medicoId);
+                localStorage.removeItem('pacienteId');
+                this.router.navigate(['/medico/dashboard']);
+              } else if (payload.role === 'PACIENTE') {
+                localStorage.setItem('pacienteId', payload.pacienteId || payload.userId);
+                localStorage.removeItem('medicoId');
+                this.router.navigate(['/paciente/dashboard']);
+              } else {
+                this.erro = 'Tipo de usuário inválido!';
+              }
+              
+            } catch (error) {
+              this.erro = 'Erro ao processar token!';
+            }
           } else {
-            this.router.navigate(['/paciente/dashboard']);
+            this.erro = 'Token não recebido do servidor!';
           }
         },
         error: (error) => {
-          console.log('ERRO no login:', error);
+          console.log('❌ ERRO DETALHADO:', error);
+          console.log('🔍 Status:', error.status);
+          console.log('🔍 Mensagem:', error.message);
+          console.log('🔍 Body:', error.error);
           
           if (error.status === 400 && error.error) {
             const validationErrors = error.error;

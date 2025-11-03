@@ -47,19 +47,23 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient authenticatePatient(String email, String password) {
-        Patient patient = patientDao.findByEmailAndPassword(email, password);
+        Patient patient = patientDao.findByEmail(email);
         if (patient != null && passwordEncoder.matches(password, patient.getPassword())) {
+            System.out.println("Paciente autenticado: " + patient.getName());
             return patient;
         }
+        System.out.println("Falha na autenticação do paciente: " + email);
         return null;
     }
 
     @Override
     public Medic authenticateMedic(String email, String password) {
-        Medic medic = medicDao.findByEmailAndPassword(email, password);
+        Medic medic = medicDao.findByEmail(email);
         if (medic != null && passwordEncoder.matches(password, medic.getPassword())) {
+            System.out.println("Médico autenticado: " + medic.getName());
             return medic;
         }
+        System.out.println("Falha na autenticação do médico: " + email);
         return null;
     }
 

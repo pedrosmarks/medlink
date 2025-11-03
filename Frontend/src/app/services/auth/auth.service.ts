@@ -17,25 +17,14 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl, credentials)
       .pipe(
         tap(response => {
+          // Verificar se tem token (JWT)
           const token = response.token || response.data?.token;
           if (token) {
             this.setToken(token);
-            
-            // Salvar dados do usuário
-            if (response.user || response.data?.user) {
-              const user = response.user || response.data.user;
-              localStorage.setItem('userId', user.id?.toString() || '');
-              localStorage.setItem('userName', user.name || '');
-              localStorage.setItem('userEmail', user.email || '');
-              localStorage.setItem('userType', credentials.userType);
-              
-              if (credentials.userType === 'MEDICO' && user.crm) {
-                localStorage.setItem('medicoId', user.id?.toString() || '');
-              } else if (credentials.userType === 'PACIENTE') {
-                localStorage.setItem('pacienteId', user.id?.toString() || '');
-              }
-            }
           }
+          
+          // Se não tem token mas tem dados do usuário, é o formato antigo
+          // Não fazer nada aqui, deixar o componente tratar
         })
       );
   }
@@ -86,6 +75,10 @@ export class AuthService {
 
   isPaciente(): boolean {
     return localStorage.getItem('userType') === 'PACIENTE';
+  }
+  
+  isUser(): boolean {
+    return localStorage.getItem('userType') === 'USER';
   }
 
   registrarUsuario(userData: any, userType: 'medico' | 'paciente'): Observable<any> {

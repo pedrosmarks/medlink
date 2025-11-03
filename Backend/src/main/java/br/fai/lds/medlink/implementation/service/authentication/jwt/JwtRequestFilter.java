@@ -29,7 +29,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("=== JWT FILTER DEBUG ===");
+        System.out.println("URL: " + request.getMethod() + " " + request.getRequestURI());
+        
         final String requestTokenHeader = request.getHeader("Authorization");
+        System.out.println("Authorization Header: " + requestTokenHeader);
 
         String email = null;
         String jwtToken = null;
@@ -37,30 +41,62 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")){
             try {
                 jwtToken = requestTokenHeader.substring(7);
+                System.out.println("Token JWT extraído: " + jwtToken.substring(0, Math.min(30, jwtToken.length())) + "...");
+                System.out.println("Token completo length: " + jwtToken.length());
 
                 email = jwtService.getEmailFromToken(jwtToken);
+                System.out.println("Email extraído do token: " + email);
+                System.out.println("Role do token: " + jwtService.getRoleFromToken(jwtToken));
+                System.out.println("UserId do token: " + jwtService.getUserIdFromToken(jwtToken));
             } catch (IllegalArgumentException e) {
-                System.out.println("Não foi possível obter o token.");
+                System.out.println("Não foi possível obter o token: " + e.getMessage());
             } catch (ExpiredJwtException e){
-                System.out.println("O token já expirou.");
+                System.out.println("O token já expirou: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Erro ao processar token: " + e.getMessage());
             }
         }else {
-            System.out.println("O token recebido não iniciou com a string Bearer");
+            System.out.println("Token não encontrado ou não inicia com Bearer. Header: " + requestTokenHeader);
         }
 
         if (email != null && SecurityContextHolder
                 .getContext()
                 .getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+            try {
+                System.out.println("Carregando UserDetails para email: " + email);
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+                System.out.println("UserDetails carregado com sucesso. Authorities: " + userDetails.getAuthorities());
 
-            if (jwtService.validadeToken(jwtToken,userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (jwtService.validadeToken(jwtToken,userDetails)) {
+                    System.out.println("Token válido! Autenticando usuário...");
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Adicionar dados do JWT ao contexto da requisição
+                    request.setAttribute("jwt.role", jwtService.getRoleFromToken(jwtToken));
+                    request.setAttribute("jwt.userId", jwtService.getUserIdFromToken(jwtToken));
+                    request.setAttribute("jwt.fullname", jwtService.getFullnameFromToken(jwtToken));
+                    request.setAttribute("jwt.email", jwtService.getEmailFromToken(jwtToken));
 
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    System.out.println("Usuário autenticado com sucesso!");
+                } else {
+                    System.out.println("Token inválido ou expirado!");
+                }
+            } catch (Exception e) {
+                System.out.println("Erro ao autenticar usuário: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else if (email == null) {
+            System.out.println("Email não extraído do token");
+        } else {
+            System.out.println("Usuário já autenticado no contexto");
         }
+        
+        System.out.println("Authentication final: " + (SecurityContextHolder.getContext().getAuthentication() != null ? "AUTHENTICATED" : "NOT AUTHENTICATED"));
+        System.out.println("=== FIM JWT FILTER ===");
+        
         filterChain.doFilter(request, response);
     }
 }
