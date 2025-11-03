@@ -31,12 +31,10 @@ public class JwtAuthController {
 
     @PostMapping
     public ResponseEntity<JwtToKenDto> authenticate(@RequestBody final LoginDTO loginDTO){
-        System.out.println("=== JWT AUTH CONTROLLER ===");
         System.out.println("Login attempt for: " + loginDTO.getEmail());
 
         try {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getEmail());
-            System.out.println("UserDetails loaded successfully");
             
             String jwt;
             // Tenta autenticar como paciente primeiro
@@ -61,9 +59,7 @@ public class JwtAuthController {
             if(jwt == null || jwt.isEmpty()){
                 throw new InternalError("Token inválido");
             }
-            
-            System.out.println("Token JWT gerado com sucesso!");
-            System.out.println("Token (primeiros 50 chars): " + jwt.substring(0, Math.min(50, jwt.length())) + "...");
+
             
             JwtToKenDto jwtTokenDto = new JwtToKenDto(jwt);
             
