@@ -33,10 +33,8 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             patientDao.create(entity);
-            log.info("Paciente criado com sucesso: {}", entity.getName());
             return entity.getId();
         } catch (Exception e) {
-            log.error("Erro ao criar paciente: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao criar paciente", e);
         }
     }
@@ -48,14 +46,8 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             boolean result = patientDao.remove(id);
-            if (result) {
-                log.info("Paciente removido com sucesso: ID {}", id);
-            } else {
-                log.warn("Tentativa de remover paciente inexistente: ID {}", id);
-            }
             return result;
         } catch (Exception e) {
-            log.error("Erro ao remover paciente ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Erro ao remover paciente", e);
         }
     }
@@ -67,12 +59,8 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             Patient patient = patientDao.readById(id);
-            if (patient == null) {
-                log.warn("Paciente não encontrado com ID: {}", id);
-            }
             return patient;
         } catch (Exception e) {
-            log.error("Erro ao buscar paciente ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Erro ao buscar paciente", e);
         }
     }
@@ -84,12 +72,8 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             Patient patient = patientDao.findByEmail(email);
-            if (patient == null) {
-                log.warn("Paciente não encontrado com email: {}", email);
-            }
             return patient;
         } catch (Exception e) {
-            log.error("Erro ao buscar paciente por email {}: {}", email, e.getMessage(), e);
             throw new RuntimeException("Erro ao buscar paciente por email", e);
         }
     }
@@ -98,10 +82,8 @@ public class PatientServiceImpl implements PatientService {
     public List<Patient> findAll() {
         try {
             List<Patient> patients = patientDao.findAll();
-            log.debug("Encontrados {} pacientes", patients.size());
             return patients;
         } catch (Exception e) {
-            log.error("Erro ao buscar todos os pacientes: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao buscar pacientes", e);
         }
     }
@@ -121,7 +103,6 @@ public class PatientServiceImpl implements PatientService {
             patientDao.updateInformation(id, entity);
             return true;
         } catch (Exception e) {
-            log.error("Erro ao atualizar informações do paciente ID {}: {}", id, e.getMessage(), e);
             return false;
         }
     }
@@ -178,21 +159,16 @@ public class PatientServiceImpl implements PatientService {
             
             entity.setId(id); // Garantir que o ID seja mantido
             patientDao.updateInformation(id, entity);
-            log.info("Paciente atualizado com sucesso: {} (ID: {})", entity.getName(), id);
             return patientDao.readById(id);
         } catch (IllegalArgumentException e) {
-            log.warn("Erro de validação ao atualizar paciente ID {}: {}", id, e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Erro ao atualizar paciente ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Erro ao atualizar paciente", e);
         }
     }
 
     @Override
     public void sendAccessRequest(int patientId, int medicoId) {
-        log.info("=== SERVICE SEND ACCESS REQUEST ===");
-        log.info("Parâmetros: patientId={}, medicoId={}", patientId, medicoId);
         patientDao.createAccessRequest(patientId, medicoId);
     }
 
@@ -203,9 +179,7 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             patientDao.revokeAccess(patientId, medicoId);
-            log.info("Acesso do médico {} ao paciente {} revogado com sucesso.", medicoId, patientId);
         } catch (Exception e) {
-            log.error("Erro ao revogar acesso do médico {} ao paciente {}: {}", medicoId, patientId, e.getMessage(), e);
             throw new RuntimeException("Erro ao revogar acesso", e);
         }
     }
@@ -232,14 +206,8 @@ public class PatientServiceImpl implements PatientService {
         }
         try {
             boolean result = patientDao.deleteMedication(patientId, medicationId);
-            if (result) {
-                log.info("Medicamento removido com sucesso: pacienteId={}, medicamentoId={}", patientId, medicationId);
-            } else {
-                log.warn("Medicamento não encontrado para remoção: pacienteId={}, medicamentoId={}", patientId, medicationId);
-            }
             return result;
         } catch (Exception e) {
-            log.error("Erro ao remover medicamento pacienteId={}, medicamentoId={}: {}", patientId, medicationId, e.getMessage(), e);
             throw new RuntimeException("Erro ao remover medicamento", e);
         }
     }
@@ -248,47 +216,44 @@ public class PatientServiceImpl implements PatientService {
     public boolean deleteVaccine(int patientId, int vaccineId) {
         return patientDao.deleteVaccine(patientId, vaccineId);
     }
+    
     @Override
     public boolean deleteAllergy(int patientId, int allergyId) {
         int prontuarioId = 0;
         try {
             prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
             if (prontuarioId == 0) {
-                log.warn("Prontuário não encontrado para paciente {} ao deletar alergia.", patientId);
                 return false;
             }
         } catch (Exception e) {
-            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
             return false;
         }
         return patientDao.deleteAllergy(prontuarioId, allergyId);
     }
+    
     @Override
     public boolean deleteDiagnosis(int patientId, int diagnosisId) {
         int prontuarioId = 0;
         try {
             prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
             if (prontuarioId == 0) {
-                log.warn("Prontuário não encontrado para paciente {} ao deletar diagnóstico.", patientId);
                 return false;
             }
         } catch (Exception e) {
-            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
             return false;
         }
         return patientDao.deleteDiagnosis(prontuarioId, diagnosisId);
     }
+    
     @Override
     public boolean deleteSurgery(int patientId, int surgeryId) {
         int prontuarioId = 0;
         try {
             prontuarioId = patientDao.readById(patientId) != null ? patientDao.readById(patientId).getId() : 0;
             if (prontuarioId == 0) {
-                log.warn("Prontuário não encontrado para paciente {} ao deletar cirurgia.", patientId);
                 return false;
             }
         } catch (Exception e) {
-            log.error("Erro ao buscar prontuário para paciente {}: {}", patientId, e.getMessage());
             return false;
         }
         return patientDao.deleteSurgery(prontuarioId, surgeryId);

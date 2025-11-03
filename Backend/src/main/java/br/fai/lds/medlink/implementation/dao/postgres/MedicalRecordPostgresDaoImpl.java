@@ -2,6 +2,7 @@ package br.fai.lds.medlink.implementation.dao.postgres;
 
 import br.fai.lds.medlink.domain.*;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,23 +10,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-// @Repository
+@Slf4j
 public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
 
-    private static final Logger logger = Logger.getLogger(MedicalRecordPostgresDaoImpl.class.getName());
     private final Connection connection;
 
     public MedicalRecordPostgresDaoImpl(Connection connection) {
         this.connection = connection;
     }
 
-    // Implementação do método exigido pela interface CreateDao
     @Override
     public void create(final MedicalRecord entity) {
-        logger.log(Level.INFO, "Preparando para adicionar o prontuário no banco de dados");
         String sql = "INSERT INTO prontuario(paciente_id, tipo_sanguineo, doador_orgao, diagnostico, historico_familiar) VALUES (?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -36,17 +32,13 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
             preparedStatement.setString(5, entity.getFamilyHistory());
             preparedStatement.execute();
             preparedStatement.close();
-            logger.log(Level.INFO, "Prontuário adicionado com sucesso.");
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Problema ao adicionar o prontuário no banco de dados.");
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public boolean remove(int id) {
-        logger.log(Level.INFO, "Preparando para remover o prontuário");
-
         String sql = "DELETE FROM prontuario WHERE id = ?";
 
         try {
@@ -55,16 +47,9 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
             int rowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
 
-            boolean success = rowsAffected > 0;
-            if (success) {
-                logger.log(Level.INFO, "Prontuário removido com sucesso.");
-            } else {
-                logger.log(Level.WARNING, "Nenhum prontuário foi removido - ID não encontrado.");
-            }
-            return success;
+            return rowsAffected > 0;
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao remover prontuário.", e);
             throw new RuntimeException(e);
         }
     }
@@ -127,7 +112,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
     }
 
     public void update(MedicalRecord entity) {
-        logger.log(Level.INFO, "Preparando para atualizar o prontuário");
         String sql = "UPDATE prontuario SET tipo_sanguineo = ?, doador_orgao = ?, diagnostico = ?, historico_familiar = ? WHERE id = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -138,7 +122,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
             preparedStatement.setInt(5, entity.getId());
             preparedStatement.execute();
             preparedStatement.close();
-            logger.log(Level.INFO, "Prontuário atualizado com sucesso.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -146,7 +129,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
 
     @Override
     public void updateInformation(int id, MedicalRecord entity) {
-        logger.log(Level.INFO, "Preparando para atualizar o prontuário");
         String sql = "UPDATE prontuario SET tipo_sanguineo = ?, doador_orgao = ?, diagnostico = ?, historico_familiar = ? WHERE id = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -157,7 +139,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
             preparedStatement.setInt(5, id);
             preparedStatement.execute();
             preparedStatement.close();
-            logger.log(Level.INFO, "Prontuário atualizado com sucesso.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -193,7 +174,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
     }
 
     public List<MedicalRecord> findByMedicId(int medicId) {
-        // Retorna prontuários que o médico tem acesso
         final String sql = """
             SELECT DISTINCT pr.id, pr.paciente_id, pr.tipo_sanguineo, pr.doador_orgao,
                    pr.observacoes, pr.historico_familiar
@@ -224,8 +204,6 @@ public class MedicalRecordPostgresDaoImpl implements MedicalRecordDao {
     }
 
     private MedicalRecord buildMedicalRecordFromResultSet(ResultSet resultSet) throws SQLException {
-        // Criar listas vazias para medicamentos, alergias, etc.
-        // Em uma implementação mais completa, você faria joins para buscar esses dados
         List<Medication> medications = new ArrayList<>();
         List<Allergy> allergies = new ArrayList<>();
         List<Vaccine> vaccines = new ArrayList<>();

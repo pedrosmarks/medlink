@@ -2,6 +2,7 @@ package br.fai.lds.medlink.implementation.service.message;
 
 import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.service.message.MessageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,18 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class MessageServiceImpl implements MessageService {
     @org.springframework.beans.factory.annotation.Autowired
     private javax.sql.DataSource dataSource;
     
     public MessageServiceImpl() {
-        System.out.println("MessageServiceImpl criado");
     }
     
     @jakarta.annotation.PostConstruct
     public void init() {
-        System.out.println("DataSource injetado: " + (dataSource != null ? "OK" : "NULL"));
         createTablesIfNotExist();
     }
     
@@ -29,9 +29,7 @@ public class MessageServiceImpl implements MessageService {
         try (java.sql.Connection conn = dataSource.getConnection()) {
             // FORÇA A RECRIAÇÃO da tabela mensagem se ela tiver estrutura incorreta
             if (tableExists(conn, "mensagem")) {
-                System.out.println("Verificando estrutura da tabela mensagem...");
                 if (!hasCorrectMessageStructure(conn)) {
-                    System.out.println("Tabela mensagem tem estrutura incorreta. Recriando...");
                     dropTable(conn, "mensagem");
                 }
             }
@@ -39,11 +37,8 @@ public class MessageServiceImpl implements MessageService {
             // Verifica se a tabela mensagem existe
             boolean tabelaMensagemCriada = false;
             if (!tableExists(conn, "mensagem")) {
-                System.out.println("Criando tabela mensagem...");
                 createMensagemTable(conn);
                 tabelaMensagemCriada = true;
-            } else {
-                System.out.println("Tabela mensagem já existe com estrutura correta");
             }
             
             // Se a tabela foi criada agora OU está vazia, insere dados de exemplo
@@ -53,13 +48,10 @@ public class MessageServiceImpl implements MessageService {
 
             // Verifica se a tabela solicitacao_acesso_prontuario existe
             if (!tableExists(conn, "solicitacao_acesso_prontuario")) {
-                System.out.println("Criando tabela solicitacao_acesso_prontuario...");
                 createSolicitacaoTable(conn);
             }
             
-            System.out.println("Tabelas verificadas/criadas com sucesso");
         } catch (Exception e) {
-            System.out.println("Erro ao verificar/criar tabelas: " + e.getMessage());
         }
     }
     
@@ -69,21 +61,16 @@ public class MessageServiceImpl implements MessageService {
 
             try (java.sql.ResultSet rs = stmt.executeQuery()) {
                 int correctColumns = 0;
-                System.out.println("Verificando colunas da tabela mensagem:");
                 while (rs.next()) {
                     String columnName = rs.getString("column_name");
-                    System.out.println("  - Coluna encontrada: " + columnName);
                     correctColumns++;
                 }
-                System.out.println("Total de colunas essenciais encontradas: " + correctColumns + "/5");
 
                 // Se tem as 5 colunas essenciais, estrutura está correta
                 boolean hasCorrectStructure = correctColumns >= 5;
-                System.out.println("Estrutura correta: " + hasCorrectStructure);
                 return hasCorrectStructure;
             }
         } catch (Exception e) {
-            System.out.println("Erro ao verificar estrutura da tabela: " + e.getMessage());
             return false;
         }
     }
@@ -91,9 +78,7 @@ public class MessageServiceImpl implements MessageService {
     private void dropTable(java.sql.Connection conn, String tableName) {
         try (java.sql.PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + tableName + " CASCADE")) {
             stmt.executeUpdate();
-            System.out.println("Tabela " + tableName + " removida com sucesso");
         } catch (Exception e) {
-            System.out.println("Erro ao remover tabela " + tableName + ": " + e.getMessage());
         }
     }
 
@@ -103,9 +88,7 @@ public class MessageServiceImpl implements MessageService {
             addColumnIfNotExists(conn, "mensagem", "sender_type", "VARCHAR(10)");
             addColumnIfNotExists(conn, "mensagem", "sender_id", "VARCHAR(10)");
             addColumnIfNotExists(conn, "mensagem", "recipient_id", "VARCHAR(10)");
-            System.out.println("Tabela mensagem atualizada");
         } catch (Exception e) {
-            System.out.println("Erro ao atualizar tabela mensagem: " + e.getMessage());
         }
     }
     
@@ -120,12 +103,10 @@ public class MessageServiceImpl implements MessageService {
                     String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnType;
                     try (java.sql.PreparedStatement addStmt = conn.prepareStatement(sql)) {
                         addStmt.executeUpdate();
-                        System.out.println("Coluna " + columnName + " adicionada à tabela " + tableName);
                     }
                 }
             }
         } catch (Exception e) {
-            System.out.println("Erro ao verificar/adicionar coluna " + columnName + ": " + e.getMessage());
         }
     }
     
@@ -146,12 +127,10 @@ public class MessageServiceImpl implements MessageService {
             try (java.sql.ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int count = rs.getInt(1);
-                    System.out.println("Tabela " + tableName + " tem " + count + " registros");
                     return count == 0;
                 }
             }
         } catch (Exception e) {
-            System.out.println("Erro ao verificar se tabela " + tableName + " está vazia: " + e.getMessage());
             return true;
         }
         return true;
@@ -170,10 +149,8 @@ public class MessageServiceImpl implements MessageService {
                     "date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
                     "read BOOLEAN NOT NULL DEFAULT FALSE" +
                     ")";
-        System.out.println("Criando tabela mensagem com SQL: " + sql);
         try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
-            System.out.println("Tabela mensagem criada com sucesso com estrutura em inglês");
         }
     }
     
@@ -203,8 +180,6 @@ public class MessageServiceImpl implements MessageService {
 
     private void insertSampleMessages(java.sql.Connection conn) {
         try {
-            System.out.println("Inserindo mensagens de exemplo...");
-
             String sql = "INSERT INTO mensagem (sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES " +
                         "(1, 'MEDIC', 'Dr. Pedro Almeida', 1, 'PATIENT', 'João da Silva', 'Olá, tudo bem? Aqui é o Dr. Pedro.', CURRENT_TIMESTAMP, false), " +
                         "(1, 'PATIENT', 'João da Silva', 1, 'MEDIC', 'Dr. Pedro Almeida', 'Olá doutor, estou bem sim. Obrigado!', CURRENT_TIMESTAMP, false), " +
@@ -212,22 +187,18 @@ public class MessageServiceImpl implements MessageService {
 
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
                 int rowsInserted = stmt.executeUpdate();
-                System.out.println("Inseridas " + rowsInserted + " mensagens de exemplo com sucesso");
             }
 
         } catch (Exception e) {
-            System.out.println("Erro ao inserir mensagens de exemplo: " + e.getMessage());
         }
     }
 
     public List<Message> findAll() {
         List<Message> messages = new ArrayList<>();
         if (dataSource == null) {
-            System.out.println("DataSource é null - retornando lista vazia");
             return messages;
         }
         try (java.sql.Connection conn = dataSource.getConnection()) {
-            System.out.println("Conexão obtida com sucesso");
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(
                 "SELECT id, sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read FROM mensagem ORDER BY date DESC")) {
                 try (java.sql.ResultSet rs = stmt.executeQuery()) {
@@ -248,10 +219,7 @@ public class MessageServiceImpl implements MessageService {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Erro ao buscar mensagens: " + e.getMessage());
-            e.printStackTrace();
         }
-        System.out.println("findAll chamado - total de mensagens: " + messages.size());
         return messages;
     }
 
@@ -303,12 +271,9 @@ public class MessageServiceImpl implements MessageService {
                 stmt.setBoolean(8, message.isRead());
 
                 stmt.executeUpdate();
-                System.out.println("Mensagem salva no banco com sucesso");
             }
             
         } catch (Exception e) {
-            System.out.println("Erro ao salvar mensagem: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Erro ao salvar mensagem no banco: " + e.getMessage(), e);
         }
     }
@@ -337,8 +302,6 @@ public class MessageServiceImpl implements MessageService {
     }
     
     private boolean isAuthorized(String remetenteId, String remetenteTipo, String destinatarioId, String destinatarioTipo) {
-        System.out.println("Validando autorização: " + remetenteTipo + "(" + remetenteId + ") -> " + destinatarioTipo + "(" + destinatarioId + ")");
-        
         try {
             // Só valida se for médico <-> paciente
             String medicoId = null;
@@ -351,11 +314,8 @@ public class MessageServiceImpl implements MessageService {
                 medicoId = destinatarioId;
                 pacienteId = remetenteId;
             } else {
-                System.out.println("Não é relação médico-paciente válida");
                 return false;
             }
-            
-            System.out.println("Verificando: medico_id=" + medicoId + ", paciente_id=" + pacienteId);
             
             // Primeiro tenta verificar na tabela de solicitações
             if (checkSolicitacaoAcesso(medicoId, pacienteId)) {
@@ -366,7 +326,6 @@ public class MessageServiceImpl implements MessageService {
             return createAutoApprovedAccess(medicoId, pacienteId);
             
         } catch (Exception e) {
-            System.out.println("Erro geral na validação: " + e.getMessage());
             return false;
         }
     }
@@ -381,11 +340,9 @@ public class MessageServiceImpl implements MessageService {
             
             try (java.sql.ResultSet rs = stmt.executeQuery()) {
                 boolean autorizado = rs.next();
-                System.out.println("Solicitação encontrada: " + autorizado);
                 return autorizado;
             }
         } catch (Exception e) {
-            System.out.println("Erro ao verificar solicitação (tabela pode não existir): " + e.getMessage());
             return false;
         }
     }
@@ -399,11 +356,9 @@ public class MessageServiceImpl implements MessageService {
             stmt.setInt(2, Integer.parseInt(pacienteId));
             
             stmt.executeUpdate();
-            System.out.println("Acesso criado automaticamente para desenvolvimento");
             return true;
             
         } catch (Exception e) {
-            System.out.println("Erro ao criar acesso automático: " + e.getMessage());
             // Se não conseguir criar, permite para desenvolvimento
             return true;
         }
@@ -426,7 +381,6 @@ public class MessageServiceImpl implements MessageService {
                     .orElse(null);
             }
         } catch (Exception e) {
-            System.out.println("Erro ao marcar mensagem como lida: " + e.getMessage());
         }
         return null;
     }

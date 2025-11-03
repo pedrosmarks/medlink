@@ -31,28 +31,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient authenticatePatient(String email, String password) {
-        log.info("Tentando autenticar paciente com email: {}", email);
         Patient patient = patientDao.findByEmailAndPassword(email, password);
         if (patient != null) {
-            log.info("Paciente encontrado: {}", patient.getName());
-            log.info("Autenticação bem-sucedida para paciente: {}", patient.getName());
             return patient;
-        } else {
-            log.warn("Paciente não encontrado ou senha incorreta com email: {}", email);
         }
         return null;
     }
 
     @Override
     public Medic authenticateMedic(String email, String password) {
-        log.info("=== AUTENTICANDO MÉDICO ===");
-        log.info("Email: {}", email);
         Medic medic = medicDao.findByEmailAndPassword(email, password);
         if (medic != null) {
-            log.info("✅ Autenticação bem-sucedida para médico ID: {}", medic.getId());
             return medic;
-        } else {
-            log.warn("❌ Email ou senha incorretos para médico: {}", email);
         }
         return null;
     }
@@ -70,9 +60,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String resetCode = generateResetCode();
         resetCodes.put(email, resetCode);
-
-        // Simula envio do código por email
-        log.info("Enviando código de reset '{}' para o email: {}", resetCode, email);
 
         return true;
     }
@@ -117,8 +104,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String code = generateResetCode();
         resetCodes.put(identifier, code);
-
-        log.info("Enviando código de verificação '{}' para: {}", code, identifier);
 
         return true;
     }

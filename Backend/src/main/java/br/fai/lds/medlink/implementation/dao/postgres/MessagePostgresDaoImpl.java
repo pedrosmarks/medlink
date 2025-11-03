@@ -2,6 +2,7 @@ package br.fai.lds.medlink.implementation.dao.postgres;
 
 import br.fai.lds.medlink.domain.Message;
 import br.fai.lds.medlink.port.dao.message.MessageDao;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,12 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class MessagePostgresDaoImpl implements MessageDao {
 
-    private static final Logger logger = Logger.getLogger(MessagePostgresDaoImpl.class.getName());
     private final Connection connection;
 
     public MessagePostgresDaoImpl(Connection connection) {
@@ -23,7 +22,6 @@ public class MessagePostgresDaoImpl implements MessageDao {
 
     @Override
     public void create(Message entity) {
-        logger.log(Level.INFO, "Preparando para adicionar mensagem no banco de dados");
         String sql = "INSERT INTO mensagem(sender_id, sender_type, sender_name, recipient_id, recipient_type, recipient_name, text, date, read) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
@@ -40,17 +38,14 @@ public class MessagePostgresDaoImpl implements MessageDao {
 
             preparedStatement.execute();
             preparedStatement.close();
-            logger.log(Level.INFO, "Mensagem adicionada com sucesso.");
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Problema ao adicionar mensagem no banco de dados.", e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public boolean remove(int id) {
-        logger.log(Level.INFO, "Preparando para remover mensagem");
         String sql = "DELETE FROM mensagem WHERE id = ?";
 
         try {
@@ -59,16 +54,9 @@ public class MessagePostgresDaoImpl implements MessageDao {
             int rowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
 
-            boolean success = rowsAffected > 0;
-            if (success) {
-                logger.log(Level.INFO, "Mensagem removida com sucesso.");
-            } else {
-                logger.log(Level.WARNING, "Nenhuma mensagem foi removida - ID não encontrado.");
-            }
-            return success;
+            return rowsAffected > 0;
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Erro ao remover mensagem.", e);
             throw new RuntimeException(e);
         }
     }
@@ -131,7 +119,6 @@ public class MessagePostgresDaoImpl implements MessageDao {
 
             preparedStatement.execute();
             preparedStatement.close();
-            logger.log(Level.INFO, "Mensagem atualizada com sucesso.");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

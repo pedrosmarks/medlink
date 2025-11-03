@@ -10,12 +10,14 @@ import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Surgery.Surger
 import br.fai.lds.medlink.domain.dataTransferObject.MedicalRecord.Vaccine.VaccineCreateDto;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import br.fai.lds.medlink.port.service.medicalRecordService.MedicalRecordService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MedicalRecordServiceImpl implements MedicalRecordService {
 
