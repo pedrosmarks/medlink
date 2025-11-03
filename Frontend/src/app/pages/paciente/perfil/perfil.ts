@@ -22,19 +22,25 @@ export class Perfil implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const pacienteId = localStorage.getItem('userId');
-    const userProfile = localStorage.getItem('userProfile');
+    const pacienteId = localStorage.getItem('pacienteId') || localStorage.getItem('userId');
+    const userType = localStorage.getItem('userType');
     
-    if (pacienteId && userProfile === 'PATIENT') {
+    console.log('👤 Carregando perfil do paciente...');
+    console.log('🔑 PacienteId:', pacienteId);
+    console.log('👨⚕️ UserType:', userType);
+    
+    if (pacienteId && userType === 'PACIENTE') {
       this.perfilReadService.getPerfilPacienteById(pacienteId).subscribe({
         next: (response) => {
-          // Processa response.data (formato ApiResponse)
+          console.log('✅ Perfil carregado:', response);
           this.perfil = response.data || response;
         },
         error: (error) => {
-          // Tratar erro silenciosamente ou mostrar mensagem ao usuário
+          console.error('❌ Erro ao carregar perfil:', error);
         }
       });
+    } else {
+      console.log('❌ Condições não atendidas para carregar perfil');
     }
   }
 

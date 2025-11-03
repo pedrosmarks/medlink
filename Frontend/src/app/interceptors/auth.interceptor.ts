@@ -10,8 +10,12 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private router: Router) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('🔍 INTERCEPTOR EXECUTADO para:', req.url);
+    
     // Adiciona token se existir
     const token = localStorage.getItem('authToken');
+    console.log('🔑 Token encontrado:', token ? 'SIM' : 'NÃO');
+    
     let authReq = req;
     
     if (token) {
@@ -20,6 +24,9 @@ export class AuthInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${token}`
         }
       });
+      console.log('✅ Header Authorization adicionado');
+    } else {
+      console.log('❌ Nenhum token encontrado, requisição sem Authorization');
     }
 
     return next.handle(authReq).pipe(

@@ -24,7 +24,10 @@ export class Dashboard implements OnInit {
   async ngOnInit(): Promise<void> {
     // Busca dados do paciente do localStorage
     this.pacienteNome = localStorage.getItem('userName') || 'Paciente';
-    this.pacienteId = localStorage.getItem('pacienteId') || '1';
+    this.pacienteId = localStorage.getItem('pacienteId') || localStorage.getItem('userId') || '1';
+    
+    console.log('👤 Dashboard Paciente - ID:', this.pacienteId);
+    console.log('👤 Dashboard Paciente - Nome:', this.pacienteNome);
     
     await this.carregarDadosDashboard();
   }

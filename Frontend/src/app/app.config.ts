@@ -1,11 +1,26 @@
 import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 
+// Interceptor funcional para Angular 17+
+function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
+  const token = localStorage.getItem('authToken');
+  
+  if (token) {
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return next(authReq);
+  }
+  
+  return next(req);
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,11 +30,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    provideHttpClient(withFetch()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor]))
   ]
 };
