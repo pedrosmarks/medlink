@@ -53,37 +53,4 @@ public class AuthController extends BaseController {
 
         return unauthorized("Email ou senha incorretos.");
     }
-
-
-    /**
-     * Solicita o envio de um código de verificação para redefinição de senha.
-     * @param dto dados contendo identificador (email ou CPF) do usuário
-     * @return resposta de sucesso ou erro se usuário não encontrado
-     */
-    @PostMapping("/request-password-reset")
-    public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDTO dto) {
-        boolean requestSuccess = authenticationService.sendVerificationCode(dto.getIdentifier());
-
-        if (!requestSuccess) {
-            return notFoundCustom("Usuário não encontrado com esse e-mail ou CPF.");
-        }
-
-        return success("Código de verificação enviado.");
-    }
-
-    /**
-     * Redefine a senha do usuário com base no código de verificação recebido.
-     * @param dto dados contendo código de verificação e nova senha
-     * @return resposta de sucesso ou erro se código inválido
-     */
-    @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody PasswordResetDTO dto) {
-        boolean resetSuccess = authenticationService.resetPassword(dto);
-
-        if (!resetSuccess) {
-            return badRequest("Código inválido ou expirado.");
-        }
-
-        return success("Senha redefinida com sucesso.");
-    }
 }
