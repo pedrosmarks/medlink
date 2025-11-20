@@ -1,0 +1,8 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","1972","should show error for invalid username","My Login application","Thu Nov 13 20:52:48 GMT-03:00 2025","passed","Thu Nov 13 20:52:50 GMT-03:00 2025","","","",""
+"","12565","should login with valid credentials","My Login application","Thu Nov 13 20:52:36 GMT-03:00 2025","passed","Thu Nov 13 20:52:48 GMT-03:00 2025","","","",""
+"","1126","should show error for invalid password","My Login application","Thu Nov 13 20:52:50 GMT-03:00 2025","passed","Thu Nov 13 20:52:51 GMT-03:00 2025","","","",""
+"","2772","should logout and show confirmation","My Login application","Thu Nov 13 20:52:53 GMT-03:00 2025","passed","Thu Nov 13 20:52:55 GMT-03:00 2025","","","",""
+"","620","should block access to the secure page without login","My Login application","Thu Nov 13 20:52:55 GMT-03:00 2025","passed","Thu Nov 13 20:52:56 GMT-03:00 2025","","","",""
+"","1834","should highlight visual regressions when flash message changes","My Login application","Thu Nov 13 20:52:56 GMT-03:00 2025","failed","Thu Nov 13 20:52:58 GMT-03:00 2025","","","",""
+"","1445","should show error for empty fields","My Login application","Thu Nov 13 20:52:51 GMT-03:00 2025","passed","Thu Nov 13 20:52:53 GMT-03:00 2025","","","",""
