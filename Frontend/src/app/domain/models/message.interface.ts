@@ -1,17 +1,18 @@
 export interface Message {
-  id: string;
+  id?: string;
   senderId: string;
-  senderType: 'MEDIC' | 'PATIENT';
   senderName: string;
+  senderType: 'MEDIC' | 'PATIENT';
   recipientId: string;
-  recipientType: 'MEDIC' | 'PATIENT';
   recipientName: string;
-  text: string;
+  recipientType: 'MEDIC' | 'PATIENT';
+  content: string;
   date: string;
   read: boolean;
 }
 
 export interface MessagesResponse {
+  success: boolean;
   message: string;
   data: Message[];
 }

@@ -5,7 +5,7 @@ import { PacientesUpdateService } from '../../../services/pacientes/pacientes-up
 import { AccessRequestsService } from '../../../services/access-requests/access-requests.service';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Patient } from '../../../models/access-request.interface';
+import { Patient } from '../../../domain/models/access-request.interface';
 
 @Component({
   selector: 'app-pacientes',

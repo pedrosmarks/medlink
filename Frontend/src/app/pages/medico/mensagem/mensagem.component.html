@@ -24,7 +24,7 @@
         <div class="info">
           <div class="title">{{ item.paciente.name }}</div>
           <div class="preview">
-            <span *ngIf="item.ultimaMensagem" class="has-messages">{{ item.ultimaMensagem.text }}</span>
+            <span *ngIf="item.ultimaMensagem" class="has-messages">{{ item.ultimaMensagem.content }}</span>
             <span *ngIf="!item.ultimaMensagem" class="no-messages">👋 Iniciar conversa</span>
           </div>
         </div>
@@ -50,7 +50,7 @@
       <div class="panel-messages" #messagesContainer>
         <div *ngFor="let m of pacienteSelecionado.mensagens" class="msg-row" [class.mine]="m.senderType === 'MEDIC'">
           <div class="msg-bubble">
-            <div class="msg-text">{{ m.text }}</div>
+            <div class="msg-text">{{ m.content }}</div>
             <div class="msg-meta">
               <small>{{ m.date | date:'dd/MM HH:mm' }}</small>
             </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccessRequestsService } from '../../../services/access-requests/access-requests.service';
-import { AccessRequest } from '../../../models/access-request.interface';
+import { AccessRequest } from '../../../domain/models/access-request.interface';
 
 @Component({
   selector: 'app-requisicoes',

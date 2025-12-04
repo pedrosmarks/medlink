@@ -9,28 +9,58 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
-  private apiUrl = 'http://localhost:8080/authenticate';
+  private apiUrl = 'http://localhost:8080/authenticate'; // Pode ser /auth/login ou /api/authenticate
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(credentials: { email: string; password: string; userType: string }): Observable<any> {
-    return this.http.post<any>(this.apiUrl, credentials)
+  login(credentials: { email: string; password: string }): Observable<any> {
+    // JWT não precisa de userType
+    const loginData = { email: credentials.email, password: credentials.password };
+    
+    return this.http.post<any>(this.apiUrl, loginData)
       .pipe(
         tap(response => {
-          // Verificar se tem token (JWT)
-          const token = response.token || response.data?.token;
-          if (token) {
-            this.setToken(token);
-          }
+          console.log('Resposta JWT:', response);
           
-          // Se não tem token mas tem dados do usuário, é o formato antigo
-          // Não fazer nada aqui, deixar o componente tratar
+          if (response && response.token) {
+            this.setToken(response.token);
+            this.extractUserDataFromJWT(response.token);
+          }
         })
       );
   }
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  private extractUserDataFromJWT(token: string): void {
+    try {
+      console.log('🔍 Token recebido:', token);
+      console.log('🔍 Tipo do token:', typeof token);
+      console.log('🔍 Comprimento do token:', token.length);
+      
+      // Verificar se é um JWT válido (deve ter 3 partes separadas por .)
+      const parts = token.split('.');
+      console.log('🔍 Partes do token:', parts.length);
+      
+      if (parts.length !== 3) {
+        console.error('❌ Token não é um JWT válido (deve ter 3 partes)');
+        return;
+      }
+      
+      const payload = JSON.parse(atob(parts[1]));
+      
+      localStorage.setItem('userId', payload.userId || payload.sub || '');
+      localStorage.setItem('userName', payload.fullname || payload.name || '');
+      localStorage.setItem('userEmail', payload.email || '');
+      localStorage.setItem('userType', payload.role || payload.authorities || '');
+      
+      console.log('✅ Dados extraídos do JWT:', payload);
+    } catch (error) {
+      console.error('❌ Erro ao decodificar JWT:', error);
+      console.error('❌ Token problemático:', token);
+    }
   }
 
   getToken(): string | null {
@@ -42,19 +72,8 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    this.clearUserData();
+    localStorage.clear();
     this.router.navigate(['/login']);
-  }
-
-  private clearUserData(): void {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userProfile');
-    localStorage.removeItem('medicoId');
-    localStorage.removeItem('pacienteId');
-    localStorage.removeItem('userType');
   }
 
   private redirectToDashboard(): void {

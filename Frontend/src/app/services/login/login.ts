@@ -9,11 +9,10 @@ export class LoginService {
 
   constructor(private authService: AuthService) {}
 
-  login(usuario: string, senha: string, userType: string): Observable<any> {
+  login(usuario: string, senha: string): Observable<any> {
     return this.authService.login({
       email: usuario,
-      password: senha,
-      userType: userType
+      password: senha
     });
   }
 }

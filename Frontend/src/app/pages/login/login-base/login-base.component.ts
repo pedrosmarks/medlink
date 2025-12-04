@@ -49,7 +49,7 @@ export class LoginBaseComponent implements OnInit {
 
     const userType = this.perfil === 'medico' ? 'MEDICO' : 'PACIENTE';
     
-    this.loginService.login(this.usuario, this.senha, userType)
+    this.loginService.login(this.usuario, this.senha)
       .subscribe({
         next: (response: any) => {
           console.log('✅ RESPOSTA DO BACKEND:', response);

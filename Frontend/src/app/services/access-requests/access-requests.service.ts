@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AccessRequest, ApiResponse, Patient } from '../../models/access-request.interface';
+import { AccessRequest, ApiResponse, Patient } from '../../domain/models/access-request.interface';
 
 @Injectable({
   providedIn: 'root'

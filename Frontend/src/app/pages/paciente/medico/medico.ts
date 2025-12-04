@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MedicosService } from '../../../services/medicos/medicos.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { Medico as MedicoInterface } from '../../../models/medico.interface';
+import { Medico as MedicoInterface } from '../../../domain/models/medico.interface';
 
 @Component({
   selector: 'app-medico',

@@ -19,7 +19,7 @@
         <div class="avatar-mini">{{ conv.medico.name ? conv.medico.name.charAt(0) : 'M' }}</div>
         <div class="info">
           <div class="title">{{ conv.medico.name || 'Médico' }}</div>
-          <div class="preview">{{ conv.ultimaMensagem?.text || 'Sem mensagens' }}</div>
+          <div class="preview">{{ conv.ultimaMensagem?.content || 'Sem mensagens' }}</div>
         </div>
         <div class="meta"> <small>{{ conv.ultimaMensagem?.date ? (conv.ultimaMensagem?.date | date:'dd/MM') : '' }}</small></div>
         <div class="unread" *ngIf="contarMensagensNaoLidas(conv) > 0">{{ contarMensagensNaoLidas(conv) }}</div>
@@ -40,7 +40,7 @@
       <div class="panel-messages" #messagesContainer>
         <div *ngFor="let m of conversaSelecionada.mensagens" class="msg-row" [class.mine]="m.senderType === 'PATIENT'">
           <div class="msg-bubble">
-            <div class="msg-text">{{ m.text }}</div>
+            <div class="msg-text">{{ m.content }}</div>
             <div class="msg-meta">
               <small>{{ m.date | date:'dd/MM HH:mm' }}</small>
             </div>

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MedicosService } from '../../../services/medicos/medicos.service';
 import { MensagensService } from '../../../services/mensagens/mensagem.service';
-import { Message, Conversation } from '../../../models/message.interface';
+import { Message, Conversation } from '../../../domain/models/message.interface';
 
 export interface Medico {
   id: number;
@@ -214,7 +214,7 @@ export class Mensagem implements OnInit, AfterViewChecked {
     this.cdr.detectChanges();
     
     // Usar o service para marcar como lidas no backend
-    const mensagemIds = mensagensNaoLidas.map(m => m.id);
+    const mensagemIds = mensagensNaoLidas.map(m => m.id).filter((id): id is string => !!id);
     this.mensagensService.marcarMensagensComoLidas(mensagemIds).subscribe({
       next: () => {
 
@@ -244,7 +244,7 @@ export class Mensagem implements OnInit, AfterViewChecked {
       recipientId: this.receiverId,
       recipientType: 'MEDIC',
       recipientName: nomeMedico,
-      text: this.novaMensagemConteudo.trim(),
+      content: this.novaMensagemConteudo.trim(),
       date: new Date().toISOString(),
       read: false
     };
