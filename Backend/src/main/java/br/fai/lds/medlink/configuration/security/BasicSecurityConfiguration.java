@@ -17,8 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@Profile("basic")
 @Configuration
+@EnableWebSecurity
 public class BasicSecurityConfiguration {
 
     @Bean
@@ -38,7 +38,8 @@ public class BasicSecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    @Profile("basic")
+    public SecurityFilterChain basicSecurityFilterChain(HttpSecurity http) throws Exception{
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)

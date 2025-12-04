@@ -114,7 +114,7 @@ public class PatientPostgresDaoImpl implements PatientDao {
 
             int pessoaId = insertPessoa(entity);
 
-            String sql = "INSERT INTO paciente(pessoa_id, email, senha, convenio_medico, cartao_sus, ativo) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
+            String sql = "INSERT INTO paciente(pessoa_id, email, senha, convenio_medico, cartao_sus, ativo) VALUES (?, ?, crypt(?, gen_salt('bf')), ?, ?, ?) RETURNING id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, pessoaId);
             preparedStatement.setString(2, entity.getEmail());

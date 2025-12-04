@@ -20,46 +20,13 @@ import java.util.List;
 
 @Profile("jwt")
 @Configuration
-public class JwtSecurityConfiguration {
+public class JwtSecurityConfiguration extends BasicSecurityConfiguration {
 
     private final JwtRequestFilter jwtRequestFilter;
 
     public JwtSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
-        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public br.fai.lds.medlink.port.service.authentication.AuthenticationService authenticationService(
-            br.fai.lds.medlink.port.dao.patient.PatientDao patientDao,
-            br.fai.lds.medlink.port.dao.medic.MedicDao medicDao,
-            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
-        return new br.fai.lds.medlink.implementation.service.authentication.JwtAuthenticationServiceImpl(
-                patientDao, medicDao, passwordEncoder);
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
 
     @Bean
@@ -72,7 +39,9 @@ public class JwtSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/authenticate",
-                                "/api/test/**").permitAll()
+                                "/api/auth/**",
+                                "/api/medic/**",
+                                "/api/patient/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))

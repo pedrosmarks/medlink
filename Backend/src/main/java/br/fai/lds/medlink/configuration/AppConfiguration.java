@@ -4,80 +4,56 @@ import br.fai.lds.medlink.implementation.dao.postgres.MedicPostgresDaoImpl;
 import br.fai.lds.medlink.implementation.dao.postgres.MedicalRecordPostgresDaoImpl;
 import br.fai.lds.medlink.implementation.dao.postgres.MessagePostgresDaoImpl;
 import br.fai.lds.medlink.implementation.dao.postgres.PatientPostgresDaoImpl;
+import br.fai.lds.medlink.implementation.service.authentication.AuthenticationServiceImpl;
+import br.fai.lds.medlink.implementation.service.authentication.JwtAuthenticationServiceImpl;
 import br.fai.lds.medlink.port.dao.medic.MedicDao;
 import br.fai.lds.medlink.port.dao.medicalRecord.MedicalRecordDao;
 import br.fai.lds.medlink.port.dao.message.MessageDao;
 import br.fai.lds.medlink.port.dao.patient.PatientDao;
+import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
+import br.fai.lds.medlink.port.service.medic.MedicService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Connection;
+import java.util.Arrays;
 
-/**
- * Classe de configuração principal da aplicação MedLink.
- * 
- * <p>Centraliza todas as configurações de beans, DAOs, documentação Swagger
- * e configurações CORS para o sistema médico.</p>
- *
- */
 @Configuration
 public class AppConfiguration {
 
-
-    /** Environment para acessar propriedades e perfis ativos do Spring. */
     private final Environment environment;
-
-    /**
-     * Construtor da configuração da aplicação.
-     * 
-     * @param environment instância do Environment do Spring
-     */
     public AppConfiguration(Environment environment) {
         this.environment = environment;
+        System.out.println("------");
+        System.out.println(Arrays.toString(environment.getActiveProfiles()));
+        System.out.println("------");
     }
 
-    /**
-     * Configura o bean do DAO de pacientes.
-     * 
-     * @param connection conexão com o banco de dados
-     * @return instância do PatientDao
-     */
+
     @Bean
     public PatientDao getPatientDao(final Connection connection) {
         return new PatientPostgresDaoImpl(connection);
     }
 
-    /**
-     * Configura o bean do DAO de médicos.
-     * 
-     * @param connection conexão com o banco de dados
-     * @return instância do MedicDao
-     */
+
     @Bean
     public MedicDao getMedicDao(final Connection connection) {
         return new MedicPostgresDaoImpl(connection);
     }
 
-    /**
-     * Configura o bean do DAO de prontuários médicos.
-     * 
-     * @param connection conexão com o banco de dados
-     * @return instância do MedicalRecordDao
-     */
+
     @Bean
     public MedicalRecordDao getMedicalRecordDao(final Connection connection) {
         return new MedicalRecordPostgresDaoImpl(connection);
     }
-    /**
-     * Configura a documentação Swagger/OpenAPI da aplicação.
-     * 
-     * <p>Para acessar a documentação, acesse: http://localhost:8080/swagger-ui.html</p>
-     * 
-     * @return configuração do OpenAPI para documentação da API
-     */
+
     @Bean
     public OpenAPI customOpenApi(){
         return new OpenAPI().info(new Info()
@@ -86,27 +62,37 @@ public class AppConfiguration {
                 .description("API do Sistema de Gestão Médica MedLink"));
     }
 
+    @Bean
+    @Profile("basic")
+    public AuthenticationService basicAuthenticationService(
+            final MedicService medicService,
+            final PatientService patientService){
+        return new AuthenticationServiceImpl(medicService, patientService);
+    }
+
+    @Bean
+    @Profile("jwt")
+    public AuthenticationService jwtAuthenticationService(
+            final MedicService medicService,
+            final PatientService patientService,
+            final PasswordEncoder passwordEncoder){
+        return new JwtAuthenticationServiceImpl(medicService, patientService, passwordEncoder);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 
-    /**
-     * Configura o bean do DAO de mensagens.
-     * 
-     * @param connection conexão com o banco de dados
-     * @return instância do MessageDao
-     */
+
+
     @Bean
     public MessageDao getMessageDao(final Connection connection) {
         return new MessagePostgresDaoImpl(connection);
     }
 
-    /**
-     * Configuração CORS para permitir requisições do frontend.
-     * 
-     * <p>Permite requisições de múltiplas origens (React, Angular) e
-     * configura recursos estáticos da aplicação.</p>
-     * 
-     * @return configurador CORS personalizado
-     */
+
     @Bean
     public org.springframework.web.servlet.config.annotation.WebMvcConfigurer corsConfigurer() {
         return new org.springframework.web.servlet.config.annotation.WebMvcConfigurer() {

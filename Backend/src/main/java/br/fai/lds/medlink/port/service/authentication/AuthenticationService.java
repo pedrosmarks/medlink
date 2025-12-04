@@ -7,6 +7,7 @@ import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 
 public interface AuthenticationService {
 
+    Object authenticate(final String email, final String password);
     Patient authenticatePatient(final String email, final String password);
     Medic authenticateMedic(final String email, final String password);
 

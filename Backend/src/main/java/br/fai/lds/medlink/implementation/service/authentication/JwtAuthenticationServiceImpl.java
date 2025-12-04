@@ -4,22 +4,22 @@ import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
-import br.fai.lds.medlink.port.dao.medic.MedicDao;
-import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
+import br.fai.lds.medlink.port.service.medic.MedicService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
-    private final PatientDao patientDao;
-    private final MedicDao medicDao;
+    private final PatientService patientService;
+    private final MedicService medicService;
     private final PasswordEncoder passwordEncoder;
 
-    public JwtAuthenticationServiceImpl(PatientDao patientDao, MedicDao medicDao, PasswordEncoder passwordEncoder) {
-        this.patientDao = patientDao;
-        this.medicDao = medicDao;
+    public JwtAuthenticationServiceImpl(MedicService medicService, PatientService patientService, PasswordEncoder passwordEncoder) {
+        this.medicService = medicService;
+        this.patientService = patientService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -47,7 +47,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient authenticatePatient(String email, String password) {
-        Patient patient = patientDao.findByEmail(email);
+        Patient patient = patientService.findByEmail(email);
         if (patient != null && passwordEncoder.matches(password, patient.getPassword())) {
             System.out.println("Paciente autenticado: " + patient.getName());
             return patient;
@@ -58,7 +58,14 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Medic authenticateMedic(String email, String password) {
-        Medic medic = medicDao.findByEmail(email);
+        // Precisa implementar findByEmail no MedicService
+        // Por enquanto, vamos buscar todos e filtrar
+        var medics = medicService.findAll();
+        var medic = medics.stream()
+                .filter(m -> email.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
+        
         if (medic != null && passwordEncoder.matches(password, medic.getPassword())) {
             System.out.println("Médico autenticado: " + medic.getName());
             return medic;
@@ -84,11 +91,16 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient findPatientByEmail(String email) {
-        return patientDao.findByEmail(email);
+        return patientService.findByEmail(email);
     }
 
     @Override
     public Medic findMedicByEmail(String email) {
-        return medicDao.findByEmail(email);
+        // Precisa implementar findByEmail no MedicService
+        var medics = medicService.findAll();
+        return medics.stream()
+                .filter(m -> email.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -4,35 +4,49 @@ import br.fai.lds.medlink.domain.Medic;
 import br.fai.lds.medlink.domain.Patient;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetDTO;
 import br.fai.lds.medlink.domain.dataTransferObject.Login.PasswordResetRequestDTO;
-import br.fai.lds.medlink.port.dao.medic.MedicDao;
-import br.fai.lds.medlink.port.dao.patient.PatientDao;
 import br.fai.lds.medlink.port.service.authentication.AuthenticationService;
+import br.fai.lds.medlink.port.service.medic.MedicService;
+import br.fai.lds.medlink.port.service.patient.PatientService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Profile("basic")
 @Slf4j
-@Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Autowired
-    private PatientDao patientDao;
+    private final PatientService patientService;
+    private final MedicService medicService;
 
-    @Autowired
-    private MedicDao medicDao;
+    public AuthenticationServiceImpl(MedicService medicService, PatientService patientService) {
+        this.medicService = medicService;
+        this.patientService = patientService;
+    }
 
     // Mapa simples para armazenar códigos temporários (email -> código)
     private final Map<String, String> resetCodes = new HashMap<>();
 
     @Override
-    public Patient authenticatePatient(String email, String password) {
-        Patient patient = patientDao.findByEmailAndPassword(email, password);
+    public Object authenticate(String email, String password) {
+        // Tenta encontrar como paciente primeiro
+        Patient patient = authenticatePatient(email, password);
         if (patient != null) {
+            return patient;
+        }
+
+        // Se não for paciente, tenta como médico
+        Medic medic = authenticateMedic(email, password);
+        if (medic != null) {
+            return medic;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Patient authenticatePatient(String email, String password) {
+        Patient patient = patientService.findByEmail(email);
+        if (patient != null && password.equals(patient.getPassword())) {
             return patient;
         }
         return null;
@@ -40,19 +54,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Medic authenticateMedic(String email, String password) {
-        Medic medic = medicDao.findByEmailAndPassword(email, password);
-        if (medic != null) {
-            return medic;
-        }
-        return null;
+        var medics = medicService.findAll();
+        var medic = medics.stream()
+                .filter(m -> email.equals(m.getEmail()) && password.equals(m.getPassword()))
+                .findFirst()
+                .orElse(null);
+        return medic;
     }
 
     @Override
     public boolean requestPasswordReset(PasswordResetRequestDTO dto) {
         String email = dto.getIdentifier();
 
-        Patient patient = patientDao.findByEmail(email);
-        Medic medic = medicDao.findByEmail(email);
+        Patient patient = patientService.findByEmail(email);
+        var medics = medicService.findAll();
+        Medic medic = medics.stream()
+                .filter(m -> email.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
 
         if (patient == null && medic == null) {
             return false; // email não encontrado
@@ -74,18 +93,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return false; // código inválido
         }
 
-        Patient patient = patientDao.findByEmail(email);
+        Patient patient = patientService.findByEmail(email);
         if (patient != null) {
             patient.setPassword(newPassword);
-            patientDao.updateInformation(patient.getId(), patient);
+            patientService.updateInformation(patient.getId(), patient);
             invalidateResetCode(email);
             return true;
         }
 
-        Medic medic = medicDao.findByEmail(email);
+        var medics = medicService.findAll();
+        Medic medic = medics.stream()
+                .filter(m -> email.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
         if (medic != null) {
             medic.setPassword(newPassword);
-            medicDao.updateInformation(patient.getId(), medic);
+            medicService.update(medic.getId(), medic);
             invalidateResetCode(email);
             return true;
         }
@@ -95,8 +118,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean sendVerificationCode(String identifier) {
-        Patient patient = patientDao.findByEmail(identifier);
-        Medic medic = medicDao.findByEmail(identifier);
+        Patient patient = patientService.findByEmail(identifier);
+        var medics = medicService.findAll();
+        Medic medic = medics.stream()
+                .filter(m -> identifier.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
 
         if (patient == null && medic == null) {
             return false; // usuário não encontrado
@@ -128,11 +155,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Patient findPatientByEmail(String email) {
-        return patientDao.findByEmail(email);
+        return patientService.findByEmail(email);
     }
 
     @Override
     public Medic findMedicByEmail(String email) {
-        return medicDao.findByEmail(email);
+        var medics = medicService.findAll();
+        return medics.stream()
+                .filter(m -> email.equals(m.getEmail()))
+                .findFirst()
+                .orElse(null);
     }
 }
